@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "restart": "node deleteNextFolder.js && next dev"
   },
   "dependencies": {
     "@types/node": "20.2.5",
@@ -17,6 +18,13 @@
     "next": "13.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-social-icons": "^5.15.0",
+    "tailwindcss": "^3.3.2",
     "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.14",
+    "framer-motion": "^10.12.16",
+    "postcss": "^8.4.24"
   }
 }
