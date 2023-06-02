@@ -1,13 +1,22 @@
 type ButtonProps = {
   text: string;
+  bgColor?: string;
+  textColor?: string;
   className?: string;
 };
 
-export default function Button({ text, className }: ButtonProps) {
+export default function Button({
+  text,
+  bgColor,
+  textColor,
+  className,
+}: ButtonProps) {
   return (
     <button
       type="button"
-      className={`bg-royal-blue p-5 text-2xl text-white font-serif text-center ${className}`}
+      className={`${bgColor ? bgColor : "bg-royal-blue"} ${
+        textColor ? textColor : "text-white"
+      } p-5 text-2xl font-serif text-center ${className}`}
     >
       {text}
     </button>

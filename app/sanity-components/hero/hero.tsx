@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./styles.module.css";
 import Button from "./../../components/buttton";
 
@@ -21,14 +22,16 @@ export default function Hero() {
         </video>
       </div>
       <div className="flex justify-center items-center h-full">
-        <div className="bg-black/[.5] p-10 rounded-xl">
-          <h1 className="font-serif text-5xl text-white text-center w-full">
-            Moon Jar
-          </h1>
-          <div className="flex justify-center mt-10">
-            <a href="/about">
-              <Button text={"Welcome"} />
-            </a>
+        <div className="bg-black/[.5] p-16 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
+          <div>
+            <h1 className="font-serif text-5xl text-white text-center w-full">
+              Moon Jar
+            </h1>
+            <div className="flex justify-center mt-10">
+              <Link href="/about">
+                <Button text={"Welcome"} />
+              </Link>
+            </div>
           </div>
         </div>
       </div>

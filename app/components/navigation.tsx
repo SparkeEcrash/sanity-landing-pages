@@ -7,9 +7,9 @@ import { usePathname } from "next/navigation";
 
 export default function Navigation() {
   const [mobileNav, setMobileNav] = useState<boolean>(false);
-  const pages = ["About", "Gallery", "Events", "Shop", "Contact"];
+  const pages = ["about", "gallery", "events", "shop", "contact"];
   const path = usePathname();
-  const activeLinkStyle = "text-royal-blue text-3xl opacity-100";
+  const activeLinkStyle = "font-serif text-royal-blue text-3xl opacity-100";
   const inactiveLinkStyleDesktop =
     "font-serif text-royal-blue text-3xl opacity-70 hover:opacity-100 transition-all duration-200";
   const ianctiveLinkStyleMobile = "text-royal-blue text-3xl opacity-100";
@@ -27,16 +27,20 @@ export default function Navigation() {
   return (
     <div className="flex flex-col">
       {/* mobile button */}
-      <div className={`px-6 min-w-full bg-white transparent-highlight flex lg:hidden cursor-pointer justify-between items-center absolute z-10`}>
+      <div
+        className={`px-6 min-w-full bg-white transparent-highlight flex lg:hidden cursor-pointer justify-between items-center absolute z-10`}
+      >
         <div>
-          <Image
-            src={"/pictures/company-logo-final.png"}
-            alt={"Company Logo"}
-            width={100}
-            height={100}
-            className="relative object-cover prevent-select"
-            priority
-          />
+          <Link href="/">
+            <Image
+              src={"/pictures/company-logo-final.png"}
+              alt={"Company Logo"}
+              width={100}
+              height={100}
+              className="relative object-cover prevent-select"
+              priority
+            />
+          </Link>
         </div>
         <button
           className="h-10 w-10 rounded-md border-4 border-blue-green flex flex-col justify-evenly items-center relative"
@@ -90,14 +94,16 @@ export default function Navigation() {
       {/* <div className="hidden lg:flex min-w-full justify-evenly bg-black/[.4] absolute z-10"> */}
       <div className="hidden lg:flex min-w-full justify-evenly px-4 bg-white absolute z-10">
         <div>
-          <Image
-            src={"/pictures/company-logo-final.png"}
-            alt={"Company Logo"}
-            width={100}
-            height={100}
-            className="relative mx-auto object-cover prevent-select"
-            priority
-          />
+          <Link href="/">
+            <Image
+              src={"/pictures/company-logo-final.png"}
+              alt={"Company Logo"}
+              width={100}
+              height={100}
+              className="relative mx-auto object-cover prevent-select"
+              priority
+            />
+          </Link>
         </div>
         <div className="lg:flex flex items-center">
           {pages.map((page, i) => (
