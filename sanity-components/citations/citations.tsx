@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Button from "./../../components/buttton";
+import Button from "../../components/buttton";
 import Image from "next/image";
 
 export default function Citations() {
@@ -31,8 +31,12 @@ export default function Citations() {
               Donec non rhoncus justo.
             </p>
             <div className="mt-10">
-              <p className="text-background-black font-serif font-bold">Jane Doe</p>
-              <p className="text-background-black font-serif">Owner of Moon Jar </p>
+              <p className="text-background-black font-serif font-bold">
+                Jane Doe
+              </p>
+              <p className="text-background-black font-serif">
+                Owner of Moon Jar{" "}
+              </p>
             </div>
           </div>
         </div>
@@ -61,8 +65,12 @@ export default function Citations() {
               Donec non rhoncus justo.
             </p>
             <div className="mt-10">
-              <p className="text-background-black font-serif font-bold">Jane Doe</p>
-              <p className="text-background-black font-serif">Customer from NYC </p>
+              <p className="text-background-black font-serif font-bold">
+                Jane Doe
+              </p>
+              <p className="text-background-black font-serif">
+                Customer from NYC{" "}
+              </p>
             </div>
           </div>
         </div>

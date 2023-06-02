@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Button from "./../../components/buttton";
+import Button from "../../components/buttton";
 import Image from "next/image";
 
 export default function Hero() {
@@ -13,22 +13,23 @@ export default function Hero() {
             </h1>
             <p className="text-white font-sans mt-10 indent-10">
               Moon Jar exhibits a gallery of masterfully crafted porcelain and
-              if given the availability makes them available for purchase to interested individuals. Vivamus eget neque non lectus interdum imperdiet eget
-              non tellus. Mauris elementum pellentesque pharetra. Vivamus
-              volutpat orci vel arcu imperdiet finibus. Maecenas aliquet quis mi
-              sit amet consequat. Proin eget porta massa. Integer efficitur sed
-              libero at tincidunt. In convallis nunc at elit tempus lobortis.
-              Donec a ex imperdiet, tincidunt dui id, ornare enim. Nunc quis
-              congue urna, a commodo lectus. Praesent a ullamcorper risus.
-              Curabitur non diam placerat risus posuere tincidunt et in nisl.
-              Etiam lacinia lobortis scelerisque. Etiam vulputate dignissim
-              urna, non mollis sapien rutrum ac. Nulla eleifend, libero at
-              rhoncus vestibulum, urna arcu vehicula odio, eu finibus enim est
-              tempor ante. Cras velit mi, vehicula vitae felis at, pharetra
-              pharetra nibh. Cras aliquam lorem erat, ac semper elit scelerisque
-              eu. Phasellus dapibus ligula nec varius congue. In hac habitasse
-              platea dictumst. Vivamus volutpat lorem at lacus euismod aliquam.
-              Nam maximus luctus nulla ac congue.
+              if given the availability makes them available for purchase to
+              interested individuals. Vivamus eget neque non lectus interdum
+              imperdiet eget non tellus. Mauris elementum pellentesque pharetra.
+              Vivamus volutpat orci vel arcu imperdiet finibus. Maecenas aliquet
+              quis mi sit amet consequat. Proin eget porta massa. Integer
+              efficitur sed libero at tincidunt. In convallis nunc at elit
+              tempus lobortis. Donec a ex imperdiet, tincidunt dui id, ornare
+              enim. Nunc quis congue urna, a commodo lectus. Praesent a
+              ullamcorper risus. Curabitur non diam placerat risus posuere
+              tincidunt et in nisl. Etiam lacinia lobortis scelerisque. Etiam
+              vulputate dignissim urna, non mollis sapien rutrum ac. Nulla
+              eleifend, libero at rhoncus vestibulum, urna arcu vehicula odio,
+              eu finibus enim est tempor ante. Cras velit mi, vehicula vitae
+              felis at, pharetra pharetra nibh. Cras aliquam lorem erat, ac
+              semper elit scelerisque eu. Phasellus dapibus ligula nec varius
+              congue. In hac habitasse platea dictumst. Vivamus volutpat lorem
+              at lacus euismod aliquam. Nam maximus luctus nulla ac congue.
             </p>
             <div className="mt-10">
               <Link href="/gallery">
