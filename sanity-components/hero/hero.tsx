@@ -1,6 +1,6 @@
 import Link from "next/link";
 import styles from "./styles.module.css";
-import Button from "./../../components/buttton";
+import Button from "../../components/buttton";
 
 export default function Hero() {
   return (
