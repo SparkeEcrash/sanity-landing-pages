@@ -33,7 +33,7 @@ export default function Navigation() {
         <div>
           <Link href="/">
             <Image
-              src={"/pictures/company-logo-final.png"}
+              src={"/pictures/company-logo.png"}
               alt={"Company Logo"}
               width={100}
               height={100}
@@ -96,7 +96,7 @@ export default function Navigation() {
         <div>
           <Link href="/">
             <Image
-              src={"/pictures/company-logo-final.png"}
+              src={"/pictures/company-logo.png"}
               alt={"Company Logo"}
               width={100}
               height={100}
