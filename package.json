@@ -10,12 +10,18 @@
     "restart": "node deleteNextFolder.js && next dev"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.18",
+    "@next-auth/firebase-adapter": "^2.0.1",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
     "@types/react-dom": "18.2.4",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
+    "firebase": "^9.22.1",
+    "firebase-admin": "^11.9.0",
     "next": "13.4.4",
+    "next-auth": "^4.22.1",
+    "nodemailer": "^6.9.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-social-icons": "^5.15.0",
@@ -23,6 +29,7 @@
     "typescript": "5.0.4"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.3",
     "autoprefixer": "^10.4.14",
     "framer-motion": "^10.12.16",
     "postcss": "^8.4.24"

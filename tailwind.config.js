@@ -31,8 +31,8 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        "serif": ['var(--font-serif)', ...fontFamily.serif],
-        "sans": ['var(--font-sans)', ...fontFamily.sans],
+        serif: ["var(--font-serif)", ...fontFamily.serif],
+        sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       colors: {
         "royal-blue": "#153084",
@@ -49,5 +49,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

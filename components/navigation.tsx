@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 export default function Navigation() {
   const [mobileNav, setMobileNav] = useState<boolean>(false);
@@ -92,7 +93,7 @@ export default function Navigation() {
       </motion.div>
       {/* desktop navigation */}
       {/* <div className="hidden lg:flex min-w-full justify-evenly bg-black/[.4] absolute z-10"> */}
-      <div className="hidden lg:flex min-w-full justify-evenly px-4 bg-white absolute z-10">
+      <div className="hidden lg:flex min-w-full justify-evenly px-4 bg-white absolute z-10 shadow-sm border-b">
         <div>
           <Link href="/">
             <Image
@@ -121,6 +122,15 @@ export default function Navigation() {
               {page.charAt(0).toUpperCase() + page.slice(1)}
             </Link>
           ))}
+        </div>
+        <div className="flex items-center">
+          <Link
+            href="/api/auth/signin"
+            className={`cursor-pointer flex justify-center items-center h-16 ${inactiveLinkStyleDesktop}`}
+          >
+            <UserCircleIcon className={`h-16 mr-2`} />
+            Sign In
+          </Link>
         </div>
       </div>
     </div>

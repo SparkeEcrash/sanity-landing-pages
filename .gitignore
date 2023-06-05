@@ -2,6 +2,7 @@
 
 #temp
 /public/pictures
+firebase_service_account_key.json
 
 # dependencies
 /node_modules
