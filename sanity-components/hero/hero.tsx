@@ -22,15 +22,19 @@ export default function Hero() {
         </video>
       </div>
       <div className="flex justify-center items-center h-full">
-        <div className="bg-royal-blue/[.5] p-4 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
-          <div className=" border-8 border-blue-green/[.5] p-10 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
+        <div className="bg-royal-blue p-4 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
+          <div className=" border-[6px] border-blue-green p-10 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
             <div>
-              <h1 className="font-serif text-5xl text-white text-center w-full">
+              <h1 className="font-serif text-5xl text-center w-full text-blue-green">
                 Moon Jar
               </h1>
               <div className="flex justify-center mt-10">
                 <Link href="/about">
-                  <Button bgColor="bg-royal-blue"text={"Welcome"} />
+                  <Button
+                    bgColor="bg-blue-green"
+                    textColor="text-royal-blue"
+                    text={"Welcome"}
+                  />
                 </Link>
               </div>
             </div>

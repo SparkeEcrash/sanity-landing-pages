@@ -5,6 +5,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { useSession } from "next-auth/react";
+import HoverModal from "components/hoverModal";
 
 export default function Navigation() {
   const [mobileNav, setMobileNav] = useState<boolean>(false);
@@ -24,6 +26,9 @@ export default function Navigation() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const session = useSession();
+  console.log(session);
 
   return (
     <div className="flex flex-col">
@@ -124,13 +129,32 @@ export default function Navigation() {
           ))}
         </div>
         <div className="flex items-center">
-          <Link
-            href="/api/auth/signin"
-            className={`cursor-pointer flex justify-center items-center h-16 ${inactiveLinkStyleDesktop}`}
-          >
-            <UserCircleIcon className={`h-16 mr-2`} />
-            Sign In
-          </Link>
+          {session.status == "authenticated" ? (
+            <HoverModal text="sign out">
+              <Link
+                href="user"
+                className={`flex justify-center items-center h-16 cursor-pointer ${inactiveLinkStyleDesktop}`}
+              >
+                <Image
+                  src={session.data.user.image}
+                  alt={"Company Logo"}
+                  width={50}
+                  height={50}
+                  className="rounded-full relative prevent-select mr-4"
+                  priority
+                />
+                {session.data.user.name}
+              </Link>
+            </HoverModal>
+          ) : (
+            <Link
+              href="/api/auth/signin"
+              className={`cursor-pointer flex justify-center items-center h-16 ${inactiveLinkStyleDesktop}`}
+            >
+              <UserCircleIcon className={`h-16 mr-2`} />
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
     </div>

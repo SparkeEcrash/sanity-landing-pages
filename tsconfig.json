@@ -22,8 +22,9 @@
     "baseUrl": ".",
     "paths": {
       "@app/*": ["app/*"],
-      "@sanity-components": ["sanity-components/*"],
-      "@components": ["components/*"],
+      "@sanity-components/*": ["sanity-components/*"],
+      "@components/*": ["components/*"],
+      "@nextauth/*": ["app/api/auth/[...nextauth]/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
