@@ -31,12 +31,12 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        "serif": ['var(--font-serif)', ...fontFamily.serif],
-        "sans": ['var(--font-sans)', ...fontFamily.sans],
+        serif: ["var(--font-serif)", ...fontFamily.serif],
+        sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       colors: {
         "royal-blue": "#153084",
-        "blue-green": "#75E6DA",
+        "blue-green": "#99D9EA",
         "blue-grotto": "#189AB4",
         "baby-blue": "#D4F1F4",
         "border-grey": "#D3D3D3",
@@ -49,5 +49,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };
