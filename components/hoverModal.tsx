@@ -58,18 +58,10 @@ const UserModal = ({ hover }: { hover: boolean }) => {
       <Link
         href={"coordinator"}
         className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
-          path === "/artist" ? activeLinkStyle : inactiveLinkStyleDesktop
+          path === "/coordinator" ? activeLinkStyle : inactiveLinkStyleDesktop
         }`}
       >
         Coordinator
-      </Link>
-      <Link
-        href={"customer"}
-        className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
-          path === "/customer" ? activeLinkStyle : inactiveLinkStyleDesktop
-        }`}
-      >
-        Customer
       </Link>
       <div
         className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
@@ -83,6 +75,7 @@ const UserModal = ({ hover }: { hover: boolean }) => {
   );
 };
 
+//TODO: Make HoverModal accessible for other hover modals
 export default function HoverModal({
   text,
   bgColor,

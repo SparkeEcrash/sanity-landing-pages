@@ -10,7 +10,7 @@ import HoverModal from "components/hoverModal";
 
 export default function Navigation() {
   const [mobileNav, setMobileNav] = useState<boolean>(false);
-  const pages = ["about", "gallery", "events", "shop", "contact"];
+  const pages = ["about", "gallery", "events", "contact"];
   const path = usePathname();
   const activeLinkStyle = "font-serif text-royal-blue text-3xl opacity-100";
   const inactiveLinkStyleDesktop =
@@ -28,7 +28,6 @@ export default function Navigation() {
   }, []);
 
   const session = useSession();
-  console.log(session);
 
   return (
     <div className="flex flex-col">

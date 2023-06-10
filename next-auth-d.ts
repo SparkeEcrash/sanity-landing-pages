@@ -11,7 +11,7 @@ declare module "next-auth" {
 			name: string
       image: string
       email: string
-			uid: string | undefined
+			uid: string
     }
   }
 }

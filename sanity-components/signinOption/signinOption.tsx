@@ -13,7 +13,7 @@ export default function SigninOption({ name, image, id }: SigninOptionProps) {
     <div>
       <div
         className="p-4 flex justify-center items-center border-2 w-[200px] h-[200px] relative shadow-md cursor-pointer hover:scale-110 transition-all duration-200"
-        onClick={() => signIn(id, { callbackUrl: "/" })}
+        onClick={() => signIn(id, { callbackUrl: "/user" })}
       >
         <Image
           src={image}
@@ -25,12 +25,7 @@ export default function SigninOption({ name, image, id }: SigninOptionProps) {
           style={{ width: "100%", height: "auto" }}
         />
       </div>
-      <p
-        className="text-3xl text-royal-blue font-serif mt-6"
-        onClick={() => signOut()}
-      >
-        {name}
-      </p>
+      <p className="text-3xl text-royal-blue font-serif mt-6">{name}</p>
     </div>
   );
 }
