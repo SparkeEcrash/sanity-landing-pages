@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styles from "./styles.module.css";
 import Button from "components/button";
+import Image from "next/image";
 
 export default function Hero() {
   return (
@@ -22,7 +23,17 @@ export default function Hero() {
         </video>
       </div>
       <div className="flex justify-center items-center h-full">
-        <div className="bg-royal-blue p-4 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
+        <Link href="/about">
+          <Image
+            src={"/pictures/company-logo.png"}
+            alt={"Company Logo"}
+            width={300}
+            height={300}
+            className="relative mx-auto object-cover prevent-select"
+            priority
+          />
+        </Link>
+        {/* <div className="bg-royal-blue p-4 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
           <div className=" border-[6px] border-blue-green p-10 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
             <div>
               <h1 className="font-serif text-5xl text-center w-full text-blue-green">
@@ -39,7 +50,7 @@ export default function Hero() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

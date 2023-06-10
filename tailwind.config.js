@@ -41,6 +41,7 @@ module.exports = {
         "baby-blue": "#D4F1F4",
         "border-grey": "#D3D3D3",
         "background-black": "#2e2e30",
+        "input-grey": "rgb(241 245 249)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -49,5 +50,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [require("@tailwindcss/forms"), require("tailwind-scrollbar")],
 };

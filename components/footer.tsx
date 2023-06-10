@@ -22,7 +22,7 @@ export default function Footer() {
         <div className="flex justify-between mt-8 flex-col xl:flex-row">
           <div className="flex flex-col mr-5">
             <div className="flex items-center">
-              <p className="font-sans font-bold text-white">
+              <p className="font-sans text-white">
                 All Rights Reserved ©2023 Moon Jar
               </p>
             </div>
