@@ -45,15 +45,23 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      //check for banned users and deny them signing in
+      //check for banned users and deny them signing in for access control
       return true;
     },
-    async session({ session, user }) {
+    async session({ session, user, trigger, newSession }) {
       session.user.username = session.user.name
         .split(" ")
         .join("")
         .toLocaleLowerCase();
       session.user.uid = user.id;
+      // console.log('session');
+      // console.log(session);
+      // console.log('user');
+      // console.log(user);
+      // console.log('trigger');
+      // console.log(trigger);
+      // console.log('newSession');
+      // console.log(newSession);
       return session;
     },
   },

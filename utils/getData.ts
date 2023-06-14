@@ -21,3 +21,10 @@ export const getTag = async (tagLabel: string) => {
   );
   return await res.json();
 };
+
+export const getUserArtworks = async (uid: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/getArtworks?user=${uid}`
+  );
+  return await res.json();
+};

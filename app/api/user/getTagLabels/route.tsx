@@ -13,9 +13,10 @@ export async function GET(request: NextRequest) {
     tags.push(tag.label);
   });
 
+  //TODO: proper validation check for data here
   if (data) {
     return NextResponse.json({ data: tags }, { status: 200 });
   } else {
-    return NextResponse.json({ data: "an error occured" }, { status: 500 });
+    return NextResponse.json({ data: "an error occured getting the tag labels" }, { status: 500 });
   }
 }

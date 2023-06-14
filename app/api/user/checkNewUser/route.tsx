@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
   `;
 
   const data = await sanityClient.fetch(query);
+  //TODO: proper validation check for checking user here
   if (data instanceof Array) {
     return NextResponse.json({ newUser: data.length === 0 }, { status: 200 });
   } else {

@@ -23,7 +23,7 @@ export default function Button({
       onClick={(e) => clickFn && clickFn(e)}
       className={`${bgColor ? bgColor : "bg-royal-blue"} ${
         textColor ? textColor : "text-white"
-      } p-5 text-2xl font-serif text-center hover:scale-110 transition-all duration-200 ${className}`}
+      } prevent-select p-5 text-2xl font-serif text-center hover:scale-110 transition-all duration-200 ${className}`}
     >
       {text}
     </button>

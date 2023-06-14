@@ -10,9 +10,10 @@ export async function GET(request: NextRequest) {
   `;
 
   const data = await sanityClient.fetch(query);
+  //TODO: proper validation check for getting tag here
   if (data instanceof Array) {
     return NextResponse.json({ data: data[0] }, { status: 200 });
   } else {
-    return NextResponse.json({ data: "an error occured" }, { status: 500 });
+    return NextResponse.json({ data: "an error occured getting the tag" }, { status: 500 });
   }
 }

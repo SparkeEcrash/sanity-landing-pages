@@ -3,6 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import { AppDispatch } from "@redux/store";
+import { addMessage } from "@redux/features/messagesSlice";
 
 interface HoverModalProps {
   text: string;
@@ -41,6 +43,7 @@ const UserModal = ({ hover }: { hover: boolean }) => {
   const inactiveLinkStyleDesktop =
     "font-serif text-royal-blue text-3xl opacity-70 hover:opacity-100 transition-all duration-200";
   const path = usePathname();
+  const dispatch = AppDispatch();
   return (
     <div
       className={`bg-white transition-all duration-200 absolute border shadow-sm flex flex-col items-start ${
@@ -67,7 +70,16 @@ const UserModal = ({ hover }: { hover: boolean }) => {
         className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
           path === "/signout" ? activeLinkStyle : inactiveLinkStyleDesktop
         }`}
-        onClick={() => signOut()}
+        onClick={() => {
+          dispatch(
+            addMessage({
+              text: "Signing out",
+              showLoading: true,
+              key: "signing out",
+            })
+          );
+          signOut();
+        }}
       >
         Sign out
       </div>

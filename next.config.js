@@ -30,10 +30,16 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname:"i.scdn.co",
+        hostname: "i.scdn.co",
         port: "",
         pathname: "/**",
-      }
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+        port: "",
+        pathname: "/**",
+      },
       // {
       //   protocol: "https",
       //   hostname: "plus.unsplash.com",

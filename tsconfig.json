@@ -25,7 +25,8 @@
       "@sanity-components/*": ["sanity-components/*"],
       "@components/*": ["components/*"],
       "@nextauth/*": ["app/api/auth/[...nextauth]/*"],
-      "@api/*": ["app/api/*"]
+      "@api/*": ["app/api/*"],
+      "@redux/*": ["redux/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
