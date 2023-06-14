@@ -1,20 +1,28 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Button from "components/button";
 import Image from "next/image";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { uploadArtwork } from "utils/postData";
 import MoonLoader from "react-spinners/MoonLoader";
+import { AppDispatch } from "@redux/store";
+import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
+import Toggle from "@components/toggle";
 
 interface UploadArtworkModalProps {
   show: boolean;
-  setShow: (show: boolean) => void;
+  setShow?: (show: boolean) => void;
+  dispatchSetShow?: ActionCreatorWithPayload<boolean, string>;
+  clickOut?: boolean;
 }
 
 export default function UploadArtworkModal({
   show,
   setShow,
+  dispatchSetShow,
+  clickOut,
 }: UploadArtworkModalProps) {
+  const dispatch = AppDispatch();
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<File[]>([]);
   const [imageDetails, setImageDetails] = useState<
@@ -24,13 +32,16 @@ export default function UploadArtworkModal({
       dimensions?: { height: number; width: number };
     }[]
   >([]);
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
   const [tag, setTag] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [isMaker, setIsMaker] = useState<boolean>(false);
+  const [isForSale, setIsForSale] = useState<boolean>(false);
+  const [price, setPrice] = useState<string>("0");
   const [errors, setErrors] = useState({
     images: false,
-    name: false,
+    title: false,
     comment: false,
     tags: false,
     tag: false,
@@ -38,13 +49,14 @@ export default function UploadArtworkModal({
   });
   const errorMessages = {
     images: "Please add a picture",
-    name: "Please enter a name",
+    title: "Please enter a title",
     comment: "Please enter a comment",
     tags: "Please enter a tag",
     tag: "Please enter your tag",
     tagAlreadyExists: "Please enter a different tag",
   };
-
+  const setModalShow = (boolean: boolean) =>
+    setShow ? setShow(boolean) : dispatch(dispatchSetShow!(boolean));
   const ImagePlaceHolder = () => (
     <div
       className="h-[275px] w-[275px] border shadow-md relative flex-center bg-input-grey cursor-pointer"
@@ -116,15 +128,18 @@ export default function UploadArtworkModal({
   };
 
   const sendData = (action: string) => {
-    //TODO: validation check here
+    //TODO: validation check here. check if price is 0 and error out and check for cent two digits
     const posted = action === "Post" ? true : false;
     const data = new FormData();
     const json = JSON.stringify({
       posted,
       imageDetails,
-      name,
+      title,
       comment,
       tags,
+      isMaker,
+      isForSale,
+      price,
     });
     const blob = new Blob([json], { type: "application/json" });
     data.append("blob", blob);
@@ -135,10 +150,10 @@ export default function UploadArtworkModal({
     uploadArtwork(data).then((result) => {
       if ("success" in result) {
         setLoading(false);
-        setShow(false);
+        setShow ? setShow(false) : dispatch(dispatchSetShow!(false));
       } else {
         setLoading(false);
-        setShow(false);
+        setModalShow(false);
         //TODO:pop up error modal
       }
     });
@@ -147,13 +162,19 @@ export default function UploadArtworkModal({
   return (
     <div
       className="fixed z-20 min-h-screen w-full bg-black/[.5] flex items-center justify-center"
-      onClick={() => setShow(false)}
+      onClick={() => clickOut && setModalShow(false)}
     >
       <div
         className="bg-white border shadow-2xl max-h-screen overflow-y-auto scrollbar-thin scrollbar-thumb-royal-blue scrollbar-track-border-grey max-w-5xl relative"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col border-b shadow-sm p-14">
+          <div>
+            <XMarkIcon
+              className="text-royal-blue absolute h-12 top-5 right-5 prevent-select cursor-pointer"
+              onClick={() => setModalShow(false)}
+            />
+          </div>
           <div className="text-center">
             <h1 className="title-font">Upload your artwork</h1>
           </div>
@@ -199,7 +220,7 @@ export default function UploadArtworkModal({
                     >
                       <Image
                         src={imageDetail.path}
-                        alt={"image name"}
+                        alt={imageDetail.name}
                         fill
                         className="object-cover peer"
                         key={i}
@@ -240,17 +261,17 @@ export default function UploadArtworkModal({
               />
             </div>
           )}
-          <p className="body-font mt-10">Name</p>
+          <p className="body-font mt-10">Title</p>
           <input
             type="text"
             className="input-style"
             onChange={(e) => {
-              setName(e.target.value.trim());
+              setTitle(e.target.value.trim());
             }}
           />
-          {errors.name && (
+          {errors.title && (
             <div>
-              <p className="body-font text-red-500">{errorMessages.name}</p>
+              <p className="body-font text-red-500">{errorMessages.title}</p>
             </div>
           )}
           <p className="body-font mt-10">Comment</p>
@@ -313,14 +334,50 @@ export default function UploadArtworkModal({
           <div className="mx-auto mt-10">
             <Button text="Add tag" clickFn={() => addTag()} />
           </div>
+          <div className="flex justify-between">
+            <div className="flex mt-10 items-center">
+              <p className="body-font">Did you make the artwork?</p>
+              <Toggle
+                yesno={true}
+                toggle={isMaker}
+                clickFn={() => setIsMaker((isMaker) => !isMaker)}
+                className="ml-5"
+              />
+            </div>
+            <div className="flex mt-10 items-center">
+              <p className="body-font">
+                Is the artwork available for purchase?
+              </p>
+              <Toggle
+                yesno={true}
+                toggle={isForSale}
+                clickFn={() => setIsForSale((isForSale) => !isForSale)}
+                className="ml-5"
+              />
+            </div>
+          </div>
+
+          {isForSale && (
+            <>
+              <div className="text-center">
+                <p className="body-font mt-10">Your Suggested Price in USD</p>
+                <i className="body-font mr-5">$</i>
+                <input
+                  type="number"
+                  className="input-style"
+                  onChange={(e) => {
+                    setPrice(e.target.value);
+                  }}
+                ></input>
+              </div>
+              <p className="body-font text-center mt-10">
+                Your email address will be shared with other users interested in
+                purchasing.
+              </p>
+            </>
+          )}
         </div>
         <div className="p-14 flex justify-evenly">
-          <Button
-            text="Close"
-            clickFn={() => {
-              setShow(false);
-            }}
-          />
           <Button text="Save" clickFn={() => sendData("Save")} />
           <Button text="Post" clickFn={() => sendData("Post")} />
         </div>

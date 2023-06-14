@@ -17,8 +17,9 @@ export async function POST(request: NextRequest) {
       dateJoined,
     };
     const result = await sanityClient.createOrReplace(doc);
+    //TODO: proper validation check for creating user here
     if (typeof result === "object" && result !== null) {
-      return NextResponse.json({ data: "new user created" }, { status: 200 });
+      return NextResponse.json({ data: "new user created or replaced" }, { status: 200 });
     } else {
       return NextResponse.json(
         { data: "new user not created" },

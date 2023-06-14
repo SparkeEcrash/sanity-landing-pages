@@ -228,5 +228,5 @@ export default function carouselTwo() {
         </div>
       </div>
     </main>
-  );
+  )
 }

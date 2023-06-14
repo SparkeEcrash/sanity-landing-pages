@@ -1,12 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
 import { sanityClient } from "sanity";
-import { getTodayDate } from "utils";
+import { getTodayDate, getDateNow } from "utils";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@nextauth/route";
 import { v4 as uuidv4 } from "uuid";
-import { groq } from "next-sanity";
 import { getTagLabels, getTag } from "utils/getData";
-
+//TODO: Convert then .then() callbacks to async await
 export async function POST(request: NextRequest) {
   // https://developer.mozilla.org/en-US/docs/Web/API/FormData/append
   const data = await getServerSession(authOptions);
@@ -17,25 +16,41 @@ export async function POST(request: NextRequest) {
   const form = await request.formData();
   const blob = form.get("blob");
   const formData = JSON.parse(await (blob as Blob)!.text());
-  const { posted, imageDetails, name, comment, tags } = formData;
+  const {
+    posted,
+    imageDetails,
+    title,
+    comment,
+    tags,
+    isMaker,
+    isForSale,
+    price,
+  } = formData;
   const images = form.getAll("image");
   const dateUploaded = getTodayDate();
+  const dateUploadedNumber = getDateNow();
   const id = uuidv4();
-  
+
   /* Validation check */
-  if (imageDetails && name && comment && tags && images.length !== 0) {
+  if (imageDetails && title && comment && tags && images.length !== 0) {
     const doc = {
       _type: "artwork",
       _id: id,
-      name,
+      title,
       comment,
       uid,
       dateUploaded,
+      dateUploadedNumber,
       posted,
+      isMaker,
+      isForSale,
+      price,
+      views: 0,
+      likes: 0,
     };
 
     /* Handle Artwork Document */
-    if (false) {
+    if (true) {
       const document = await sanityClient.create(doc);
       if (!("_id" in document)) {
         return NextResponse.json(
@@ -46,13 +61,13 @@ export async function POST(request: NextRequest) {
     }
 
     /* Handle Images */
-    if (false) {
+    if (true) {
       for (let i = 0; i < images.length; i++) {
-        const { type, name: imageName } = images[i] as Blob;
+        const { type, name } = images[i] as Blob;
         const buffer = Buffer.from(await (images[i] as Blob).arrayBuffer());
         sanityClient.assets
           .upload("image", buffer, {
-            filename: imageName,
+            filename: name,
             contentType: type,
           })
           .then((doc) => {
@@ -90,6 +105,8 @@ export async function POST(request: NextRequest) {
                 .setIfMissing({ images: [] })
                 .insert("after", "images[-1]", [
                   {
+                    //TODO: FIX THIS! multiple uploads and edits can mess with _key values of attached images
+                    //TODO: instead of ${i} use _id
                     _key: `artworkImage-${i}`,
                     _type: "reference",
                     _ref: doc._id,
@@ -97,6 +114,7 @@ export async function POST(request: NextRequest) {
                 ])
                 .commit()
                 .then((doc) => {
+                  //TODO: proper validation check here necessary
                   if (doc.images.length === 0) {
                     return NextResponse.json(
                       { error: "failed to attach artwork image to document" },
@@ -110,7 +128,7 @@ export async function POST(request: NextRequest) {
     }
 
     /* Handle Tags */
-    if (false) {
+    if (true) {
       const { data: tagLabels } = await getTagLabels();
       for (const [i, tag] of tags.entries()) {
         if (tagLabels.includes(tag)) {

@@ -6,6 +6,14 @@ export const getTodayDate = () => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
+export const getDateNow = () => {
+  return Date.now();
+}
+
+export const isFirstDateMoreRecent = (dateOne: string, dateTwo: string) => {
+  return Date.parse(dateOne) > Date.parse(dateTwo);
+};
+
 export const trimString = (count: number, string: string) => {
   if (string.length > count) {
     return string.substring(0, count - 3) + "...";
