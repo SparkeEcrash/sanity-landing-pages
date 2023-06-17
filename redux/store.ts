@@ -3,6 +3,7 @@ import sampleReducer from "@redux/features/sampleSlice";
 import userReducer from "@redux/features/userSlice";
 import messagesReducer from "@redux/features/messagesSlice";
 import artworksReducer from "@redux/features/artworksSlice";
+import galleryReducer from "@redux/features/gallerySlice";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import logger from "redux-logger";
@@ -13,6 +14,7 @@ export const store = configureStore({
     user: userReducer,
     messages: messagesReducer,
     artworks: artworksReducer,
+    gallery: galleryReducer,
     // posts: postsReducer,
     // comments: commentsReducer,
     // users: usersReducer,

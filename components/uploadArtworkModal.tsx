@@ -8,6 +8,7 @@ import MoonLoader from "react-spinners/MoonLoader";
 import { AppDispatch } from "@redux/store";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import Toggle from "@components/toggle";
+import { v4 as uuidv4 } from "uuid";
 
 interface UploadArtworkModalProps {
   show: boolean;
@@ -171,7 +172,7 @@ export default function UploadArtworkModal({
         <div className="flex flex-col border-b shadow-sm p-14">
           <div>
             <XMarkIcon
-              className="text-royal-blue absolute h-12 top-5 right-5 prevent-select cursor-pointer"
+              className="text-royal-blue absolute h-8 top-5 left-5 prevent-select cursor-pointer"
               onClick={() => setModalShow(false)}
             />
           </div>
@@ -215,7 +216,7 @@ export default function UploadArtworkModal({
                 {imageDetails.map((imageDetail, i) => {
                   return (
                     <div
-                      key={`${i}-image`}
+                      key={`image-${uuidv4()}`}
                       className="h-[275px] w-[275px] border shadow-md relative flex-center overflow-hidden"
                     >
                       <Image
@@ -223,7 +224,6 @@ export default function UploadArtworkModal({
                         alt={imageDetail.name}
                         fill
                         className="object-cover peer"
-                        key={i}
                         onLoad={({
                           currentTarget,
                         }: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -290,7 +290,7 @@ export default function UploadArtworkModal({
           <div className="flex flex-wrap gap-2 mt-2 text-royal-blue">
             {tags.map((tag, i) => (
               <div
-                key={`${i}-tag`}
+                key={`tag-${uuidv4()}`}
                 className="relative flex overflow-hidden prevent-select"
               >
                 <div className="p-5 text-2xl font-serif border shadow-sm cursor-pointer peer">
@@ -378,6 +378,7 @@ export default function UploadArtworkModal({
           )}
         </div>
         <div className="p-14 flex justify-evenly">
+          <Button text="Clear" />
           <Button text="Save" clickFn={() => sendData("Save")} />
           <Button text="Post" clickFn={() => sendData("Post")} />
         </div>

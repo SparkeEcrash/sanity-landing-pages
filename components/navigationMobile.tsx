@@ -4,16 +4,17 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { AppDispatch, useAppSelector } from "@redux/store";
-import { signIn, getUser, fetchUserArtworks } from "@redux/features/userSlice";
+import { signIn, findUser, fetchUserArtworks } from "@redux/features/userSlice";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 export default function NavigationMobile() {
   const [mobileNav, setMobileNav] = useState<boolean>(false);
   const pages = ["about", "gallery", "events", "contact"];
   const path = usePathname();
   const dispatch = AppDispatch();
-  const user = useAppSelector(getUser);
+  const user = useAppSelector(findUser);
   const session = useSession();
   const activeLinkStyle = "font-serif text-royal-blue text-3xl opacity-100";
   const ianctiveLinkStyleMobile = "text-royal-blue text-3xl opacity-100";
@@ -35,15 +36,16 @@ export default function NavigationMobile() {
       // initialize app for user
       const {
         data: {
-          user: { name, uid, image, email },
+          user: { name, uid, username, image, email },
         },
       } = session;
       dispatch(
         signIn({
           name,
           uid,
-          image,
-          email,
+          userImage: image,
+          userEmail: email,
+          username,
           provider: "",
           signedIn: true,
           userLoading: false,
@@ -115,7 +117,7 @@ export default function NavigationMobile() {
                   ? activeLinkStyle
                   : ianctiveLinkStyleMobile
               }`}
-              key={i}
+              key={`mobileLink-${uuidv4()}`}
             >
               {page.charAt(0).toUpperCase() + page.slice(1)}
             </Link>

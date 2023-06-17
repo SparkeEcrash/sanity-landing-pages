@@ -21,18 +21,21 @@ export default function Citations() {
           </div>
           <div className="pl-10 border-l-2 border-royal-blue flex flex-col justify-between">
             <p className="text-royal-blue font-sans">
-              Nulla vel lacinia massa, in dictum eros. Class aptent taciti
-              sociosqu ad litora torquent per conubia nostra, per inceptos
-              himenaeos. Ut vel pellentesque odio, ac dapibus justo. Duis dictum
-              magna accumsan, bibendum ante ut, sagittis massa.Lorem ipsum dolor
-              sit amet, consectetur adipiscing elit. Sed euismod libero a risus
-              maximus elementum.Lorem ipsum dolor sit amet, consectetur
-              adipiscing elit. Sed euismod libero a risus maximus elementum.
-              Donec non rhoncus justo.
+              The rise of AI has marginalized artistic creativity . I created
+              this platform for artists, enthusists, and hobbiest to celebrate
+              their creations by posting pictures of their work on the internet
+              and sharing it with others.Nulla vel lacinia massa, in dictum
+              eros. Class aptent taciti sociosqu ad litora torquent per conubia
+              nostra, per inceptos himenaeos. Ut vel pellentesque odio, ac
+              dapibus justo. Duis dictum magna accumsan, bibendum ante ut,
+              sagittis massa.Lorem ipsum dolor sit amet, consectetur adipiscing
+              elit. Sed euismod libero a risus maximus elementum.Lorem ipsum
+              dolor sit amet, consectetur adipiscing elit. Sed euismod libero a
+              risus maximus elementum. Donec non rhoncus justo.
             </p>
             <div className="mt-10">
               <p className="text-background-black font-serif font-bold">
-                Jane Doe
+                James Park
               </p>
               <p className="text-background-black font-serif">
                 Founder of Moon Jar{" "}

@@ -28,3 +28,10 @@ export const getUserArtworks = async (uid: string) => {
   );
   return await res.json();
 };
+
+export const getGalleryArtwork = async (aid: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/gallery/getArtwork?aid=${aid}`
+  );
+  return await res.json();
+};

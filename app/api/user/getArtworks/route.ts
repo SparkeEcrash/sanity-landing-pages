@@ -9,10 +9,37 @@ export async function GET(request: NextRequest) {
   const query = groq`
 	*[_type == "artwork" && uid == "${uid}"]{
 		...,
+    comments[]-> {
+      _id,
+			uid,
+			aid,
+			name,
+			userEmail,
+			userImage,
+			username,
+			comment,
+			datePosted,
+			datePostedNumber,
+      dateUpdated,
+			dateUpdatedNumber,
+		},
+    likes[]-> {
+      _id,
+      uid,
+      aid,
+      name,
+      userEmail,
+      userImage,
+      username,
+      datePosted,
+      datePostedNumber,
+    },
 		tags[]-> {
-			label
+      _id,
+			label,
 		},
 		images[]-> {
+      _id,
 			height,
 			width,
 			"imageUrl": image.asset->url,
@@ -21,15 +48,15 @@ export async function GET(request: NextRequest) {
   `;
 
   let data;
-  if (false) {
-    data = await sanityClient.fetch(query);
+  if (true) {
+    data = await sanityClient.fetch(query).catch(console.error);
     //change to const instead of let when ready for production
   } else {
     data = mockData;
   }
 
   //TODO: proper validation check for getting tag here
-  if (data instanceof Array) {
+  if (data !== null) {
     return NextResponse.json({ data }, { status: 200 });
   } else {
     return NextResponse.json(

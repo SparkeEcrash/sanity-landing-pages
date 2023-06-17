@@ -8,7 +8,15 @@ export const getTodayDate = () => {
 
 export const getDateNow = () => {
   return Date.now();
-}
+};
+
+export const changeDateFormat = (date: string) => {
+  const pattern = /(\d{4})\-(\d{2})\-(\d{2})/;
+  if (!date || !date.match(pattern)) {
+    return null;
+  }
+  return date.replace(pattern, "$2/$3/$1");
+};
 
 export const isFirstDateMoreRecent = (dateOne: string, dateTwo: string) => {
   return Date.parse(dateOne) > Date.parse(dateTwo);
@@ -19,5 +27,45 @@ export const trimString = (count: number, string: string) => {
     return string.substring(0, count - 3) + "...";
   } else {
     return string;
+  }
+};
+
+export const setMaxDimensions = (
+  width: number,
+  height: number,
+  maxWidth: number,
+  maxHeight: number
+) => {
+  const isLandscape = width >= height;
+  if (isLandscape) {
+    const isTooWide = width > maxWidth;
+    if (isTooWide) {
+      const shrinkPercentage = maxWidth / width;
+      const newHeight = Math.round(height * shrinkPercentage);
+      return {
+        width: maxWidth,
+        height: newHeight,
+      };
+    } else {
+      return {
+        width,
+        height,
+      };
+    }
+  } else {
+    const isTooTall = height > width;
+    if (isTooTall) {
+      const shrinkPercentage = maxHeight / height;
+      const newWidth = Math.round(width * shrinkPercentage)
+      return {
+        width: newWidth,
+        height: maxHeight,
+      };
+    } else {
+      return {
+        width,
+        height,
+      };
+    }
   }
 };
