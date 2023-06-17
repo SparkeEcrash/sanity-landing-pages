@@ -10,13 +10,13 @@ export async function POST(request: NextRequest) {
       _type: "user",
       _id: uid,
       name,
-      username,
       email,
       image,
+      username,
       uid,
       dateJoined,
     };
-    const result = await sanityClient.createOrReplace(doc);
+    const result = await sanityClient.createOrReplace(doc).catch(console.error);
     //TODO: proper validation check for creating user here
     if (typeof result === "object" && result !== null) {
       return NextResponse.json({ data: "new user created or replaced" }, { status: 200 });

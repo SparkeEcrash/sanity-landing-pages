@@ -6,14 +6,17 @@ export async function GET(request: NextRequest) {
   const tagLabel = request.nextUrl.searchParams.get("tagLabel");
 
   const query = groq`
-	*[_type == "tag" && label == "${tagLabel}"]
+	*[_type == "tag" && label == "${tagLabel}"][0]
   `;
 
-  const data = await sanityClient.fetch(query);
+  const data = await sanityClient.fetch(query).catch(console.error);
   //TODO: proper validation check for getting tag here
-  if (data instanceof Array) {
-    return NextResponse.json({ data: data[0] }, { status: 200 });
+  if (data !== null) {
+    return NextResponse.json({ data }, { status: 200 });
   } else {
-    return NextResponse.json({ data: "an error occured getting the tag" }, { status: 500 });
+    return NextResponse.json(
+      { data: "an error occured getting the tag" },
+      { status: 500 }
+    );
   }
 }

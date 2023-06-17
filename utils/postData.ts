@@ -37,3 +37,21 @@ export const uploadArtwork = async (data: any) => {
     console.error("Error:", error);
   }
 };
+
+export const addComment = async (data: any) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/gallery/addComment`,
+      {
+        method: "POST", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    return await res.json();
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};

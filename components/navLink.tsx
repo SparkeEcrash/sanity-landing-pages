@@ -1,6 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { v4 as uuidv4 } from "uuid";
 
 interface NavLinkProps {
   page: string;
@@ -22,7 +23,7 @@ export default function NavLink({ page, index }: NavLinkProps) {
           ? activeLinkStyle
           : inactiveLinkStyleDesktop
       }`}
-      key={`link-${index}`}
+      key={`link-${uuidv4()}`}
     >
       {page.charAt(0).toUpperCase() + page.slice(1)}
     </Link>

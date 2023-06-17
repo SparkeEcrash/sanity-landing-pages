@@ -6,7 +6,8 @@ import { trimString } from "utils";
 import UserArtworks from "@sanity-components/userArtworks/userArtworks";
 import { AppDispatch, useAppSelector } from "@redux/store";
 import {
-  getUser,
+  fetchUserArtworks,
+  findUser,
   sortArtworksSavedByUploadDate,
 } from "@redux/features/userSlice";
 import {
@@ -33,11 +34,17 @@ import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 //api: check_booked_dates
 
 export default function Artist() {
-  const { artworksSaved, artworksPosted, artworksLoading, signedIn } =
-    useAppSelector(getUser);
+  const { artworksSaved, artworksPosted, artworksLoading, signedIn, uid } =
+    useAppSelector(findUser);
   const { showModal, postedView, filterPosted, filterSaved } =
     useAppSelector(getArtworks);
   const dispatch = AppDispatch();
+
+  useEffect(() => {
+    if (uid) {
+      dispatch(fetchUserArtworks(uid));
+    }
+  }, []);
 
   useEffect(() => {
     signedIn && dispatch(sortArtworksSavedByUploadDate(filterSaved));
@@ -118,34 +125,3 @@ export default function Artist() {
     </>
   );
 }
-
-const nameExample = "My super duper awesome emperor jade green porcelain";
-
-const DataPosted = () => (
-  <div className="w-[300px] relative border shadow-md cursor-pointer">
-    <div className="w-full h-[300px] relative">
-      <Image
-        src={
-          "https://images.unsplash.com/photo-1590600504282-30e4dc6f8fcc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1734&q=80"
-        }
-        alt={"alt tag"}
-        className="object-cover prevent-select"
-        fill
-        priority
-      />
-    </div>
-    <div className="flex flex-col min-h-[75px] p-2 relative w-full overflow-hidden justify-center">
-      <div>
-        <h2 className="w-full title-font text-xl text-center">
-          {trimString(75, nameExample)}
-        </h2>
-      </div>
-      <div className="w-full mt-2">
-        <div className="flex justify-between">
-          <p className="body-font text-sm">Views: 25</p>
-          <p className="body-font text-sm">Likes: 255</p>
-        </div>
-      </div>
-    </div>
-  </div>
-);

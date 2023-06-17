@@ -1,5 +1,5 @@
-import Navigation from "components/navigation";
-import Footer from "components/footer";
+import Navigation from "@components/navigation";
+import Footer from "@components/footer";
 import Messages from "@components/messages";
 
 export default async function RootLayout({

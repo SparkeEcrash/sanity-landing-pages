@@ -6,9 +6,10 @@ interface UserSliceState {
   name: string;
   first_name?: string;
   last_name?: string;
+  username: string;
   uid: string;
-  image: string;
-  email: string;
+  userImage: string;
+  userEmail: string;
   provider: string;
   locale?: string;
   signedIn: boolean;
@@ -20,9 +21,10 @@ interface UserSliceState {
 
 const initialState: UserSliceState = {
   name: "",
+  username: "",
   uid: "",
-  image: "",
-  email: "",
+  userImage: "",
+  userEmail: "",
   provider: "",
   signedIn: false,
   userLoading: true,
@@ -32,7 +34,7 @@ const initialState: UserSliceState = {
 };
 
 export const fetchUserArtworks = createAsyncThunk(
-  "users/requestStatus",
+  "user/fetchUserArtworks",
   getUserArtworks
 );
 
@@ -66,41 +68,56 @@ const userSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(fetchUserArtworks.fulfilled, (state, action) => {
-      console.log(action.payload.data);
-      const existingArtworksSaved = state.artworksSaved;
-      const existingArtworksPosted = state.artworksPosted;
+      const existingArtworksSaved: ArtworkProps[] = [];
+      // const existingArtworksSaved = state.artworksSaved;
+      const existingArtworksPosted: ArtworkProps[] = [];
+      // const existingArtworksPosted = state.artworksPosted;
       action.payload.data.forEach((artwork: IArtwork) => {
         if (artwork.posted) {
           existingArtworksPosted.push({
+            _id: artwork._id,
             title: artwork.title,
             images: artwork.images,
             posted: artwork.posted,
             tags: artwork.tags,
             uid: artwork.uid,
+            name: artwork.name,
+            userImage: artwork.userImage,
+            userEmail: artwork.userEmail,
+            username: artwork.username,
             isMaker: artwork.isMaker,
             isForSale: artwork.isForSale,
             views: artwork.views,
-            likes: artwork.likes,
+            likes: artwork.likes ? artwork.likes : [],
+            comments: artwork.comments ? artwork.comments : [],
             price: artwork.price,
             comment: artwork.comment,
             dateUploaded: artwork.dateUploaded,
             dateUploadedNumber: artwork.dateUploadedNumber,
+            aid: artwork._id,
           });
         } else {
           existingArtworksSaved.push({
+            _id: artwork._id,
             title: artwork.title,
             images: artwork.images,
             posted: artwork.posted,
             tags: artwork.tags,
             uid: artwork.uid,
+            name: artwork.name,
+            userImage: artwork.userImage,
+            userEmail: artwork.userEmail,
+            username: artwork.username,
             isMaker: artwork.isMaker,
             isForSale: artwork.isForSale,
             views: artwork.views,
-            likes: artwork.likes,
+            likes: artwork.likes ? artwork.likes : [],
+            comments: artwork.comments ? artwork.comments : [],
             price: artwork.price,
             comment: artwork.comment,
             dateUploaded: artwork.dateUploaded,
             dateUploadedNumber: artwork.dateUploadedNumber,
+            aid: artwork._id,
           });
         }
       });
@@ -114,4 +131,4 @@ const userSlice = createSlice({
 export const { signIn, signOut, userLoaded, sortArtworksSavedByUploadDate } =
   userSlice.actions;
 export default userSlice.reducer;
-export const getUser = (state: RootState) => state.user;
+export const findUser = (state: RootState) => state.user;

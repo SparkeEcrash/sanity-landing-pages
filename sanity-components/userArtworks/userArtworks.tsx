@@ -6,6 +6,8 @@ import CircleLoader from "react-spinners/CircleLoader";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import { AppDispatch } from "@redux/store";
+import Link from "next/link";
+import { v4 as uuidv4 } from "uuid";
 
 interface UserArtWorkProps {
   artworks: ArtworkProps[];
@@ -61,8 +63,8 @@ const Artwork = ({ title, images, posted, views, likes }: ArtworkProps) => (
       {posted && (
         <div className="w-full mt-2">
           <div className="flex justify-between">
+            <p className="body-font text-sm">Likes: {likes.length}</p>
             <p className="body-font text-sm">Views: {views}</p>
-            <p className="body-font text-sm">Likes: {likes}</p>
           </div>
         </div>
       )}
@@ -81,7 +83,7 @@ export default function UserArtworks({
     const placeHolders = [];
     for (let index = 0; index < defaultCount; index++) {
       placeHolders.push(
-        <div key={`placeholder-${index}`}>
+        <div key={`placeholder-${uuidv4()}`}>
           <LoadingArtwork />
         </div>
       );
@@ -99,7 +101,7 @@ export default function UserArtworks({
     const placeHolders = [];
     for (let index = 0; index < defaultCount; index++) {
       placeHolders.push(
-        <div key={`placeholder-${index}`}>
+        <div key={`placeholder-${uuidv4()}`}>
           <PlaceHolderArtwork dispatchClickFn={dispatchClickFn} />
         </div>
       );
@@ -119,7 +121,7 @@ export default function UserArtworks({
       let count = defaultCount - artworks.length;
       for (let index = 0; index < count; index++) {
         placeHolders.push(
-          <div key={`placeholder-${index}`}>
+          <div key={`placeholder-${uuidv4()}`}>
             <PlaceHolderArtwork dispatchClickFn={dispatchClickFn} />
           </div>
         );
@@ -134,6 +136,7 @@ export default function UserArtworks({
         {artworks.map(
           (
             {
+              _id,
               title,
               images,
               comment,
@@ -145,27 +148,44 @@ export default function UserArtworks({
               isForSale,
               price,
               uid,
+              name,
+              userImage,
+              userEmail,
+              username,
+              comments,
               dateUploaded,
               dateUploadedNumber,
+              dateModified,
+              aid,
             },
             i
           ) => (
-            <div key={`artwork-${i}`}>
-              <Artwork
-                title={title}
-                images={images}
-                comment={comment}
-                posted={posted}
-                views={views}
-                likes={likes}
-                tags={tags}
-                isMaker={isMaker}
-                isForSale={isForSale}
-                price={price}
-                uid={uid}
-                dateUploaded={dateUploaded}
-                dateUploadedNumber={dateUploadedNumber}
-              />
+            <div key={_id}>
+              <Link href={`/gallery/${aid}`}>
+                <Artwork
+                  _id={_id}
+                  title={title}
+                  images={images}
+                  comment={comment}
+                  posted={posted}
+                  views={views}
+                  likes={likes}
+                  tags={tags}
+                  isMaker={isMaker}
+                  isForSale={isForSale}
+                  price={price}
+                  uid={uid}
+                  name={name}
+                  userImage={userImage}
+                  userEmail={userEmail}
+                  username={username}
+                  comments={comments}
+                  dateUploaded={dateUploaded}
+                  dateUploadedNumber={dateUploadedNumber}
+                  dateModified={dateModified}
+                  aid={aid}
+                />
+              </Link>
             </div>
           )
         )}

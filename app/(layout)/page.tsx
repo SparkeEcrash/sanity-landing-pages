@@ -8,7 +8,6 @@ import { useState } from "react";
 
 export default function Home() {
   const dispatch = AppDispatch();
-  const username = useAppSelector((state) => state.sample.auth.username);
   const number = useAppSelector((state) => state.sample.value);
   const [toggle, setToggle] = useState<boolean>(false);
 
