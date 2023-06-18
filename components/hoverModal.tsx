@@ -51,12 +51,12 @@ const UserModal = ({ hover }: { hover: boolean }) => {
       }`}
     >
       <Link
-        href={"artist"}
+        href={"artworks"}
         className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
-          path === "/artist" ? activeLinkStyle : inactiveLinkStyleDesktop
+          path === "/artworks" ? activeLinkStyle : inactiveLinkStyleDesktop
         }`}
       >
-        Artist
+        Artworks
       </Link>
       <Link
         href={"coordinator"}

@@ -24,6 +24,7 @@ interface GallerySliceState {
 
 const artworkInitialState: ArtworkProps = {
   _id: "",
+  _updatedAt: "",
   title: "",
   images: [],
   comment: "",
@@ -123,7 +124,6 @@ const gallerySlice = createSlice({
     builder.addCase(fetchGalleryArtwork.pending, (state) => {
       state.artwork = initialState.artwork;
       state.isArtworkNotFound = false;
-
     });
     builder.addCase(fetchGalleryArtwork.fulfilled, (state) => {
       state.comment = "";
@@ -174,6 +174,7 @@ const gallerySlice = createSlice({
           state.isArtworkNotFound = false;
           state.artwork = {
             _id: payload.data._id,
+            _updatedAt: payload.data._updatedAt,
             title: payload.data.title,
             images: payload.data.images,
             comment: payload.data.comment,

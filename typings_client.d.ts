@@ -1,5 +1,6 @@
 interface ArtworkProps {
   _id: string;
+  _updatedAt: string;
   title: string;
   images: ArtworkImageProps[];
   comment: string;

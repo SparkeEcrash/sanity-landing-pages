@@ -8,6 +8,7 @@ import { signIn, findUser, fetchUserArtworks } from "@redux/features/userSlice";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
+import { initialState } from "@redux/features/userSlice";
 
 export default function NavigationMobile() {
   const [mobileNav, setMobileNav] = useState<boolean>(false);
@@ -41,18 +42,14 @@ export default function NavigationMobile() {
       } = session;
       dispatch(
         signIn({
+          ...initialState,
           name,
           uid,
           userImage: image,
           userEmail: email,
           username,
-          provider: "",
           signedIn: true,
           userLoading: false,
-          artworksSaved: [],
-          artworksPosted: [],
-          artworksLoading: true,
-          //TODO: rewrite this to not override provider and artworks
         })
       );
       dispatch(fetchUserArtworks(uid));

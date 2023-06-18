@@ -33,13 +33,25 @@ export default function Spotlight({
 }: SpotlightProps) {
   const [imagesDisplayed, setImagesDisplayed] = useState<Image[]>([]);
   const [imagesHidden, setImagesHidden] = useState<Image[]>([]);
-  const positionHidden = "opacity-0";
-  const positionExit = "hidden";
-  // const positionFirst = "z-[4] scale-110";
+  const [view, setView] = useState<"" | "single" | "double" | "triple">("");
+  let positionExit = "hidden";
   const positionFirst = "z-[4]";
-  const positionSecond = "translate-x-12 translate-y-12 rotate-[20deg] z-[3]";
-  const positionThird = "-translate-x-12 -translate-y-12 rotate-[-20deg] z-[2]";
-  const positionFourth = "-translate-x-24 -translate-y-24";
+  let positionSecond = "";
+  let positionThird = "";
+
+  if (view === "single") {
+    positionSecond = "-translate-x-24 -translate-y-24 opacity-0";
+    positionThird = "translate-x-24 -translate-y-24 opacity-0";
+  }
+  if (view === "double") {
+    positionSecond = "-translate-x-24 -translate-y-24";
+    positionThird = "translate-x-24 -translate-y-24 opacity-0";
+  }
+  if (view === "triple") {
+    positionSecond = "translate-x-12 translate-y-12 rotate-[20deg] z-[3]";
+    positionThird = "-translate-x-12 -translate-y-12 rotate-[-20deg] z-[2]";
+  }
+
   const image =
     "prevent-select overflow-hidden absolute transition-all duration-1000 shadow-2xl shadow-background-black";
 
@@ -51,6 +63,15 @@ export default function Spotlight({
       { ...images[3] },
     ]);
     setImagesHidden(images.slice(4));
+    if (images.length === 1) {
+      setView("single");
+    }
+    if (images.length === 2) {
+      setView("double");
+    }
+    if (images.length >= 3) {
+      setView("triple");
+    }
   }, [images]);
 
   useEffect(() => {
@@ -111,13 +132,43 @@ export default function Spotlight({
     }
   };
 
-  const ChangeMode = () => (
-    <div className="flex flex-col" onClick={(e) => e.stopPropagation()}>
-      <StopIcon className="prevent-click bottom-[40px] left-0 absolute h-6 text-royal-blue" />
-      <Square2StackIcon className="prevent-click bottom-[64px] left-0 absolute h-6 text-royal-blue" />
-      <Square3Stack3DIcon className="prevent-click bottom-[88px] left-0 absolute h-6 text-royal-blue" />
-    </div>
-  );
+  const ChangeMode = () => {
+    if (images.length === 1) {
+      return;
+    }
+    if (images.length === 2) {
+      return (
+        <div className="flex flex-col" onClick={(e) => e.stopPropagation()}>
+          <StopIcon
+            onClick={() => setView("single")}
+            className="prevent-click bottom-[40px] left-0 absolute h-6 text-royal-blue"
+          />
+          <Square2StackIcon
+            onClick={() => setView("double")}
+            className="prevent-click bottom-[64px] left-0 absolute h-6 text-royal-blue"
+          />
+        </div>
+      );
+    }
+    if (images.length >= 3) {
+      return (
+        <div className="flex flex-col" onClick={(e) => e.stopPropagation()}>
+          <StopIcon
+            onClick={() => setView("single")}
+            className="prevent-click bottom-[40px] left-0 absolute h-6 text-royal-blue"
+          />
+          <Square2StackIcon
+            onClick={() => setView("double")}
+            className="prevent-click bottom-[64px] left-0 absolute h-6 text-royal-blue"
+          />
+          <Square3Stack3DIcon
+            onClick={() => setView("triple")}
+            className="prevent-click bottom-[88px] left-0 absolute h-6 text-royal-blue"
+          />
+        </div>
+      );
+    }
+  };
 
   if (images.length === 0) {
     return (
@@ -165,7 +216,7 @@ export default function Spotlight({
               <Image
                 src={imagesDisplayed[0] ? imagesDisplayed[0].imageUrl : ""}
                 className={`${image} ${
-                  index % 2 === 0 ? positionFirst : positionFourth
+                  index % 2 === 0 ? positionFirst : positionSecond
                 }`}
                 alt="alt"
                 width={dimensions[0].width}
@@ -176,7 +227,7 @@ export default function Spotlight({
               <Image
                 src={imagesDisplayed[1] ? imagesDisplayed[1].imageUrl : ""}
                 className={`${image} ${
-                  index % 2 === 0 ? positionFourth : positionFirst
+                  index % 2 === 0 ? positionSecond : positionFirst
                 }`}
                 alt="alt"
                 width={dimensions[1].width}
@@ -250,7 +301,7 @@ export default function Spotlight({
               <Image
                 src={imagesDisplayed[0] ? imagesDisplayed[0].imageUrl : ""}
                 className={`${image} ${
-                  index % 4 === 0 % 4
+                  index % 4 === 0
                     ? positionFirst
                     : (index % 4) - 1 == 0
                     ? positionExit
