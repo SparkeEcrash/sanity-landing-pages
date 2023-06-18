@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 interface ToggleProps {
   toggle?: boolean;
   options?: string[];
-  value?: number;
+  value?: string;
   yesno: boolean;
   clickFn: () => void;
   className?: string;
@@ -45,11 +45,11 @@ export default function Toggle({
         </>
       ) : (
         <>
-          {options!.map((option, i) => (
+          {options!.map((option) => (
             <div
               key={`toggle-${uuidv4()}`}
               className={`h-[32px]  odd:text-royal-blue odd:bg-white even:text-white even:bg-royal-blue px-2 body-font border flex-center transition-all duration-200 text-sm ${
-                value === i ? "opacity-100" : "opacity-0"
+                value === option ? "opacity-100" : "opacity-0"
               }`}
             >
               {option}

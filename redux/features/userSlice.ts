@@ -17,9 +17,12 @@ interface UserSliceState {
   artworksSaved: ArtworkProps[];
   artworksPosted: ArtworkProps[];
   artworksLoading: boolean;
+  postedView: boolean;
+  filterPosted: string;
+  filterSaved: string;
 }
 
-const initialState: UserSliceState = {
+export const initialState: UserSliceState = {
   name: "",
   username: "",
   uid: "",
@@ -31,6 +34,9 @@ const initialState: UserSliceState = {
   artworksSaved: [],
   artworksPosted: [],
   artworksLoading: true,
+  postedView: false,
+  filterPosted: "Updated",
+  filterSaved: "Updated",
 };
 
 export const fetchUserArtworks = createAsyncThunk(
@@ -53,29 +59,99 @@ const userSlice = createSlice({
       loadingState.userLoading = false;
       return loadingState;
     },
-    sortArtworksSavedByUploadDate: (state, action: PayloadAction<boolean>) => {
-      let sortedArtworks = [...state.artworksSaved];
-      if (action.payload) {
-        state.artworksSaved = sortedArtworks.sort(
-          (a, b) => a.dateUploadedNumber - b.dateUploadedNumber
-        );
+    togglePostedView: (state) => {
+      state.postedView = !state.postedView;
+    },
+    toggleFilterOptions: (
+      state,
+      action: PayloadAction<{ value: string; options: string[] }>
+    ) => {
+      const { value, options } = action.payload;
+      const index = action.payload.options.findIndex(
+        (option) => option === value
+      );
+      if (state.postedView) {
+        if (index === options.length - 1) {
+          state.filterPosted = options[0];
+        } else {
+          state.filterPosted = options[index + 1];
+        }
       } else {
+        if (index === options.length - 1) {
+          state.filterSaved = options[0];
+        } else {
+          state.filterSaved = options[index + 1];
+        }
+      }
+    },
+    sortArtworksPostedByFilter: (state, action: PayloadAction<string>) => {
+      let sortedArtworks = [...state.artworksPosted];
+      if (action.payload === "Updated") {
+        state.artworksPosted = sortedArtworks.sort(
+          (a, b) => Date.parse(b._updatedAt) - Date.parse(a._updatedAt)
+        );
+      }
+      if (action.payload === "Most Liked") {
+        state.artworksPosted = sortedArtworks.sort(
+          (a, b) => b.likes.length - a.likes.length
+        );
+      }
+      if (action.payload === "Most Viewed") {
+        state.artworksPosted = sortedArtworks.sort((a, b) => a.views - b.views);
+      }
+      if (action.payload === "Alphabetical") {
+        state.artworksPosted = sortedArtworks.sort((a, b) => {
+          if (a.title < b.title) {
+            return -1;
+          }
+          if (a.title > b.title) {
+            return 1;
+          }
+          return 0;
+        });
+      }
+    },
+    sortArtworksSavedByFilter: (state, action: PayloadAction<string>) => {
+      let sortedArtworks = [...state.artworksSaved];
+      if (action.payload === "Updated") {
+        state.artworksSaved = sortedArtworks.sort(
+          (a, b) => Date.parse(b._updatedAt) - Date.parse(a._updatedAt)
+        );
+      }
+      if (action.payload === "Newest") {
         state.artworksSaved = sortedArtworks.sort(
           (a, b) => b.dateUploadedNumber - a.dateUploadedNumber
         );
+      }
+      if (action.payload === "Oldest") {
+        state.artworksSaved = sortedArtworks.sort(
+          (a, b) => a.dateUploadedNumber - b.dateUploadedNumber
+        );
+      }
+      if (action.payload === "Alphabetical") {
+        state.artworksSaved = sortedArtworks.sort((a, b) => {
+          if (a.title < b.title) {
+            return -1;
+          }
+          if (a.title > b.title) {
+            return 1;
+          }
+          return 0;
+        });
       }
     },
   },
   extraReducers(builder) {
     builder.addCase(fetchUserArtworks.fulfilled, (state, action) => {
-      const existingArtworksSaved: ArtworkProps[] = [];
+      const userArtworksSaved: ArtworkProps[] = [];
       // const existingArtworksSaved = state.artworksSaved;
-      const existingArtworksPosted: ArtworkProps[] = [];
+      const userArtworksPosted: ArtworkProps[] = [];
       // const existingArtworksPosted = state.artworksPosted;
       action.payload.data.forEach((artwork: IArtwork) => {
         if (artwork.posted) {
-          existingArtworksPosted.push({
+          userArtworksPosted.push({
             _id: artwork._id,
+            _updatedAt: artwork._updatedAt,
             title: artwork.title,
             images: artwork.images,
             posted: artwork.posted,
@@ -97,8 +173,9 @@ const userSlice = createSlice({
             aid: artwork._id,
           });
         } else {
-          existingArtworksSaved.push({
+          userArtworksSaved.push({
             _id: artwork._id,
+            _updatedAt: artwork._updatedAt,
             title: artwork.title,
             images: artwork.images,
             posted: artwork.posted,
@@ -121,14 +198,79 @@ const userSlice = createSlice({
           });
         }
       });
-      state.artworksSaved = existingArtworksSaved;
-      state.artworksPosted = existingArtworksPosted;
+
+      //sort for intial fetch of saved artworks
+      if (state.filterSaved === "Updated") {
+        state.artworksSaved = userArtworksSaved.sort(
+          (a, b) => Date.parse(b._updatedAt) - Date.parse(a._updatedAt)
+        );
+      }
+      if (state.filterSaved === "Newest") {
+        state.artworksSaved = userArtworksSaved.sort(
+          (a, b) => b.dateUploadedNumber - a.dateUploadedNumber
+        );
+      }
+      if (state.filterSaved === "Oldest") {
+        state.artworksSaved = userArtworksSaved.sort(
+          (a, b) => a.dateUploadedNumber - b.dateUploadedNumber
+        );
+      }
+      if (state.filterSaved === "Alphabetical") {
+        state.artworksSaved = userArtworksSaved.sort((a, b) => {
+          if (a.title < b.title) {
+            return -1;
+          }
+          if (a.title > b.title) {
+            return 1;
+          }
+          return 0;
+        });
+      } else {
+        state.artworksSaved = userArtworksSaved;
+      }
+
+      //sort for intial fetch of posted artworks
+      if (state.filterPosted === "Updated") {
+        state.artworksPosted = userArtworksPosted.sort(
+          (a, b) => Date.parse(b._updatedAt) - Date.parse(a._updatedAt)
+        );
+      }
+      if (state.filterPosted === "Most Liked") {
+        state.artworksPosted = userArtworksPosted.sort(
+          (a, b) => b.likes.length - a.likes.length
+        );
+      }
+      if (state.filterPosted === "Most Viewed") {
+        state.artworksPosted = userArtworksPosted.sort(
+          (a, b) => a.views - b.views
+        );
+      }
+      if (state.filterPosted === "Alphabetical") {
+        state.artworksPosted = userArtworksPosted.sort((a, b) => {
+          if (a.title < b.title) {
+            return -1;
+          }
+          if (a.title > b.title) {
+            return 1;
+          }
+          return 0;
+        });
+      } else {
+        state.artworksPosted = userArtworksPosted;
+      }
       state.artworksLoading = false;
     });
   },
 });
 
-export const { signIn, signOut, userLoaded, sortArtworksSavedByUploadDate } =
-  userSlice.actions;
+export const {
+  signIn,
+  signOut,
+  userLoaded,
+  togglePostedView,
+  toggleFilterOptions,
+  sortArtworksPostedByFilter,
+  sortArtworksSavedByFilter,
+} = userSlice.actions;
 export default userSlice.reducer;
 export const findUser = (state: RootState) => state.user;

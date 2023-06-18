@@ -1,22 +1,17 @@
 "use client";
 import { useEffect } from "react";
-import Image from "next/image";
 import UploadArtworkModal from "components/uploadArtworkModal";
-import { trimString } from "utils";
 import UserArtworks from "@sanity-components/userArtworks/userArtworks";
 import { AppDispatch, useAppSelector } from "@redux/store";
 import {
   fetchUserArtworks,
   findUser,
-  sortArtworksSavedByUploadDate,
-} from "@redux/features/userSlice";
-import {
-  setShowModal,
   togglePostedView,
-  toggleFilterPosted,
-  toggleFilterSaved,
-  getArtworks,
-} from "@redux/features/artworksSlice";
+  toggleFilterOptions,
+  sortArtworksPostedByFilter,
+  sortArtworksSavedByFilter,
+} from "@redux/features/userSlice";
+import { setShowModal, getArtworks } from "@redux/features/artworksSlice";
 import Toggle from "components/toggle";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 
@@ -34,21 +29,37 @@ import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 //api: check_booked_dates
 
 export default function Artist() {
-  const { artworksSaved, artworksPosted, artworksLoading, signedIn, uid } =
-    useAppSelector(findUser);
-  const { showModal, postedView, filterPosted, filterSaved } =
-    useAppSelector(getArtworks);
+  const {
+    artworksSaved,
+    artworksPosted,
+    artworksLoading,
+    signedIn,
+    uid,
+    postedView,
+    filterPosted,
+    filterSaved,
+  } = useAppSelector(findUser);
+  const { showModal } = useAppSelector(getArtworks);
   const dispatch = AppDispatch();
+  const filterSavedOptions = ["Updated", "Newest", "Oldest", "Alphabetical"];
+  const filterPostedOptions = [
+    "Updated",
+    "Most Liked",
+    "Most Viewed",
+    "Alphabetical",
+  ];
 
   useEffect(() => {
-    if (uid) {
-      dispatch(fetchUserArtworks(uid));
-    }
+    signedIn && dispatch(fetchUserArtworks(uid));
   }, []);
 
   useEffect(() => {
-    signedIn && dispatch(sortArtworksSavedByUploadDate(filterSaved));
+    signedIn && dispatch(sortArtworksSavedByFilter(filterSaved));
   }, [filterSaved]);
+
+  useEffect(() => {
+    signedIn && dispatch(sortArtworksPostedByFilter(filterPosted));
+  }, [filterPosted]);
 
   return (
     <>
@@ -79,10 +90,15 @@ export default function Artist() {
                 <div className="mt-10 flex justify-center">
                   <Toggle
                     yesno={false}
-                    options={["Latest", "Most Viewed", "Most Liked"]}
+                    options={filterPostedOptions}
                     value={filterPosted}
                     clickFn={() =>
-                      dispatch(toggleFilterPosted((filterPosted + 1) % 3))
+                      dispatch(
+                        toggleFilterOptions({
+                          value: filterPosted,
+                          options: filterPostedOptions,
+                        })
+                      )
                     }
                   />
                 </div>
@@ -101,10 +117,17 @@ export default function Artist() {
                 </p>
                 <div className="mt-10 flex justify-center">
                   <Toggle
-                    toggle={filterSaved}
-                    yesno={true}
-                    options={["Latest", "Oldest"]}
-                    clickFn={() => dispatch(toggleFilterSaved(!filterSaved))}
+                    yesno={false}
+                    options={filterSavedOptions}
+                    value={filterSaved}
+                    clickFn={() =>
+                      dispatch(
+                        toggleFilterOptions({
+                          value: filterSaved,
+                          options: filterSavedOptions,
+                        })
+                      )
+                    }
                   />
                 </div>
                 <div className="flex mt-10">
