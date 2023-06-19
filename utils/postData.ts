@@ -19,10 +19,10 @@ export const createUser = async (user: any) => {
   }
 };
 
-export const uploadArtwork = async (data: any) => {
+export const addUserArtwork = async (data: any) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/uploadArtwork`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/artworks/addUserArtwork`,
       {
         method: "POST", // or 'PUT'
         // headers: {

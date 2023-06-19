@@ -1,5 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { fetchUserArtworks } from "@redux/features/userSlice";
+import {
+  fetchAddUserArtwork,
+  fetchEditUserArtwork,
+  fetchToggleHideComment,
+} from "@redux/features/artworksSlice";
 import {
   fetchAddComment,
   fetchUpdateComment,
@@ -46,19 +50,34 @@ const messagesSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    // builder.addCase(fetchUserArtworks.pending, (state) => {
-    //   state.messages.push({
-    //     text: "Getting your artworks",
-    //     showLoading: true,
-    //     key: "get user artworks",
-    //   });
-    // });
-    // builder.addCase(fetchUserArtworks.fulfilled, (state) => {
-    //   const newMessages = state.messages.filter(
-    //     (message) => message.key !== "get user artworks"
-    //   );
-    //   state.messages = newMessages;
-    // });
+    builder.addCase(fetchAddUserArtwork.pending, (state) => {
+      state.messages.push({
+        text: "Uploading your artwork",
+        showLoading: true,
+        key: "add user artwork",
+        dark: true,
+      });
+    });
+    builder.addCase(fetchAddUserArtwork.fulfilled, (state) => {
+      const newMessages = state.messages.filter(
+        (message) => message.key !== "add user artwork"
+      );
+      state.messages = newMessages;
+    });
+    builder.addCase(fetchEditUserArtwork.pending, (state) => {
+      state.messages.push({
+        text: "Updating your artwork",
+        showLoading: true,
+        key: "updating user artwork",
+        dark: true,
+      });
+    });
+    builder.addCase(fetchEditUserArtwork.fulfilled, (state) => {
+      const newMessages = state.messages.filter(
+        (message) => message.key !== "updating user artwork"
+      );
+      state.messages = newMessages;
+    });
     builder.addCase(fetchToggleLike.fulfilled, (state) => {
       const newMessages = state.messages.filter(
         (message) => message.key !== "toggling a like"
@@ -104,6 +123,12 @@ const messagesSlice = createSlice({
     builder.addCase(fetchDeleteComment.fulfilled, (state) => {
       const newMessages = state.messages.filter(
         (message) => message.key !== "delete user comment"
+      );
+      state.messages = newMessages;
+    });
+    builder.addCase(fetchToggleHideComment.fulfilled, (state) => {
+      const newMessages = state.messages.filter(
+        (message) => message.key !== "toggle hide for selected comment"
       );
       state.messages = newMessages;
     });

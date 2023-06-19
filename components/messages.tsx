@@ -14,12 +14,13 @@ export default function Messages() {
             initial={{ x: "-200%", opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "-200%", opacity: 0 }}
+            transition={{ duration: 1 }}
             key={key}
             className={`p-8 flex border title-font ${
               dark ? "bg-royal-blue text-white" : "bg-white"
-            } shadaow-md min-w-[250px] justify-center`}
+            } shadow-md min-w-[450px] justify-center`}
           >
-            {text}
+            {text} 
             {showLoading && (
               <SyncLoader
                 color={`${dark ? "#FFFFFF" : "#153084"}`}

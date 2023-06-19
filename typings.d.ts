@@ -2,9 +2,8 @@ interface SanityBody {
   _createdAt: string;
   _id: string;
   _rev: string;
-  _updatedAt: string;
   _type: string;
-  _updatedAt?: string;
+  _updatedAt: string;
 }
 
 interface ITag extends SanityBody {
@@ -51,6 +50,8 @@ interface IComment extends SanityBody {
   datePostedNumber: number;
   dateUpdated?: string;
   dateUpdatedNumber?: number;
+  isHidden: boolean;
+  hiddenBy?: string;
 }
 
 interface IArtwork extends SanityBody {
@@ -72,4 +73,6 @@ interface IArtwork extends SanityBody {
   price: string;
   dateUploaded: string;
   dateUploadedNumber: number;
+  dateUpdated?: string;
+  dateUpdatedNumber?: number;
 }

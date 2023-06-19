@@ -71,6 +71,8 @@ export async function PATCH(request: NextRequest) {
 				datePostedNumber,
         dateUpdated,
 				dateUpdatedNumber,
+        isHidden,
+        hiddenBy,
 			},
       likes[]-> {
         _id,

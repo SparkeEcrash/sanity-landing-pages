@@ -11,11 +11,11 @@ export async function PATCH(request: NextRequest) {
   const uid = user && user.uid;
   const dateUpdated = getTodayDate();
   const dateUpdatedNumber = getDateNow();
-  const { comment, _id } = await request.json();
+  const { comment, comment_id } = await request.json();
   const commentTrimmed = comment.trim();
-  if (commentTrimmed && _id) {
+  if (commentTrimmed && comment_id) {
     const documentResult = await sanityClient
-      .patch(_id)
+      .patch(comment_id)
       .setIfMissing({ dateUpdated: "" })
       .setIfMissing({ dateUpdatedNumber: 0 })
       .set({ comment: commentTrimmed })
@@ -40,6 +40,8 @@ export async function PATCH(request: NextRequest) {
 					datePostedNumber,
 					dateUpdated,
 					dateUpdatedNumber,
+					isHidden,
+					hiddenBy,
 				},
 				likes[]-> {
           _id,
@@ -67,7 +69,7 @@ export async function PATCH(request: NextRequest) {
       let data = await sanityClient.fetch(query).catch(console.error);
       const likes = data.likes ? data.likes : [];
       data.isVisitorLiked = likes.some((like: ILike) => like.uid === uid);
-      return NextResponse.json({ data: data }, { status: 200 });
+      return NextResponse.json({ data }, { status: 200 });
     } else {
       return NextResponse.json({ data: "Adding like failed" }, { status: 500 });
     }

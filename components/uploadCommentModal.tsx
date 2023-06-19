@@ -60,9 +60,9 @@ export default function UploadCommentModal({
       return;
     }
     if (editCommentModal) {
-      dispatch(fetchUpdateComment({ comment, _id: toUpdateCommentId }));
+      dispatch(fetchUpdateComment({ comment, comment_id: toUpdateCommentId }));
     } else if (deleteCommentModal) {
-      dispatch(fetchDeleteComment({ _id: toUpdateCommentId, aid }));
+      dispatch(fetchDeleteComment({ comment_id: toUpdateCommentId, aid }));
     } else {
       dispatch(fetchAddComment({ comment, aid }));
     }
@@ -97,10 +97,14 @@ export default function UploadCommentModal({
             <h1 className="title-font">
               {title ? title : "Please Enter Your Comment"}
             </h1>
-            <div
-              className={`w-[${width}px] h-[${height}px] mx-auto shadow-md mt-10 relative`}
-            >
-              <Image src={commentImage.imageUrl} alt={title!} fill />
+            <div className={`mt-10 relative`}>
+              <Image
+                width={width}
+                className={"mx-auto shadow-md"}
+                height={height}
+                src={commentImage.imageUrl}
+                alt={title!}
+              />
             </div>
           </div>
           <p className="title-font text-base mt-10">Comment</p>
@@ -140,7 +144,6 @@ export default function UploadCommentModal({
               text="Delete"
               disabled={isSendingComment}
               clickFn={() => {
-                console.log("???");
                 sendComment();
               }}
             />

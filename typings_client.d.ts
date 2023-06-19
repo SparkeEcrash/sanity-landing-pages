@@ -19,12 +19,14 @@ interface ArtworkProps {
   price: string;
   dateUploaded: string;
   dateUploadedNumber: number;
-  dateModified?: string;
+  dateUpdated?: string;
+  dateUpdatedNumber?: number;
   aid: string;
   isVisitorLiked?: boolean;
 }
 
 interface ArtworkImageProps {
+  _id: string;
   height: number;
   width: number;
   imageUrl: string;
@@ -53,6 +55,8 @@ interface CommentProps {
   datePostedNumber: number;
   dateUpdated?: string;
   dateUpdatedNumber?: number;
+  isHidden: boolean;
+  hiddenBy?: string;
 }
 
 interface TagProps {

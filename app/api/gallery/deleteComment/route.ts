@@ -6,20 +6,16 @@ import { authOptions } from "@nextauth/route";
 import { groq } from "next-sanity";
 
 export async function PATCH(request: NextRequest) {
-	console.log('???');
   const session = await getServerSession(authOptions);
   const user = session && session.user;
   const uid = user && user.uid;
   const dateUpdated = getTodayDate();
   const dateUpdatedNumber = getDateNow();
-  const { aid, _id } = await request.json();
-	console.log('!!!');
-	console.log(aid);
-	console.log(_id);
-  const commentToRemove = [`comments[_ref=="${_id}"]`];
-  if (aid && _id) {
+  const { aid, comment_id } = await request.json();
+  const commentToRemove = [`comments[_ref=="${comment_id}"]`];
+  if (aid && comment_id) {
     await sanityClient
-      .patch(_id)
+      .patch(comment_id)
       .setIfMissing({ isDeleted: true })
       .setIfMissing({ dateUpdated: "" })
       .setIfMissing({ dateUpdatedNumber: 0 })
@@ -49,6 +45,8 @@ export async function PATCH(request: NextRequest) {
 						datePostedNumber,
 						dateUpdated,
 						dateUpdatedNumber,
+						isHidden,
+						hiddenBy,
 					},
 					likes[]-> {
 						_id,

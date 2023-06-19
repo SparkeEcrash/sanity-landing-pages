@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@nextauth/route";
 import { v4 as uuidv4 } from "uuid";
 import { getTagLabels } from "utils/getData";
+import { groq } from "next-sanity";
 //TODO: Convert then .then() callbacks to async await
 export async function POST(request: NextRequest) {
   // https://developer.mozilla.org/en-US/docs/Web/API/FormData/append
@@ -76,12 +77,12 @@ export async function POST(request: NextRequest) {
       for (let i = 0; i < images.length; i++) {
         const { type, name } = images[i] as Blob;
         const buffer = Buffer.from(await (images[i] as Blob).arrayBuffer());
-        sanityClient.assets
+        await sanityClient.assets
           .upload("image", buffer, {
             filename: name,
             contentType: type,
           })
-          .then((doc) => {
+          .then(async (doc) => {
             if (!("_id" in doc)) {
               return NextResponse.json(
                 { error: "failed to upload image" },
@@ -104,22 +105,20 @@ export async function POST(request: NextRequest) {
                 },
               },
             };
-            sanityClient
+            await sanityClient
               .create(artworkImage)
-              .then((doc) => {
+              .then(async (doc) => {
                 if (!("_id" in doc)) {
                   return NextResponse.json(
                     { error: "failed to create artwork image" },
                     { status: 500 }
                   );
                 }
-                sanityClient
+                await sanityClient
                   .patch(id)
                   .setIfMissing({ images: [] })
                   .insert("after", "images[-1]", [
                     {
-                      //TODO: FIX THIS! multiple uploads and edits can mess with _key values of attached images
-                      //TODO: instead of ${i} use _id
                       _key: doc._id,
                       _type: "reference",
                       _ref: doc._id,
@@ -146,13 +145,13 @@ export async function POST(request: NextRequest) {
     /* Handle Tags */
     if (true) {
       const { data: tagLabels } = await getTagLabels();
-      tags.forEach((tag: string) => {
+      tags.forEach(async (tag: string) => {
         const existingTag = tagLabels.find(
           (tagDoc: TagProps) => tagDoc.label === tag
         );
         if (existingTag) {
           // let obj = arr.find(o => o.name === 'string 1');
-          sanityClient
+          await sanityClient
             .patch(id)
             .setIfMissing({ tags: [] })
             .insert("after", "tags[-1]", [
@@ -177,10 +176,10 @@ export async function POST(request: NextRequest) {
             _type: "tag",
             label: tag,
           };
-          sanityClient
+          await sanityClient
             .create(doc)
-            .then((doc) => {
-              sanityClient
+            .then(async (doc) => {
+              await sanityClient
                 .patch(id)
                 .setIfMissing({ tags: [] })
                 .insert("after", "tags[-1]", [
@@ -205,9 +204,51 @@ export async function POST(request: NextRequest) {
         }
       });
     }
-    return NextResponse.json(
-      { success: "artwork upload was successful" },
-      { status: 200 }
-    );
+    //return updated data
+    const queryTwo = groq`
+		*[_type == "artwork" && uid == "${uid}"]{
+			...,
+			comments[]-> {
+				_id,
+				uid,
+				aid,
+				name,
+				userEmail,
+				userImage,
+				username,
+				comment,
+				datePosted,
+				datePostedNumber,
+				dateUpdated,
+				dateUpdatedNumber,
+				isHidden,
+				hiddenBy,
+			},
+			likes[]-> {
+				_id,
+				uid,
+				aid,
+				name,
+				userEmail,
+				userImage,
+				username,
+				datePosted,
+				datePostedNumber,
+			},
+			tags[]-> {
+				_id,
+				label,
+			},
+			images[]-> {
+				_id,
+				height,
+				width,
+				"imageUrl": image.asset->url,
+			}
+		}
+		`;
+
+    const data = await sanityClient.fetch(queryTwo).catch(console.error);
+    return NextResponse.json({ data }, { status: 200 });
   }
 }
