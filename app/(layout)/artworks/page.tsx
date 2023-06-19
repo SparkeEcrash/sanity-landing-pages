@@ -3,15 +3,17 @@ import { useEffect } from "react";
 import UploadArtworkModal from "components/uploadArtworkModal";
 import UserArtworks from "@sanity-components/userArtworks/userArtworks";
 import { AppDispatch, useAppSelector } from "@redux/store";
+import { findUser } from "@redux/features/userSlice";
 import {
   fetchUserArtworks,
-  findUser,
   togglePostedView,
   toggleFilterOptions,
   sortArtworksPostedByFilter,
   sortArtworksSavedByFilter,
-} from "@redux/features/userSlice";
-import { setShowModal, getArtworks } from "@redux/features/artworksSlice";
+  setShowArtworkModal,
+  getArtworks,
+  resetArtwork,
+} from "@redux/features/artworksSlice";
 import Toggle from "components/toggle";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 
@@ -29,17 +31,16 @@ import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 //api: check_booked_dates
 
 export default function Artist() {
+  const { signedIn, uid } = useAppSelector(findUser);
   const {
+    showArtworkModal,
     artworksSaved,
     artworksPosted,
     artworksLoading,
-    signedIn,
-    uid,
     postedView,
     filterPosted,
     filterSaved,
-  } = useAppSelector(findUser);
-  const { showModal } = useAppSelector(getArtworks);
+  } = useAppSelector(getArtworks);
   const dispatch = AppDispatch();
   const filterSavedOptions = ["Updated", "Newest", "Oldest", "Alphabetical"];
   const filterPostedOptions = [
@@ -78,7 +79,10 @@ export default function Artist() {
               <div>
                 <DocumentPlusIcon
                   className={`h-10 text-royal-blue prevent-select cursor-pointer`}
-                  onClick={() => dispatch(setShowModal(true))}
+                  onClick={() => {
+                    dispatch(resetArtwork());
+                    dispatch(setShowArtworkModal({ show: true }));
+                  }}
                 />
               </div>
             </div>
@@ -106,7 +110,7 @@ export default function Artist() {
                   <UserArtworks
                     artworks={artworksPosted}
                     loading={artworksLoading}
-                    dispatchClickFn={setShowModal}
+                    dispatchClickFn={setShowArtworkModal}
                   />
                 </div>
               </div>
@@ -134,7 +138,7 @@ export default function Artist() {
                   <UserArtworks
                     artworks={artworksSaved}
                     loading={artworksLoading}
-                    dispatchClickFn={setShowModal}
+                    dispatchClickFn={setShowArtworkModal}
                   />
                 </div>
               </div>
@@ -142,8 +146,11 @@ export default function Artist() {
           </div>
         </section>
       </main>
-      {showModal && (
-        <UploadArtworkModal show={showModal} dispatchSetShow={setShowModal} />
+      {showArtworkModal && (
+        <UploadArtworkModal
+          show={showArtworkModal}
+          dispatchSetShow={setShowArtworkModal}
+        />
       )}
     </>
   );

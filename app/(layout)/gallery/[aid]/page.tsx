@@ -20,6 +20,7 @@ import {
 } from "@redux/features/gallerySlice";
 import { AppDispatch, useAppSelector } from "@redux/store";
 import { addMessage } from "@redux/features/messagesSlice";
+import { findUser } from "@redux/features/userSlice";
 import { changeDateFormat } from "utils";
 import BounceLoader from "react-spinners/BounceLoader";
 
@@ -41,12 +42,13 @@ export default function About({ params }: { params: { aid: string } }) {
     comments,
     dateUploaded,
     tags,
-    dateModified,
+    dateUpdated,
     isVisitorLiked,
   } = artwork;
-  const dateToUse = dateModified ? dateModified : dateUploaded;
+  const dateToUse = dateUpdated ? dateUpdated : dateUploaded;
   const dateFormatted = changeDateFormat(dateToUse);
   const aid = params.aid;
+  const { uid } = useAppSelector(findUser);
   const [index, setIndex] = useState<number>(0);
   const [showPurchaseModal, setShowPurchaseModal] = useState<boolean>(false);
   const dispatch = AppDispatch();
@@ -84,8 +86,8 @@ export default function About({ params }: { params: { aid: string } }) {
                   <div className="flex justify-end">
                     <p className="title-font text-sm prevent-select">
                       {dateFormatted &&
-                        (dateModified
-                          ? `Modified on ${dateFormatted}`
+                        (dateUpdated
+                          ? `Updated on ${dateFormatted}`
                           : `Posted on ${dateFormatted}`)}
                     </p>
                   </div>
@@ -137,6 +139,7 @@ export default function About({ params }: { params: { aid: string } }) {
                           initial={{ opacity: 0, scale: 0 }}
                           whileInView={{ opacity: 1, scale: 1, rotate: 360 }}
                           transition={{ duration: 1 }}
+                          viewport={{ once: true }}
                         >
                           <HeartIcon className="absolute h-12 w-12 text-[#FF69B4] -rotate-12 left-[-70px]" />
                         </motion.div>
@@ -209,12 +212,12 @@ export default function About({ params }: { params: { aid: string } }) {
                           <div key={comment._id}>
                             <Comment
                               _id={comment._id}
-                              authorId={comment.uid}
                               comment={comment.comment}
                               name={comment.name}
                               userImage={comment.userImage}
                               datePosted={comment.datePosted}
                               dateUpdated={comment.dateUpdated}
+                              isAuthor={comment.uid === uid}
                             />
                           </div>
                         ))}

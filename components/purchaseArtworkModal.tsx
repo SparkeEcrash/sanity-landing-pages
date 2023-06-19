@@ -54,9 +54,12 @@ export default function PurchaseArtworkModal({
           <div className="text-center">
             <h1 className="title-font mt-10">The artwork is up for sale</h1>
             <p className="body-font mt-10 text-center leading-loose">
-              {name} has suggested a price of ${price}. You are welcome to
-              contact {name} using the seller's email listed below and make an
-              offer.
+              {name} has suggested a price of{" "}
+              <span className="title-font text-lg">${price}</span>.
+            </p>
+            <p className="body-font mt-2">
+              You are welcome to use the seller's email listed
+              below and make an offer.
             </p>
             <h1 className="title-font mt-10">{email}</h1>
           </div>

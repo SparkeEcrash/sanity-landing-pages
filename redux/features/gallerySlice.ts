@@ -43,7 +43,7 @@ const artworkInitialState: ArtworkProps = {
   price: "",
   dateUploaded: "",
   dateUploadedNumber: 0,
-  dateModified: "",
+  dateUpdated: "",
   aid: "",
   isVisitorLiked: false,
 };
@@ -193,9 +193,8 @@ const gallerySlice = createSlice({
             price: payload.data.price,
             dateUploaded: payload.data.dateUploaded,
             dateUploadedNumber: payload.data.dateUploadedNumber,
-            dateModified:
-              payload.data._updatedAt &&
-              payload.data._updatedAt.substring(0, 10),
+            dateUpdated: payload.data.dataUpdated,
+            dateUpdatedNumber: payload.data.dataUpdatedNumber,
             aid: payload.data._id,
             isVisitorLiked: payload.data.isVisitorLiked,
           };

@@ -1,19 +1,35 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Button from "components/button";
+import Comment from "components/comment";
+import Masonry from "react-masonry-css";
 import Image from "next/image";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { uploadArtwork } from "utils/postData";
-import MoonLoader from "react-spinners/MoonLoader";
-import { AppDispatch } from "@redux/store";
+import { AppDispatch, useAppSelector } from "@redux/store";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import Toggle from "@components/toggle";
 import { v4 as uuidv4 } from "uuid";
+import {
+  onChangeArtwork,
+  fetchAddUserArtwork,
+  fetchEditUserArtwork,
+  getArtworks,
+  ArtworkFormData as ArtworkFormDataInterface,
+} from "@redux/features/artworksSlice";
+import { addMessage } from "@redux/features/messagesSlice";
 
 interface UploadArtworkModalProps {
   show: boolean;
   setShow?: (show: boolean) => void;
-  dispatchSetShow?: ActionCreatorWithPayload<boolean, string>;
+  dispatchSetShow?: ActionCreatorWithPayload<
+    {
+      show: boolean;
+      edit?: boolean | undefined;
+      delete?: boolean | undefined;
+      _id?: string | undefined;
+    },
+    "artworks/setShowArtworkModal"
+  >;
   clickOut?: boolean;
 }
 
@@ -24,30 +40,31 @@ export default function UploadArtworkModal({
   clickOut,
 }: UploadArtworkModalProps) {
   const dispatch = AppDispatch();
-  const [loading, setLoading] = useState(false);
-  const [images, setImages] = useState<File[]>([]);
+  const artworks = useAppSelector(getArtworks);
+  const { artworkFormData, isTogglingHideComment } = artworks;
+  const [images, setImages] = useState<(File | string)[]>([
+    ...artworkFormData.imagesFromRedux!,
+  ]);
   const [imageDetails, setImageDetails] = useState<
     {
       name: string;
       path: string;
       dimensions?: { height: number; width: number };
     }[]
-  >([]);
-  const [title, setTitle] = useState("");
-  const [comment, setComment] = useState("");
-  const [tag, setTag] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
-  const [isMaker, setIsMaker] = useState<boolean>(false);
-  const [isForSale, setIsForSale] = useState<boolean>(false);
-  const [price, setPrice] = useState<string>("0");
-  const [errors, setErrors] = useState({
-    images: false,
-    title: false,
-    comment: false,
-    tags: false,
-    tag: false,
-    tagAlreadyExists: false,
-  });
+  >([...artworkFormData.imageDetailsFromRedux]);
+  const {
+    title,
+    comment,
+    tag,
+    tags,
+    isMaker,
+    isForSale,
+    price,
+    errors,
+    aid,
+    uid,
+    comments,
+  } = artworkFormData;
   const errorMessages = {
     images: "Please add a picture",
     title: "Please enter a title",
@@ -57,7 +74,7 @@ export default function UploadArtworkModal({
     tagAlreadyExists: "Please enter a different tag",
   };
   const setModalShow = (boolean: boolean) =>
-    setShow ? setShow(boolean) : dispatch(dispatchSetShow!(boolean));
+    setShow ? setShow(boolean) : dispatch(dispatchSetShow!({ show: boolean }));
   const ImagePlaceHolder = () => (
     <div
       className="h-[275px] w-[275px] border shadow-md relative flex-center bg-input-grey cursor-pointer"
@@ -105,8 +122,13 @@ export default function UploadArtworkModal({
     );
   };
 
-  const removeTag = (id: number) => {
-    setTags((tags) => tags.filter((tag, i) => i !== id));
+  const removeTag = (index: number) => {
+    onChange([
+      {
+        value: tags.filter((tag: string, i: number) => i !== index),
+        field: "tags",
+      },
+    ]);
   };
 
   const addTag = () => {
@@ -114,50 +136,91 @@ export default function UploadArtworkModal({
       const tagInput = tag.trim().toLowerCase();
       const alreadyExists = tags.includes(tagInput);
       if (alreadyExists) {
-        setErrors((errors) => ({ ...errors, tagAlreadyExists: true }));
+        onChange([
+          { value: { ...errors, tagAlreadyExists: true }, field: "errors" },
+          { value: { ...errors, tag: false }, field: "errors" },
+        ]);
       } else {
-        setTags((tags) => [...tags, tag.trim().toLowerCase()]);
-        setTag("");
-        setErrors((errors) => ({ ...errors, tagAlreadyExists: false }));
+        onChange([
+          { value: [...tags, tag.trim().toLowerCase()], field: "tags" },
+          { value: "", field: "tag" },
+          { value: { ...errors, tag: false }, field: "errors" },
+        ]);
       }
-      setErrors((errors) => ({ ...errors, tag: false }));
       tagInputRef.current!.focus();
     } else {
-      setErrors((errors) => ({ ...errors, tag: true }));
-      setErrors((errors) => ({ ...errors, tagAlreadyExists: false }));
+      onChange([{ value: { ...errors, tag: true }, field: "errors" }]);
+      onChange([
+        { value: { ...errors, tagAlreadyExists: false }, field: "errors" },
+      ]);
     }
   };
 
+  const toggleHideComment = (index: number) => {
+    const updatedComments = [...comments];
+    updatedComments[index] = {
+      ...updatedComments[index],
+      isHidden: !updatedComments[index].isHidden,
+      hiddenBy: uid,
+    };
+    onChange([{ value: updatedComments, field: "comments" }]);
+  };
   const sendData = (action: string) => {
     //TODO: validation check here. check if price is 0 and error out and check for cent two digits
     const posted = action === "Post" ? true : false;
     const data = new FormData();
-    const json = JSON.stringify({
-      posted,
-      imageDetails,
-      title,
-      comment,
-      tags,
-      isMaker,
-      isForSale,
-      price,
-    });
+    const json = artworks.editArtworkModal
+      ? JSON.stringify({
+          posted,
+          imageDetails,
+          title: title.trim(),
+          comment: comment.trim(),
+          tags,
+          isMaker,
+          isForSale,
+          price,
+          aid,
+          comments,
+        })
+      : JSON.stringify({
+          posted,
+          imageDetails,
+          title: title.trim(),
+          comment: comment.trim(),
+          tags,
+          isMaker,
+          isForSale,
+          price,
+        });
     const blob = new Blob([json], { type: "application/json" });
     data.append("blob", blob);
     images.forEach((image) => {
       data.append("image", image);
     });
-    setLoading(true);
-    uploadArtwork(data).then((result) => {
-      if ("success" in result) {
-        setLoading(false);
-        setShow ? setShow(false) : dispatch(dispatchSetShow!(false));
-      } else {
-        setLoading(false);
-        setModalShow(false);
-        //TODO:pop up error modal
+    artworks.editArtworkModal
+      ? dispatch(fetchEditUserArtwork(data))
+      : dispatch(fetchAddUserArtwork(data));
+  };
+
+  const onChange = (inputs: { value: any; field: string }[]) => {
+    const validKeys = [
+      "title",
+      "comment",
+      "tag",
+      "tags",
+      "isMaker",
+      "isForSale",
+      "price",
+      "errors",
+      "comments",
+    ];
+    let artworkForm = { ...artworkFormData };
+    inputs.forEach(({ value, field }) => {
+      if (validKeys.includes(field)) {
+        artworkForm[field as keyof ArtworkFormDataInterface] = value;
       }
     });
+    dispatch(onChangeArtwork(artworkForm));
   };
 
   return (
@@ -227,13 +290,15 @@ export default function UploadArtworkModal({
                         onLoad={({
                           currentTarget,
                         }: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                          setImageDetails((imageDetails) => {
-                            imageDetails[i]["dimensions"] = {
-                              height: currentTarget.naturalHeight,
-                              width: currentTarget.naturalWidth,
-                            };
-                            return imageDetails;
-                          });
+                          if (!imageDetails[i]["dimensions"]) {
+                            setImageDetails((imageDetails) => {
+                              imageDetails[i]["dimensions"] = {
+                                height: currentTarget.naturalHeight,
+                                width: currentTarget.naturalWidth,
+                              };
+                              return imageDetails;
+                            });
+                          }
                         }}
                       />
                       <div className="absolute w-full h-full bg-black/[.5] translate-x-[275px] flex-center peer-hover:translate-x-0 hover:translate-x-0 transition-all duration-100">
@@ -261,12 +326,13 @@ export default function UploadArtworkModal({
               />
             </div>
           )}
-          <p className="body-font mt-10">Title</p>
+          <p className="title-font text-base mt-10">Title</p>
           <input
             type="text"
             className="input-style"
+            value={title}
             onChange={(e) => {
-              setTitle(e.target.value.trim());
+              onChange([{ value: e.target.value, field: "title" }]);
             }}
           />
           {errors.title && (
@@ -274,11 +340,12 @@ export default function UploadArtworkModal({
               <p className="body-font text-red-500">{errorMessages.title}</p>
             </div>
           )}
-          <p className="body-font mt-10">Comment</p>
+          <p className="title-font text-base mt-10">Comment</p>
           <textarea
             className="input-style h-24"
+            value={comment}
             onChange={(e) => {
-              setComment(e.target.value.trim());
+              onChange([{ value: e.target.value, field: "comment" }]);
             }}
           />
           {errors.comment && (
@@ -286,7 +353,7 @@ export default function UploadArtworkModal({
               <p className="body-font text-red-500">{errorMessages.comment}</p>
             </div>
           )}
-          <p className="body-font mt-10">Tags</p>
+          <p className="title-font text-base mt-10">Tags</p>
           <div className="flex flex-wrap gap-2 mt-2 text-royal-blue">
             {tags.map((tag, i) => (
               <div
@@ -310,7 +377,8 @@ export default function UploadArtworkModal({
             className="input-style"
             value={tag}
             onChange={(e) => {
-              setTag(e.target.value);
+              onChange([{ value: e.target.value.trim(), field: "tag" }]);
+              // setTag(e.target.value);
             }}
             ref={tagInputRef}
           />
@@ -334,13 +402,52 @@ export default function UploadArtworkModal({
           <div className="mx-auto mt-10">
             <Button text="Add tag" clickFn={() => addTag()} />
           </div>
+          {comments.length > 0 && (
+            <div className={`mt-10`}>
+              <p className="title-font text-base">Comments</p>
+              <div className={`flex justify-center mt-2`}>
+                <Masonry
+                  breakpointCols={1}
+                  className="my-masonry-grid"
+                  columnClassName="my-masonry-grid_column"
+                >
+                  {comments.map((comment, i) => (
+                    <div className="flex" key={comment._id}>
+                      <div>
+                        <Comment
+                          _id={comment._id}
+                          isHidden={comment.isHidden}
+                          comment={comment.comment}
+                          name={comment.name}
+                          userImage={comment.userImage}
+                          datePosted={comment.datePosted}
+                          dateUpdated={comment.dateUpdated}
+                        />
+                      </div>
+                      <Button
+                        text={`${comment.isHidden ? "Show" : "Hide"}`}
+                        className={"w-[105px]"}
+                        clickFn={() => {
+                          toggleHideComment(i);
+                        }}
+                        noHover
+                      />
+                    </div>
+                  ))}
+                </Masonry>
+              </div>
+            </div>
+          )}
           <div className="flex justify-between">
             <div className="flex mt-10 items-center">
               <p className="body-font">Did you make the artwork?</p>
               <Toggle
                 yesno={true}
                 toggle={isMaker}
-                clickFn={() => setIsMaker((isMaker) => !isMaker)}
+                clickFn={() => {
+                  onChange([{ value: !isMaker, field: "isMaker" }]);
+                  // setIsMaker((isMaker) => !isMaker);
+                }}
                 className="ml-5"
               />
             </div>
@@ -351,12 +458,14 @@ export default function UploadArtworkModal({
               <Toggle
                 yesno={true}
                 toggle={isForSale}
-                clickFn={() => setIsForSale((isForSale) => !isForSale)}
+                clickFn={() => {
+                  onChange([{ value: !isForSale, field: "isForSale" }]);
+                  // setIsForSale((isForSale) => !isForSale);
+                }}
                 className="ml-5"
               />
             </div>
           </div>
-
           {isForSale && (
             <>
               <div className="text-center">
@@ -364,9 +473,11 @@ export default function UploadArtworkModal({
                 <i className="body-font mr-5">$</i>
                 <input
                   type="number"
+                  value={price}
                   className="input-style"
                   onChange={(e) => {
-                    setPrice(e.target.value);
+                    onChange([{ value: e.target.value, field: "price" }]);
+                    // setPrice(e.target.value);
                   }}
                 ></input>
               </div>
@@ -383,19 +494,6 @@ export default function UploadArtworkModal({
           <Button text="Post" clickFn={() => sendData("Post")} />
         </div>
       </div>
-      {loading && (
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="fixed bg-black/[.5] h-full w-full top-0 flex-center"
-        >
-          <MoonLoader
-            color="rgba(255,255,255)"
-            loading={true}
-            size={100}
-            aria-label="Loading Spinner"
-          />
-        </div>
-      )}
     </div>
   );
 }

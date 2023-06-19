@@ -22,6 +22,8 @@ export async function GET(request: NextRequest) {
 			datePostedNumber,
       dateUpdated,
 			dateUpdatedNumber,
+      isHidden,
+      hiddenBy,
 		},
     likes[]-> {
       _id,

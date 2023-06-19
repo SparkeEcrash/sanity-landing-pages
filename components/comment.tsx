@@ -6,16 +6,17 @@ import {
   onChangeComment,
   setShowCommentModal,
 } from "@redux/features/gallerySlice";
-import { findUser } from "@redux/features/userSlice";
 
 interface CommentProps {
   _id: string;
   comment: string;
   name: string;
   userImage: string;
-  authorId: string;
   datePosted: string;
   dateUpdated?: string;
+  isAuthor?: boolean;
+  hasOnlyDeletePermission?: boolean;
+  isHidden?: boolean;
 }
 
 export default function Comment({
@@ -23,21 +24,21 @@ export default function Comment({
   comment,
   name,
   userImage,
-  authorId,
   datePosted,
   dateUpdated,
+  isAuthor,
+  hasOnlyDeletePermission,
+  isHidden,
 }: CommentProps) {
-  const { uid } = useAppSelector(findUser);
   const dateFormatted = dateUpdated
     ? changeDateFormat(dateUpdated)
     : changeDateFormat(datePosted);
   const dispatch = AppDispatch();
-  const isAuthor = authorId === uid;
   return (
     <div
       className={`${
         isAuthor && "group/comment"
-      } border shadow-sm p-4 w-[500px]`}
+      } border shadow-sm p-4 w-[500px] ${isHidden && "opacity-50"} relative`}
     >
       <div className="flex items-start gap-x-4">
         <div className="w-[40px] h-[29px] relative flex-none">
@@ -65,7 +66,7 @@ export default function Comment({
         </div>
       </div>
       <div className="mt-5">
-        <h3 className="title-font text-lg">
+        <h3 className="title-font text-lg text-center">
           from
           <span className="ml-2 title-font text-lg">{name}</span>
         </h3>
@@ -89,7 +90,13 @@ export default function Comment({
             />
           </div>
           <div className="flex-1 flex justify-center title-font text-sm text-center h-[25px]">
-            {dateUpdated ? "Updated" : "Posted"} on {dateFormatted}
+            {isHidden ? (
+              "Hidden"
+            ) : (
+              <>
+                {dateUpdated ? "Updated" : "Posted"} on {dateFormatted}
+              </>
+            )}
           </div>
           <div className="flex-1 flex justify-end">
             <XCircleIcon

@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
       comment: commentTrimmed,
       datePosted,
       datePostedNumber,
+      isHidden: false,
     };
     const document = await sanityClient.create(doc).catch(console.error);
     const documentResult = await sanityClient
@@ -53,6 +54,8 @@ export async function POST(request: NextRequest) {
 					datePostedNumber,
           dateUpdated,
 					dateUpdatedNumber,
+          isHidden,
+          hiddenBy,
 				},
 				likes[]-> {
           _id,

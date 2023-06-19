@@ -7,6 +7,7 @@ type ButtonProps = {
   textColor?: string;
   className?: string;
   disabled?: boolean;
+  noHover?: boolean;
   clickFn?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
     | void
     | (() => void)
@@ -31,6 +32,7 @@ export default function Button({
   textColor,
   className,
   disabled,
+  noHover,
   clickFn,
 }: ButtonProps) {
   return (
@@ -39,7 +41,9 @@ export default function Button({
       onClick={(e) => clickFn && clickFn(e)}
       className={`${bgColor ? bgColor : "bg-royal-blue"} ${
         textColor ? textColor : "text-white"
-      } shadow-md shadow-background-grey prevent-select p-5 text-2xl font-serif text-center hover:scale-110 transition-all duration-200 ${className}`}
+      } shadow-md shadow-background-grey prevent-select p-5 text-2xl font-serif text-center ${
+        !noHover && "hover:scale-110 transition-all duration-200"
+      } ${className}`}
       disabled={disabled}
     >
       {text}

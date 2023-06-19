@@ -56,6 +56,39 @@ export const deleteComment = async (data: any) => {
   }
 };
 
+export const toggleHideComment = async (data: any) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/artworks/toggleHideComment`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    return await res.json();
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
+export const editUserArtwork = async (data: any) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/artworks/editUserArtwork`,
+      {
+        method: "PATCH",
+        body: data,
+      }
+    );
+    return await res.json();
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
 // export const addLike = async (args: { aid: string; uid: string }) => {
 //   const { aid, uid } = args;
 //   const res = await fetch(

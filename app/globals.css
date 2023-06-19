@@ -12,10 +12,12 @@
   .flex-center {
     @apply flex justify-center items-center;
   }
+  .transform-center {
+    @apply top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%];
+  }
   .input-style {
     @apply body-font mt-2 bg-input-grey border-border-grey outline-none hover:border-border-grey focus:border-border-grey focus:ring-transparent shadow-sm;
   }
-
   .button {
     @apply bg-royal-blue text-white p-5 text-2xl font-serif text-center hover:scale-110 transition-all duration-200;
   }
@@ -47,6 +49,10 @@ body {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
+}
+
+.override-max-w {
+  max-width: none;
 }
 
 /* "react-masonry-css" start */

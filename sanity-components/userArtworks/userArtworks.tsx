@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import Image from "next/image";
 import Masonry from "react-masonry-css";
 import { trimString } from "utils";
@@ -6,13 +7,30 @@ import CircleLoader from "react-spinners/CircleLoader";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import { AppDispatch } from "@redux/store";
-import Link from "next/link";
+import {
+  loadSavedArtwork,
+  setShowArtworkModal,
+} from "@redux/features/artworksSlice";
 import { v4 as uuidv4 } from "uuid";
+import {
+  StopIcon,
+  Square2StackIcon,
+  Square3Stack3DIcon,
+} from "@heroicons/react/24/outline";
+import { setDimensionsForWindow } from "utils";
 
 interface UserArtWorkProps {
   artworks: ArtworkProps[];
   loading: boolean;
-  dispatchClickFn: ActionCreatorWithPayload<boolean, string>;
+  dispatchClickFn: ActionCreatorWithPayload<
+    {
+      show: boolean;
+      edit?: boolean | undefined;
+      delete?: boolean | undefined;
+      _id?: string | undefined;
+    },
+    "artworks/setShowArtworkModal"
+  >;
 }
 
 const LoadingArtwork = () => (
@@ -27,13 +45,21 @@ const LoadingArtwork = () => (
 const PlaceHolderArtwork = ({
   dispatchClickFn,
 }: {
-  dispatchClickFn: ActionCreatorWithPayload<boolean, string>;
+  dispatchClickFn: ActionCreatorWithPayload<
+    {
+      show: boolean;
+      edit?: boolean | undefined;
+      delete?: boolean | undefined;
+      _id?: string | undefined;
+    },
+    "artworks/setShowArtworkModal"
+  >;
 }) => {
   const dispatch = AppDispatch();
   return (
     <div
       className="w-[300px] relative border shadow-md"
-      onClick={() => dispatch(dispatchClickFn(true))}
+      onClick={() => dispatch(dispatchClickFn({ show: true }))}
     >
       <div className="w-full h-[300px] relative bg-input-grey flex-center">
         <CameraIcon className="text-border-grey h-24 w-24" />
@@ -43,34 +69,67 @@ const PlaceHolderArtwork = ({
   );
 };
 
-const Artwork = ({ title, images, posted, views, likes }: ArtworkProps) => (
-  <div className="w-[300px] relative border shadow-md cursor-pointer">
-    <div className="w-full h-[300px] relative">
-      <Image
-        src={images[0].imageUrl}
-        alt={title}
-        className="object-cover prevent-select"
-        fill
-        priority
-      />
-    </div>
-    <div className="flex flex-col min-h-[75px] p-2 relative w-full overflow-hidden justify-center">
-      <div>
+const Artwork = ({
+  title,
+  images,
+  posted,
+  views,
+  likes,
+  _id,
+}: ArtworkProps) => {
+  const { width, height } = images[0];
+  const { width: shrunkWidth, height: shrunkHeight } = setDimensionsForWindow(
+    width,
+    height,
+    300,
+    300
+  );
+  return (
+    <div className="w-[300px] relative border shadow-md cursor-pointer">
+      <div className="w-full h-[300px] relative overflow-hidden flex-center">
+        <Image
+          src={images[0].imageUrl}
+          alt={title}
+          className="absolute prevent-select override-max-w"
+          width={shrunkWidth}
+          height={shrunkHeight} //change this so that image has width and height
+          priority
+        />
+      </div>
+      <div className="flex flex-col min-h-[75px] p-2 relative w-full overflow-hidden justify-center">
         <h2 className="w-full title-font text-xl text-center">
           {trimString(75, title)}
         </h2>
       </div>
       {posted && (
-        <div className="w-full mt-2">
-          <div className="flex justify-between">
+        <div className="w-full">
+          <div className="flex justify-between pr-2 pb-2 pl-2">
             <p className="body-font text-sm">Likes: {likes.length}</p>
             <p className="body-font text-sm">Views: {views}</p>
           </div>
         </div>
       )}
+      {posted && (
+        <div
+          className="absolute h-10 w-10 rounded-full bg-white right-2 top-2 border shadow-sm flex-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Link href={`/gallery/${_id}`}>
+            {images.length === 1 && (
+              <StopIcon className={`h-6 text-royal-blue`} />
+            )}
+            {images.length === 2 && (
+              <Square2StackIcon className={`h-6 text-royal-blue`} />
+            )}
+            {images.length >= 3 && (
+              <Square3Stack3DIcon className={`h-6 text-royal-blue`} />
+            )}
+          </Link>
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 export default function UserArtworks({
   artworks,
@@ -78,7 +137,7 @@ export default function UserArtworks({
   dispatchClickFn,
 }: UserArtWorkProps) {
   const defaultCount = 6;
-
+  const dispatch = AppDispatch();
   if (loading && artworks.length === 0) {
     const placeHolders = [];
     for (let index = 0; index < defaultCount; index++) {
@@ -137,6 +196,7 @@ export default function UserArtworks({
           (
             {
               _id,
+              _updatedAt,
               title,
               images,
               comment,
@@ -155,15 +215,47 @@ export default function UserArtworks({
               comments,
               dateUploaded,
               dateUploadedNumber,
-              dateModified,
+              dateUpdated,
               aid,
             },
             i
           ) => (
             <div key={_id}>
-              <Link href={`/gallery/${aid}`}>
+              <div
+                onClick={() => {
+                  dispatch(
+                    setShowArtworkModal({ show: true, edit: true, _id })
+                  );
+                  dispatch(
+                    loadSavedArtwork({
+                      images,
+                      title,
+                      comment,
+                      tags,
+                      isMaker,
+                      isForSale,
+                      price,
+                      _id,
+                      _updatedAt,
+                      posted,
+                      uid,
+                      name,
+                      userEmail,
+                      username,
+                      userImage,
+                      views,
+                      likes,
+                      comments,
+                      dateUploaded,
+                      dateUploadedNumber,
+                      aid,
+                    })
+                  );
+                }}
+              >
                 <Artwork
                   _id={_id}
+                  _updatedAt={_updatedAt}
                   title={title}
                   images={images}
                   comment={comment}
@@ -182,10 +274,10 @@ export default function UserArtworks({
                   comments={comments}
                   dateUploaded={dateUploaded}
                   dateUploadedNumber={dateUploadedNumber}
-                  dateModified={dateModified}
+                  dateUpdated={dateUpdated}
                   aid={aid}
                 />
-              </Link>
+              </div>
             </div>
           )
         )}
