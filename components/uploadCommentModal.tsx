@@ -57,14 +57,17 @@ export default function UploadCommentModal({
 
   const sendComment = () => {
     if (comment.trim().length === 0) {
-      return;
-    }
-    if (editCommentModal) {
-      dispatch(fetchUpdateComment({ comment, comment_id: toUpdateCommentId }));
-    } else if (deleteCommentModal) {
-      dispatch(fetchDeleteComment({ comment_id: toUpdateCommentId, aid }));
+      setErrors({ comment: true });
     } else {
-      dispatch(fetchAddComment({ comment, aid }));
+      if (editCommentModal) {
+        dispatch(
+          fetchUpdateComment({ comment, comment_id: toUpdateCommentId })
+        );
+      } else if (deleteCommentModal) {
+        dispatch(fetchDeleteComment({ comment_id: toUpdateCommentId, aid }));
+      } else {
+        dispatch(fetchAddComment({ comment, aid }));
+      }
     }
   };
 
@@ -131,6 +134,7 @@ export default function UploadCommentModal({
                 disabled={isSendingComment}
                 clickFn={() => {
                   dispatch(onChangeComment(""));
+                  setErrors({ comment: false });
                 }}
               />
               <Button

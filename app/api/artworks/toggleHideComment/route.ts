@@ -29,7 +29,7 @@ export async function PATCH(request: NextRequest) {
   }
   if (documentResult !== null) {
     const query = groq`
-		*[_type == "artwork" && _id == "${documentResult!.aid}"][0]{
+		*[_type == "artwork" && _id == "${documentResult!.aid}" && isDeleted != true][0]{
 			...,
 			comments[]-> {
 				_id,

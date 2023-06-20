@@ -34,7 +34,7 @@ export default async function NavigationUser() {
           href="/api/auth/signin"
           className={`cursor-pointer flex justify-center items-center h-16 ${inactiveLinkStyleDesktop}`}
         >
-          <UserCircleIcon className={`h-16 mr-2`} />
+          <UserCircleIcon className={`h-12 mr-2`} />
           Sign In
         </Link>
       )}

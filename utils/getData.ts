@@ -35,3 +35,17 @@ export const getGalleryArtwork = async (aid: string) => {
   );
   return await res.json();
 };
+
+export const getGalleryArtworks = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/gallery/getArtworks`
+  );
+  return await res.json();
+};
+
+export const getGalleryTagsAndArtworks = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/gallery/getTagsAndArtworks`
+  );
+  return await res.json();
+};

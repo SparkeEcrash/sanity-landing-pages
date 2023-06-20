@@ -69,7 +69,7 @@ const PlaceHolderArtwork = ({
   );
 };
 
-const Artwork = ({
+export const Artwork = ({
   title,
   images,
   posted,
@@ -218,7 +218,6 @@ export default function UserArtworks({
               dateUpdated,
               aid,
             },
-            i
           ) => (
             <div key={_id}>
               <div

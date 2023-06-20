@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const aid = request.nextUrl.searchParams.get("aid");
 
   const query = groq`
-	*[_type == "artwork" && _id == "${aid}" && posted == true][0]{
+	*[_type == "artwork" && _id == "${aid}" && posted == true && isDeleted != true][0]{
 		...,
     comments[]-> {
       _id,

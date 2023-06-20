@@ -11,24 +11,24 @@ export async function PATCH(request: NextRequest) {
   const uid = user && user.uid;
   const dateUpdated = getTodayDate();
   const dateUpdatedNumber = getDateNow();
-  const { comment, comment_id } = await request.json();
-  const commentTrimmed = comment.trim();
-  if (commentTrimmed && comment_id) {
+  const { aid } = await request.json();
+  if (aid) {
     const documentResult = await sanityClient
-      .patch(comment_id)
+      .patch(aid)
+      .setIfMissing({ isDeleted: true })
       .setIfMissing({ dateUpdated: "" })
       .setIfMissing({ dateUpdatedNumber: 0 })
-      .set({ comment: commentTrimmed })
       .set({ dateUpdated })
       .set({ dateUpdatedNumber })
-      .commit({ autoGenerateArrayKeys: true })
-      .catch((err) => console.error("Adding comment failed: ", err.message));
+      .set({ isDeleted: true })
+      .commit()
+      .catch((err) => console.error("deleting artwork failed: ", err.message));
     if (documentResult !== null) {
       const query = groq`
-			*[_type == "artwork" && _id == "${documentResult!.aid}" && isDeleted != true][0]{
+			*[_type == "artwork" && uid == "${uid}" && isDeleted != true]{
 				...,
 				comments[]-> {
-          _id,
+					_id,
 					uid,
 					aid,
 					name,
@@ -44,7 +44,7 @@ export async function PATCH(request: NextRequest) {
 					hiddenBy,
 				},
 				likes[]-> {
-          _id,
+					_id,
 					uid,
 					aid,
 					name,
@@ -55,23 +55,26 @@ export async function PATCH(request: NextRequest) {
 					datePostedNumber,
 				},
 				tags[]-> {
-          _id,
-					label
+					_id,
+					label,
 				},
 				images[]-> {
-          _id,
+					_id,
 					height,
 					width,
 					"imageUrl": image.asset->url,
 				}
 			}
 			`;
-      let data = await sanityClient.fetch(query).catch(console.error);
+      const data = await sanityClient.fetch(query).catch(console.error);
       const likes = data.likes ? data.likes : [];
       data.isVisitorLiked = likes.some((like: ILike) => like.uid === uid);
       return NextResponse.json({ data }, { status: 200 });
-    } else {
-      return NextResponse.json({ data: "Adding like failed" }, { status: 500 });
     }
+  } else {
+    return NextResponse.json(
+      { data: "Removing comment failed" },
+      { status: 500 }
+    );
   }
 }

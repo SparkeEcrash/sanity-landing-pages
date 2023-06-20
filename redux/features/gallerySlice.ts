@@ -5,13 +5,21 @@ import {
   createSlice,
   isAnyOf,
 } from "@reduxjs/toolkit";
-import { getGalleryArtwork } from "utils/getData";
+import {
+  getGalleryArtwork,
+  getGalleryArtworks,
+  getTagLabels,
+  getGalleryTagsAndArtworks,
+} from "utils/getData";
 import { toggleLike, updateComment, deleteComment } from "utils/patchData";
 import { addComment } from "utils/postData";
 
 interface GallerySliceState {
   artwork: ArtworkProps;
   artworks: ArtworkProps[];
+  artworksFiltered: ArtworkProps[];
+  tags: TagButtons[];
+  tagsSelected: TagProps[];
   isArtworkNotFound: boolean;
   comment: string;
   isTogglingLike: boolean;
@@ -51,6 +59,9 @@ const artworkInitialState: ArtworkProps = {
 const initialState: GallerySliceState = {
   artwork: artworkInitialState,
   artworks: [],
+  artworksFiltered: [],
+  tags: [],
+  tagsSelected: [],
   isArtworkNotFound: false,
   comment: "",
   isTogglingLike: false,
@@ -60,6 +71,21 @@ const initialState: GallerySliceState = {
   deleteCommentModal: false,
   toUpdateCommentId: "",
 };
+
+export const fetchGalleryTagsAndArtworks = createAsyncThunk(
+  "gallery/fetchGalleryTagsAndArtworks",
+  getGalleryTagsAndArtworks
+);
+
+export const fetchGalleryTags = createAsyncThunk(
+  "gallery/fetchGalleryTags",
+  getTagLabels
+);
+
+export const fetchGalleryArtworks = createAsyncThunk(
+  "gallery/fetchGalleryArtworks",
+  getGalleryArtworks
+);
 
 export const fetchGalleryArtwork = createAsyncThunk(
   "gallery/fetchGalleryArtwork",
@@ -90,6 +116,23 @@ const gallerySlice = createSlice({
   name: "gallery",
   initialState,
   reducers: {
+    onChangeTagsSelected: (state, action: PayloadAction<TagProps[]>) => {
+      state.tagsSelected = action.payload;
+      let newArtworks: ArtworkProps[] = [];
+      const selectedLabelIds = action.payload.map((tag) => tag._id);
+      state.artworks.forEach((artwork) => {
+        const matchingTags = artwork.tags.filter((tag) =>
+          selectedLabelIds.includes(tag._id)
+        );
+        if (matchingTags.length > 0) {
+          newArtworks.push(artwork);
+        }
+      });
+      if (newArtworks.length === 0) {
+        newArtworks = state.artworks;
+      }
+      state.artworksFiltered = newArtworks;
+    },
     onChangeComment: (state, action: PayloadAction<string>) => {
       state.comment = action.payload;
     },
@@ -121,6 +164,11 @@ const gallerySlice = createSlice({
     },
   },
   extraReducers(builder) {
+    builder.addCase(fetchGalleryTagsAndArtworks.fulfilled, (state, action) => {
+      state.artworks = action.payload.artworks;
+      state.artworksFiltered = action.payload.artworks;
+      state.tags = action.payload.tagsWithCount;
+    });
     builder.addCase(fetchGalleryArtwork.pending, (state) => {
       state.artwork = initialState.artwork;
       state.isArtworkNotFound = false;
@@ -206,10 +254,22 @@ const gallerySlice = createSlice({
   },
 });
 
-export const { onChangeComment, resetArtwork, setShowCommentModal } =
-  gallerySlice.actions;
+export const {
+  onChangeComment,
+  resetArtwork,
+  setShowCommentModal,
+  onChangeTagsSelected,
+} = gallerySlice.actions;
 export default gallerySlice.reducer;
 export const findGallery = (state: RootState) => state.gallery;
+export const findGalleryTagsAndArtworks = (state: RootState) => {
+  return {
+    artworks: state.gallery.artworks,
+    artworksFiltered: state.gallery.artworksFiltered,
+    tags: state.gallery.tags,
+    tagsSelected: state.gallery.tagsSelected,
+  };
+};
 // function getState() {
 //   throw new Error("Function not implemented.");
 // }

@@ -41,7 +41,7 @@ export async function PATCH(request: NextRequest) {
       .commit({ autoGenerateArrayKeys: true })
       .catch((err) => console.error("Adding like failed: ", err.message));
   } else {
-    const query = groq`*[_type == "like" && aid == "${aid}" && uid == "${uid}"][0]`;
+    const query = groq`*[_type == "like" && aid == "${aid}" && uid == "${uid}" && isDeleted != true][0]`;
     let like = await sanityClient.fetch(query).catch(console.error);
     const likeToRemove = [`likes[_ref=="${like._id}"]`];
     documentResult = await sanityClient
@@ -56,7 +56,9 @@ export async function PATCH(request: NextRequest) {
 
   if (documentResult !== null) {
     const query = groq`
-    *[_type == "artwork" && _id == "${documentResult!._id}"][0]{
+    *[_type == "artwork" && _id == "${
+      documentResult!._id
+    }" && isDeleted != true][0]{
       ...,
       comments[]-> {
         _id,
@@ -112,7 +114,7 @@ export async function PATCH(request: NextRequest) {
 //   console.log(aid);
 
 //   const queryForArtwork = groq`
-// 	*[_type == "artwork" && _id == "${aid}"]
+// 	*[_type == "artwork" && _id == "${aid}" && isDeleted != true]
 //   `;
 
 //   const queryForUser = groq`
