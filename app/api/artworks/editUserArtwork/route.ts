@@ -40,7 +40,7 @@ export async function PATCH(request: NextRequest) {
     aid
   ) {
     const query = groq`
-    *[_type == "artwork" && _id == "${aid}"][0]{
+    *[_type == "artwork" && _id == "${aid}" && isDeleted != true][0]{
 			...,
 			comments[]-> {
 				_id,
@@ -296,7 +296,7 @@ export async function PATCH(request: NextRequest) {
 
     //return updated data
     const queryTwo = groq`
-		*[_type == "artwork" && uid == "${uid}"]{
+		*[_type == "artwork" && uid == "${uid}" && isDeleted != true]{
 			...,
 			comments[]-> {
 				_id,

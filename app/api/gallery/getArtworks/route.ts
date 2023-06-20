@@ -1,13 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
 import { sanityClient } from "sanity";
 import { groq } from "next-sanity";
-import mockData from "./data";
 
 export async function GET(request: NextRequest) {
-  const uid = request.nextUrl.searchParams.get("user");
-
   const query = groq`
-	*[_type == "artwork" && uid == "${uid}" && isDeleted != true]{
+	*[_type == "artwork" && posted == true && isDeleted != true]{
 		...,
     comments[]-> {
       _id,
@@ -49,21 +46,11 @@ export async function GET(request: NextRequest) {
 	}
   `;
 
-  let data;
-  if (true) {
-    data = await sanityClient.fetch(query).catch(console.error);
-    //change to const instead of let when ready for production
-  } else {
-    data = mockData;
-  }
-
-  //TODO: proper validation check for getting tag here
+  const data = await sanityClient.fetch(query).catch(console.error);
+  //TODO: proper validation check for checking user here
   if (data !== null) {
     return NextResponse.json({ data }, { status: 200 });
   } else {
-    return NextResponse.json(
-      { data: "an error occured getting the artworks for the user" },
-      { status: 500 }
-    );
+    return NextResponse.json({ data }, { status: 404 });
   }
 }

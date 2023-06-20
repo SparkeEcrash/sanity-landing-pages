@@ -13,10 +13,11 @@ import {
   onChangeArtwork,
   fetchAddUserArtwork,
   fetchEditUserArtwork,
+  fetchDeleteUserArtwork,
   getArtworks,
   ArtworkFormData as ArtworkFormDataInterface,
+  resetArtwork,
 } from "@redux/features/artworksSlice";
-import { addMessage } from "@redux/features/messagesSlice";
 
 interface UploadArtworkModalProps {
   show: boolean;
@@ -42,6 +43,8 @@ export default function UploadArtworkModal({
   const dispatch = AppDispatch();
   const artworks = useAppSelector(getArtworks);
   const { artworkFormData, isTogglingHideComment } = artworks;
+  const [showDelete, setShowDelete] = useState<boolean>(false);
+  const [textDelete, setTextDelete] = useState<string>("");
   const [images, setImages] = useState<(File | string)[]>([
     ...artworkFormData.imagesFromRedux!,
   ]);
@@ -65,13 +68,28 @@ export default function UploadArtworkModal({
     uid,
     comments,
   } = artworkFormData;
+  type Errors = {
+    value: {
+      images?: boolean;
+      title?: boolean;
+      comment?: boolean;
+      tags?: boolean;
+      tag?: boolean;
+      tagAlreadyExists?: boolean;
+      delete?: boolean;
+    };
+    field: string;
+  };
+  let errorChecks: Errors[] = [];
   const errorMessages = {
+    image: "Image file type is not supported",
     images: "Please add a picture",
     title: "Please enter a title",
     comment: "Please enter a comment",
-    tags: "Please enter a tag",
+    tags: "Please add a tag",
     tag: "Please enter your tag",
-    tagAlreadyExists: "Please enter a different tag",
+    tagAlreadyExists: "The tag already exists",
+    delete: "The text you entered did not match the title of the artwork",
   };
   const setModalShow = (boolean: boolean) =>
     setShow ? setShow(boolean) : dispatch(dispatchSetShow!({ show: boolean }));
@@ -95,17 +113,25 @@ export default function UploadArtworkModal({
   }, [show]);
 
   const addPictures = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //TODO: do add image validation here
-
-    // if (
-    //   type === "image/png" ||
-    //   type === "image/svg" ||
-    //   type === "image/jpeg" ||
-    //   type === "image/gif" ||
-    //   type === "image/tiff"
-    // ) {
+    const acceptedImageTypes = [
+      "image/png",
+      "image/svg",
+      "image/jpeg",
+      "image/gif",
+      "image/tiff",
+    ];
     if (e.target.files && e.target.files.length !== 0) {
-      const myFileList: File[] = Array.from(e.target.files);
+      console.log("this fired");
+      console.log(e.target.files);
+      const fileList: File[] = Array.from(e.target.files);
+      const myFileList = fileList.filter((file) =>
+        acceptedImageTypes.includes(file.type)
+      );
+      if (fileList.length !== myFileList.length) {
+        onChange([{ value: { ...errors, image: true }, field: "errors" }]);
+      } else {
+        onChange([{ value: { ...errors, image: false }, field: "errors" }]);
+      }
       const myFilePaths = myFileList.map((file) => ({
         name: file.name,
         path: URL.createObjectURL(file),
@@ -137,25 +163,31 @@ export default function UploadArtworkModal({
       const alreadyExists = tags.includes(tagInput);
       if (alreadyExists) {
         onChange([
-          { value: { ...errors, tagAlreadyExists: true }, field: "errors" },
-          { value: { ...errors, tag: false }, field: "errors" },
+          {
+            value: { ...errors, tagAlreadyExists: true, tag: false },
+            field: "errors",
+          },
         ]);
       } else {
         onChange([
           { value: [...tags, tag.trim().toLowerCase()], field: "tags" },
           { value: "", field: "tag" },
-          { value: { ...errors, tag: false }, field: "errors" },
+          {
+            value: { ...errors, tagAlreadyExists: false, tag: false },
+            field: "errors",
+          },
         ]);
       }
       tagInputRef.current!.focus();
     } else {
-      onChange([{ value: { ...errors, tag: true }, field: "errors" }]);
       onChange([
-        { value: { ...errors, tagAlreadyExists: false }, field: "errors" },
+        {
+          value: { ...errors, tag: true, tagAlreadyExists: false },
+          field: "errors",
+        },
       ]);
     }
   };
-
   const toggleHideComment = (index: number) => {
     const updatedComments = [...comments];
     updatedComments[index] = {
@@ -165,41 +197,75 @@ export default function UploadArtworkModal({
     };
     onChange([{ value: updatedComments, field: "comments" }]);
   };
+
+  const confirmDelete = () => {
+    console.log("hello");
+    console.log(textDelete);
+    const trimmedLowerCaseTextDelete = textDelete.trim().toLowerCase();
+    const trimmedLowerCaseTitle = title.trim().toLowerCase();
+    if (trimmedLowerCaseTextDelete === trimmedLowerCaseTitle) {
+      dispatch(fetchDeleteUserArtwork({ aid }));
+      onChange([{ value: { ...errors, delete: false }, field: "errors" }]);
+    } else {
+      console.log('this fired');
+      onChange([{ value: { ...errors, delete: true }, field: "errors" }]);
+    }
+  };
+
   const sendData = (action: string) => {
-    //TODO: validation check here. check if price is 0 and error out and check for cent two digits
-    const posted = action === "Post" ? true : false;
-    const data = new FormData();
-    const json = artworks.editArtworkModal
-      ? JSON.stringify({
-          posted,
-          imageDetails,
-          title: title.trim(),
-          comment: comment.trim(),
-          tags,
-          isMaker,
-          isForSale,
-          price,
-          aid,
-          comments,
-        })
-      : JSON.stringify({
-          posted,
-          imageDetails,
-          title: title.trim(),
-          comment: comment.trim(),
-          tags,
-          isMaker,
-          isForSale,
-          price,
-        });
-    const blob = new Blob([json], { type: "application/json" });
-    data.append("blob", blob);
-    images.forEach((image) => {
-      data.append("image", image);
+    errorChecks.push({
+      value: {
+        ...errors,
+        images: images.length === 0,
+        title: title.length === 0,
+        comment: comment.length === 0,
+        tags: tags.length === 0,
+      },
+      field: "errors",
     });
-    artworks.editArtworkModal
-      ? dispatch(fetchEditUserArtwork(data))
-      : dispatch(fetchAddUserArtwork(data));
+    onChange(errorChecks);
+
+    let hasError =
+      images.length === 0 ||
+      title.length === 0 ||
+      comment.length === 0 ||
+      tags.length === 0;
+
+    if (!hasError) {
+      const posted = action === "Post" ? true : false;
+      const data = new FormData();
+      const json = artworks.editArtworkModal
+        ? JSON.stringify({
+            posted,
+            imageDetails,
+            title: title.trim(),
+            comment: comment.trim(),
+            tags,
+            isMaker,
+            isForSale,
+            price,
+            aid,
+            comments,
+          })
+        : JSON.stringify({
+            posted,
+            imageDetails,
+            title: title.trim(),
+            comment: comment.trim(),
+            tags,
+            isMaker,
+            isForSale,
+            price,
+          });
+      const blob = new Blob([json], { type: "application/json" });
+      data.append("blob", blob);
+      images.forEach((image) => {
+        data.append("image", image);
+      });
+      artworks.editArtworkModal
+        ? dispatch(fetchEditUserArtwork(data))
+        : dispatch(fetchAddUserArtwork(data));
+    }
   };
 
   const onChange = (inputs: { value: any; field: string }[]) => {
@@ -253,6 +319,9 @@ export default function UploadArtworkModal({
             onChange={(e) => {
               addPictures(e);
             }}
+            onClick={(e) => {
+              (e.target as HTMLInputElement).value = "";
+            }}
             multiple
           />
           {images.length === 0 ? (
@@ -265,6 +334,11 @@ export default function UploadArtworkModal({
               {errors.images && (
                 <p className="body-font text-red-500 mt-1">
                   {errorMessages.images}
+                </p>
+              )}
+              {errors.image && (
+                <p className="body-font text-red-500 mt-1">
+                  {errorMessages.image}
                 </p>
               )}
               <Button
@@ -319,6 +393,16 @@ export default function UploadArtworkModal({
                 )}
                 {images.length === 2 && <ImagePlaceHolder />}
               </div>
+              {errors.images && (
+                <p className="body-font text-red-500 mt-1">
+                  {errorMessages.images}
+                </p>
+              )}
+              {errors.image && (
+                <p className="body-font text-red-500 mt-1">
+                  {errorMessages.image}
+                </p>
+              )}
               <Button
                 clickFn={() => imageFileRef.current!.click()}
                 text="Add Pictures"
@@ -440,7 +524,7 @@ export default function UploadArtworkModal({
           )}
           <div className="flex justify-between">
             <div className="flex mt-10 items-center">
-              <p className="body-font">Did you make the artwork?</p>
+              <p className="title-font text-base">Did you make the artwork?</p>
               <Toggle
                 yesno={true}
                 toggle={isMaker}
@@ -452,7 +536,7 @@ export default function UploadArtworkModal({
               />
             </div>
             <div className="flex mt-10 items-center">
-              <p className="body-font">
+              <p className="title-font text-base">
                 Is the artwork available for purchase?
               </p>
               <Toggle
@@ -469,7 +553,9 @@ export default function UploadArtworkModal({
           {isForSale && (
             <>
               <div className="text-center">
-                <p className="body-font mt-10">Your Suggested Price in USD</p>
+                <p className="title-font text-base mt-10">
+                  Your Suggested Price in USD
+                </p>
                 <i className="body-font mr-5">$</i>
                 <input
                   type="number"
@@ -481,17 +567,63 @@ export default function UploadArtworkModal({
                   }}
                 ></input>
               </div>
-              <p className="body-font text-center mt-10">
+              <p className="title-font text-base text-center mt-10">
                 Your email address will be shared with other users interested in
                 purchasing.
               </p>
             </>
           )}
         </div>
+        {showDelete && (
+          <div className="pt-14 pr-14 pl-14 flex flex-col">
+            <p className="title-font text-base">
+              Please enter the title to confirm deleting the artwork
+            </p>
+            <input
+              type="text"
+              className="input-style"
+              value={textDelete}
+              onChange={(e) => {
+                setTextDelete(e.target.value);
+              }}
+            />
+            {errors.delete && (
+              <p className="body-font text-red-500 mt-1">
+                {errorMessages.delete}
+              </p>
+            )}
+          </div>
+        )}
         <div className="p-14 flex justify-evenly">
-          <Button text="Clear" />
-          <Button text="Save" clickFn={() => sendData("Save")} />
-          <Button text="Post" clickFn={() => sendData("Post")} />
+          {artworks.editArtworkModal ? (
+            showDelete ? (
+              <Button
+                text="Confirm"
+                disabled={artworks.isSendingArtwork}
+                clickFn={() => confirmDelete()}
+                // clickFn={() => dispatch(fetchDeleteUserArtwork({ aid }))}
+              />
+            ) : (
+              <Button
+                text="Delete"
+                disabled={artworks.isSendingArtwork}
+                clickFn={() => setShowDelete(true)}
+                // clickFn={() => dispatch(fetchDeleteUserArtwork({ aid }))}
+              />
+            )
+          ) : (
+            <Button text="Clear" clickFn={() => dispatch(resetArtwork())} />
+          )}
+          <Button
+            text="Save"
+            disabled={artworks.isSendingArtwork}
+            clickFn={() => sendData("Save")}
+          />
+          <Button
+            text="Post"
+            disabled={artworks.isSendingArtwork}
+            clickFn={() => sendData("Post")}
+          />
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
   fetchAddUserArtwork,
   fetchEditUserArtwork,
+  fetchDeleteUserArtwork,
   fetchToggleHideComment,
 } from "@redux/features/artworksSlice";
 import {
@@ -68,13 +69,27 @@ const messagesSlice = createSlice({
       state.messages.push({
         text: "Updating your artwork",
         showLoading: true,
-        key: "updating user artwork",
+        key: "update user artwork",
         dark: true,
       });
     });
     builder.addCase(fetchEditUserArtwork.fulfilled, (state) => {
       const newMessages = state.messages.filter(
-        (message) => message.key !== "updating user artwork"
+        (message) => message.key !== "update user artwork"
+      );
+      state.messages = newMessages;
+    });
+    builder.addCase(fetchDeleteUserArtwork.pending, (state) => {
+      state.messages.push({
+        text: "Deleting your artwork",
+        showLoading: true,
+        key: "delete user artwork",
+        dark: true,
+      });
+    });
+    builder.addCase(fetchDeleteUserArtwork.fulfilled, (state) => {
+      const newMessages = state.messages.filter(
+        (message) => message.key !== "delete user artwork"
       );
       state.messages = newMessages;
     });

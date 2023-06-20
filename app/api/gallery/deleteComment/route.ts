@@ -30,7 +30,7 @@ export async function PATCH(request: NextRequest) {
       .catch((err) => console.error("Removing comment failed: ", err.message));
     if (documentResult !== null) {
       const query = groq`
-				*[_type == "artwork" && _id == "${documentResult!._id}"][0]{
+				*[_type == "artwork" && _id == "${documentResult!._id}" && isDeleted != true][0]{
 					...,
 					comments[]-> {
 						_id,

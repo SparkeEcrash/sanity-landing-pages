@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
     }
     //return updated data
     const queryTwo = groq`
-		*[_type == "artwork" && uid == "${uid}"]{
+		*[_type == "artwork" && uid == "${uid}" && isDeleted != true]{
 			...,
 			comments[]-> {
 				_id,

@@ -63,3 +63,9 @@ interface TagProps {
   _id: string;
   label: string;
 }
+
+interface TagButtons {
+  _id: string;
+  label: string;
+  count?: number;
+}

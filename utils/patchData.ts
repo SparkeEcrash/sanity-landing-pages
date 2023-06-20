@@ -89,10 +89,20 @@ export const editUserArtwork = async (data: any) => {
   }
 };
 
-// export const addLike = async (args: { aid: string; uid: string }) => {
-//   const { aid, uid } = args;
-//   const res = await fetch(
-//     `${process.env.NEXT_PUBLIC_BASE_URL}/api/gallery/addLike?aid=${aid}&uid=${uid}`
-//   );
-//   return await res.json();
-// };
+export const deleteUserArtwork = async (data: any) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/artworks/deleteUserArtwork`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    return await res.json();
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
