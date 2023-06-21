@@ -2,30 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  .title-font {
-    @apply font-serif text-royal-blue text-3xl;
-  }
-  .body-font {
-    @apply font-sans text-background-black;
-  }
-  .flex-center {
-    @apply flex justify-center items-center;
-  }
-  .transform-center {
-    @apply top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%];
-  }
-  .input-style {
-    @apply body-font mt-2 bg-input-grey border-border-grey outline-none hover:border-border-grey focus:border-border-grey focus:ring-transparent shadow-sm;
-  }
-  .button {
-    @apply bg-royal-blue text-white p-5 text-2xl font-serif text-center hover:scale-110 transition-all duration-200;
-  }
-}
-
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+  --background-rgb: 255,255,255;
   --phone-size: 425px;
 }
 
@@ -50,29 +29,3 @@ body {
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
-
-.override-max-w {
-  max-width: none;
-}
-
-/* "react-masonry-css" start */
-/* https://www.npmjs.com/package/react-masonry-css */
-.my-masonry-grid {
-  display: -webkit-box; /* Not needed if autoprefixing */
-  display: -ms-flexbox; /* Not needed if autoprefixing */
-  display: flex;
-  margin-left: -30px; /* gutter size offset */
-  width: auto;
-}
-.my-masonry-grid_column {
-  padding-left: 30px; /* gutter size */
-  background-clip: padding-box;
-}
-
-/* Style your items */
-.my-masonry-grid_column > div {
-  /* change div to reference your elements you put in <Masonry> */
-  background: transparent;
-  margin-bottom: 30px;
-}
-/* "react-masonry-css" end */
