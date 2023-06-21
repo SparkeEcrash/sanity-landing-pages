@@ -5,6 +5,7 @@ module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./sanity-components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
@@ -30,16 +31,17 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        "serif": ['var(--font-serif)', ...fontFamily.serif],
-        "sans": ['var(--font-sans)', ...fontFamily.sans],
+        serif: ["var(--font-serif)", ...fontFamily.serif],
+        sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       colors: {
         "royal-blue": "#153084",
-        "blue-green": "#75E6DA",
+        "blue-green": "#99D9EA",
         "blue-grotto": "#189AB4",
         "baby-blue": "#D4F1F4",
         "border-grey": "#D3D3D3",
         "background-black": "#2e2e30",
+        "input-grey": "rgb(241 245 249)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -48,5 +50,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms"), require("tailwind-scrollbar")],
 };

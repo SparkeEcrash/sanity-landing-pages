@@ -3,7 +3,7 @@ import Citations from "../../../sanity-components/citations/citations";
 
 export default function About() {
   return (
-    <main>
+    <main className="py-[100px]">
       <Post />
       <Citations />
     </main>
