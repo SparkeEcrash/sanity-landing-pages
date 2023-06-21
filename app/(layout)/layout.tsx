@@ -1,6 +1,5 @@
-import Navigation from "@components/navigation";
-import Footer from "@components/footer";
-import Messages from "@components/messages";
+import Navigation from "../../components/navigation";
+import Footer from "../../components/footer";
 
 export default async function RootLayout({
   children,
@@ -11,7 +10,6 @@ export default async function RootLayout({
     <>
       <div className="flex flex-col justify-between min-h-screen">
         <Navigation />
-        <Messages />
         {children}
         <Footer />
       </div>

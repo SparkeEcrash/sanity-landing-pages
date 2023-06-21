@@ -19,23 +19,10 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
     "paths": {
-      "@app/*": ["app/*"],
-      "@sanity-components/*": ["sanity-components/*"],
-      "@components/*": ["components/*"],
-      "@nextauth/*": ["app/api/auth/[...nextauth]/*"],
-      "@api/*": ["app/api/*"],
-      "@redux/*": ["redux/*"],
-      "@lib/*": ["lib/*"],
+      "@/*": ["./*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "app/api/user/getArtworks/routes.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
