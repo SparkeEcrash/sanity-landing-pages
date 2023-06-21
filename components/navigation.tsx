@@ -5,7 +5,7 @@ import NavigationUser from "components/navigationUser";
 import NavLink from "components/navLink";
 
 export default function Navigation() {
-  const pages = ["about", "gallery", "events", "contact"];
+  const pages = ["gallery"];
   return (
     <div className="flex flex-col">
       <NavigationMobile />

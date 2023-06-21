@@ -13,7 +13,7 @@ import { initialState } from "@redux/features/userSlice";
 
 export default function NavigationMobile() {
   const [mobileNav, setMobileNav] = useState<boolean>(false);
-  const pages = ["about", "gallery", "events", "contact"];
+  const pages = ["gallery"];
   const path = usePathname();
   const dispatch = AppDispatch();
   const user = useAppSelector(findUser);
@@ -38,7 +38,7 @@ export default function NavigationMobile() {
       // initialize app for user
       const {
         data: {
-          user: { name, uid, username, image, email },
+          user: { name, uid, username, image, email, roles, accessToken },
         },
       } = session;
       dispatch(
@@ -48,12 +48,23 @@ export default function NavigationMobile() {
           uid,
           userImage: image,
           userEmail: email,
-          username,
+          username: username ? username : "",
+          roles,
+          accessToken,
           signedIn: true,
           userLoading: false,
         })
       );
-      dispatch(fetchUserArtworks(uid));
+      dispatch(fetchUserArtworks({ uid, accessToken }));
+    }
+    if (session.status === "unauthenticated" && user.userLoading) {
+      dispatch(
+        signIn({
+          ...initialState,
+          signedIn: false,
+          userLoading: false,
+        })
+      );
     }
   }, [session]);
   return (

@@ -445,6 +445,9 @@ const artworksSlice = createSlice({
         fetchDeleteUserArtwork.fulfilled
       ),
       (state, { payload }) => {
+        if (!payload.data) {
+          return;
+        }
         const userArtworksSaved: ArtworkProps[] = [];
         // const existingArtworksSaved = state.artworksSaved;
         const userArtworksPosted: ArtworkProps[] = [];

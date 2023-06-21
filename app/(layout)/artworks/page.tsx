@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import UploadArtworkModal from "components/uploadArtworkModal";
 import UserArtworks from "@sanity-components/userArtworks/userArtworks";
@@ -31,7 +32,8 @@ import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 //api: check_booked_dates
 
 export default function Artist() {
-  const { signedIn, uid } = useAppSelector(findUser);
+  const router = useRouter();
+  const { signedIn, uid, userLoading, accessToken } = useAppSelector(findUser);
   const {
     showArtworkModal,
     artworksSaved,
@@ -51,7 +53,13 @@ export default function Artist() {
   ];
 
   useEffect(() => {
-    signedIn && dispatch(fetchUserArtworks(uid));
+    if (!userLoading && !signedIn) {
+      router.push("/gallery");
+    }
+  }, [userLoading]);
+
+  useEffect(() => {
+    signedIn && dispatch(fetchUserArtworks({ uid, accessToken }));
   }, []);
 
   useEffect(() => {

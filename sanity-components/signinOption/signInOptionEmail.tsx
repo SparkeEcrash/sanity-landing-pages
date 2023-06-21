@@ -5,15 +5,15 @@ import { signIn, signOut } from "next-auth/react";
 interface SigninOptionProps {
   name: string;
   image: string;
-  id: string;
+  email: string;
 }
 
-export default function SigninOption({ name, image, id }: SigninOptionProps) {
+export default function SigninOption({ name, image, email }: SigninOptionProps) {
   return (
     <div>
       <div
         className="p-4 flex justify-center items-center border-2 w-[200px] h-[200px] relative shadow-md cursor-pointer hover:scale-110 transition-all duration-200"
-        onClick={() => signIn(id, { callbackUrl: "/artworks" })}
+        onClick={() => signIn("email", { email, callbackUrl: "/user" })}
       >
         <Image
           src={image}

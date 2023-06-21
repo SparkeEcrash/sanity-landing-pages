@@ -2,10 +2,27 @@ import { NextResponse, NextRequest } from "next/server";
 import { sanityClient } from "sanity";
 import { groq } from "next-sanity";
 import mockData from "./data";
+import { verifyJwt } from "@lib/jwt";
+import jwt_decode from "jwt-decode";
 
 export async function GET(request: NextRequest) {
-  const uid = request.nextUrl.searchParams.get("user");
+  const accessToken = request.headers.get("authorization");
+  if (!accessToken || !verifyJwt(accessToken)) {
+    return NextResponse.json(
+      { error: "not signed in and unauthorized" },
+      { status: 401 }
+    );
+  }
 
+  const decoded = jwt_decode(accessToken) as any;
+  const uid = request.nextUrl.searchParams.get("user");
+  if (decoded.uid !== uid) {
+    return NextResponse.json(
+      { error: "not the correct user and unauthorized" },
+      { status: 401 }
+    );
+  }
+  
   const query = groq`
 	*[_type == "artwork" && uid == "${uid}" && isDeleted != true]{
 		...,

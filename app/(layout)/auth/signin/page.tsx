@@ -15,7 +15,7 @@ export default async function Signin() {
           <p className="text-background-black font-sans mt-2">
             New members can sign up <span className="text-royal-blue font-bold cursor-pointer">here</span>
           </p>
-          <p className="text-background-black font-sans mt-10">Your email</p>
+          <p className="text-background-black font-sans mt-10">Your username or email</p>
           <input
             type="text"
             className="border-2 border-background-grey font-sans mt-2"
