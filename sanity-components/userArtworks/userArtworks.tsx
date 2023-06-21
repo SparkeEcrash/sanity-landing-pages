@@ -58,7 +58,7 @@ const PlaceHolderArtwork = ({
   const dispatch = AppDispatch();
   return (
     <div
-      className="w-[300px] relative border shadow-md"
+      className="w-[300px] relative border shadow-md cursor-pointer"
       onClick={() => dispatch(dispatchClickFn({ show: true }))}
     >
       <div className="w-full h-[300px] relative bg-input-grey flex-center">

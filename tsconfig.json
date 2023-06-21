@@ -26,7 +26,8 @@
       "@components/*": ["components/*"],
       "@nextauth/*": ["app/api/auth/[...nextauth]/*"],
       "@api/*": ["app/api/*"],
-      "@redux/*": ["redux/*"]
+      "@redux/*": ["redux/*"],
+      "@lib/*": ["lib/*"],
     }
   },
   "include": [

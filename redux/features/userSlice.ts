@@ -9,7 +9,8 @@ interface UserSliceState {
   uid: string;
   userImage: string;
   userEmail: string;
-  provider: string;
+  roles: string[];
+  accessToken: string;
   locale?: string;
   signedIn: boolean;
   userLoading: boolean;
@@ -21,9 +22,10 @@ export const initialState: UserSliceState = {
   uid: "",
   userImage: "",
   userEmail: "",
-  provider: "",
   signedIn: false,
   userLoading: true,
+  roles: [],
+  accessToken: "",
 };
 
 const userSlice = createSlice({

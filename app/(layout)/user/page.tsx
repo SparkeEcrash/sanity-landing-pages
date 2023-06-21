@@ -7,17 +7,22 @@ import { checkNewUser } from "utils/getData";
 import { createUser } from "utils/postData";
 
 export default async function User() {
+  //no longer needed
+
   const data = await getServerSession(authOptions);
-  let user = null;
-  if (data) {
-    user = await checkNewUser(data.user.uid);
-    if (user.newUser) {
-      console.log("he is a new user and post api sent");
-      createUser(data.user);
-    } else {
-      console.log("he is an existing user");
-    }
-  }
+  // let user = null;
+  // if (data) {
+  //   console.log('check here');
+  //   console.log(data.user);
+  //   user = await checkNewUser(data.user.uid);
+  //   if (user.newUser) {
+  //     console.log("he is a new user and post api sent");
+  //     //only users who signed in with oauth would not have user account after signing in
+  //     createUser({ ...data.user, provider: "oAuth" });
+  //   } else {
+  //     console.log("he is an existing user");
+  //   }
+  // }
 
   const UserDashboard = () => (
     <section className="flex justify-center items-center">
