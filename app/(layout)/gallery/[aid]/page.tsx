@@ -62,7 +62,7 @@ export default function About({ params }: { params: { aid: string } }) {
     <>
       {isArtworkNotFound ? (
         <div className="flex-center min-h-screen">
-          <div className="border shadow-sm p-12 flex flex-col flex-center">
+          <div className="border shadow-sm p-14 flex flex-col flex-center">
             <div><QuestionMarkCircleIcon className="h-12 text-royal-blue"/></div>
             <h1 className="title-font mt-5">No artwork was found</h1>
             <p className="body-font mt-10 ">
@@ -112,7 +112,7 @@ export default function About({ params }: { params: { aid: string } }) {
                       priority
                     />
                   </div>
-                  <p className="body-font leading-loose mt-[10px] text-left">
+                  <p className="body-font leading-loose mt-[30px] text-left">
                     {comment}
                   </p>
                   <div className="w-[69px] h-[50px] relative flex-none">

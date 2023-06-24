@@ -6,7 +6,7 @@ import { authOptions } from "@nextauth/route";
 import { v4 as uuidv4 } from "uuid";
 import { getTagLabels } from "utils/getData";
 import { groq } from "next-sanity";
-//TODO: Convert then .then() callbacks to async await
+
 export async function POST(request: NextRequest) {
   // https://developer.mozilla.org/en-US/docs/Web/API/FormData/append
   const data = await getServerSession(authOptions);
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         filename: name,
         contentType: type,
       });
-      if (!("_id" in uploadedImage)) {
+      if (uploadedImage === null) {
         return NextResponse.json(
           { error: "failed to upload image" },
           { status: 500 }
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
         },
       };
       const docArtImage = await sanityClient.create(artworkImage);
-      if (!("_id" in docArtImage)) {
+      if (docArtImage === null) {
         return NextResponse.json(
           { error: "failed to create artwork image" },
           { status: 500 }
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
           },
         ])
         .commit();
-      if (docArtworkWithImage.images.length === 0) {
+      if (docArtworkWithImage === null) {
         return NextResponse.json(
           { error: "failed to attach artwork image to document" },
           { status: 500 }

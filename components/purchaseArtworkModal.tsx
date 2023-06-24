@@ -37,7 +37,7 @@ export default function PurchaseArtworkModal({
 
   return (
     <div
-      className="fixed z-20 min-h-screen w-full bg-black/[.5] flex items-center justify-center"
+      className="fixed top-0 left-0 z-20 min-h-screen w-full bg-black/[.5] flex items-center justify-center"
       onClick={() => clickOut && setModalShow(false)}
     >
       <div

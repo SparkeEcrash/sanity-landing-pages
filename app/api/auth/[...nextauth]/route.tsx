@@ -9,6 +9,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { sanityClient } from "sanity";
 import { getTodayDate } from "utils";
 import { signJwtAccessToken } from "@lib/jwt";
+import { loginUser } from "utils/getData";
 
 export const authOptions: NextAuthOptions = {
   // adapter: FirestoreAdapter(firestore),
@@ -28,6 +29,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
       authorization: {
         params: {
           prompt: "consent",
@@ -48,8 +50,9 @@ export const authOptions: NextAuthOptions = {
           uid: "google." + profile.sub,
           roles: ["user"],
           dateJoined,
-          provider: "oAuth",
+          provider: "google",
           isEmailVerified: profile.email_verified,
+          isPasswordSet: false,
           // emailVerified: profile.email_verified,
         };
       },
@@ -62,18 +65,19 @@ export const authOptions: NextAuthOptions = {
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
       profile(profile, tokens) {
         const dateJoined = getTodayDate();
         return {
           id: profile.id,
           name: profile.name,
-          username: profile.login,
           email: profile.email,
           image: profile.avatar_url,
           uid: "github." + profile.id,
           roles: ["user"],
           dateJoined,
-          provider: "oAuth",
+          provider: "github",
+          isPasswordSet: false,
         };
       },
     }),
@@ -85,32 +89,44 @@ export const authOptions: NextAuthOptions = {
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        usernameOrEmail: {
+          label: "Username",
+          type: "text",
+          placeholder: "jsmith",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        //TODO: refactor this
-        const res = await fetch("/api/user/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: credentials?.username,
-            password: credentials?.password,
-          }),
-        });
-
-        const user = await res.json();
-
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user;
+        if (credentials) {
+          const { usernameOrEmail, password } = credentials;
+          if (!usernameOrEmail || !password) {
+            return Promise.reject(new Error("incorrect credentials provided"));
+          }
+          const response = await loginUser({ usernameOrEmail, password });
+          if (response.result === "authenticated") {
+            // Any object returned will be saved in `user` property of the JWT
+            return response.user;
+          }
+          if (response.result === "incorrect password") {
+            // If you return null then an error will be displayed advising the user to check their details.
+            return Promise.reject(new Error("incorrect password"));
+          }
+          if (response.result === "no username or email") {
+            return Promise.reject(new Error("no username or email"));
+          }
+          if (
+            response.result === "account already exists from another provider"
+          ) {
+            return Promise.reject(
+              new Error("account already exists from another provider")
+            );
+          }
+          if (response.result === "missing credentials") {
+            return Promise.reject(new Error("incorrect credentials provided"));
+          }
         } else {
-          // If you return null then an error will be displayed advising the user to check their details.
-          return null;
-
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+          //send improper credentials were provided
+          return Promise.reject(new Error("incorrect credentials provided"));
         }
       },
     }),
@@ -128,7 +144,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
     // signOut: "/auth/signout",
-    error: "/auth/error", // Error code passed in query string as ?error=
+    error: "/auth/signin", // Error code passed in query string as ?error=
     // verifyRequest: "/auth/verify-request", // (used for check email message)
     // newUser: "/auth/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
   },
@@ -137,35 +153,27 @@ export const authOptions: NextAuthOptions = {
       //check for banned users and deny them signing in for access control
       return true;
     },
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, trigger, session, user, account, profile }) {
       //combine jwt with user object that you get from profile(profile) in Provider config
       //if you have adapter the user object adds data from database and overrides id with one from the database
       //if you sign in with credentials the user is the returned user object in async authorize earlier
       //token is created by the Provider such as Google and only available when using jwt straregy
-      //create access token here so that session.user can get it later
-      // console.log("user");
-      // console.log(user);
-      // console.log("token");
-      // console.log(token);
-      // console.log("account");
-      // console.log(account);
-      // console.log("profile");
-      // console.log(profile);
-
       let updatedToken = { ...token };
-      // let updatedToken = { token } as any;
-      if (user) {
-        updatedToken = { ...updatedToken, ...user };
-        // updatedToken = { ...updatedToken, user };
-      }
       if (account) {
         updatedToken = { ...updatedToken, ...account };
-        // updatedToken = { ...updatedToken, account };
       }
       if (profile) {
         updatedToken = { ...updatedToken, ...profile };
-        // updatedToken = { ...updatedToken, profile };
       }
+      //let data from 'user' which is from sanity database override the data from profile which came from provider in case user updated his profile info in sanity database
+      if (user) {
+        updatedToken = { ...updatedToken, ...user };
+      }
+      if (trigger === "update") {
+        user = { ...session };
+        updatedToken = { ...updatedToken, ...user };
+      }
+      //create access token here so that session.user can get it later
       const myAccessToken = signJwtAccessToken({ uid: updatedToken.uid });
       updatedToken.myAccessToken = myAccessToken;
       return updatedToken;
@@ -179,31 +187,21 @@ export const authOptions: NextAuthOptions = {
       } else {
         data = { ...user };
       }
-      //set session.user depending on provider
-      if (token && data.provider === "google") {
+      //set session.user depending on whether token or user was provided
+      if (token) {
         session.user = {
-          uid: ("google." + data.providerAccountId) as string,
+          uid: data.uid,
           name: data.name,
+          username: data.username,
           image: data.image,
           email: data.email,
           roles: data.roles,
-          accessToken: data.myAccessToken as string,
-        };
-      }
-      if (token && data.provider === "github" && token) {
-        session.user = {
-          uid: ("github." + data.providerAccountId) as string,
-          name: data.name,
-          username: data.login,
-          image: data.image,
-          email: data.email,
-          roles: data.roles,
+          isPasswordSet: data.isPasswordSet,
           accessToken: data.myAccessToken,
         };
-        console.log(session.user);
       }
       if (user) {
-        session.user.uid = user.id;
+        session.user.uid = data.id;
       }
       return session;
     },

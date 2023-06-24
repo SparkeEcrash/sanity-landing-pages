@@ -1,13 +1,11 @@
 "use client";
 import { PayloadAction } from "@reduxjs/toolkit";
 
-type ButtonProps = {
+type ButtonMiniProps = {
   text: string;
-  bgColor?: string;
-  textColor?: string;
+  dark?: boolean;
   className?: string;
   disabled?: boolean;
-  noHover?: boolean;
   clickFn?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
     | void
     | (() => void)
@@ -23,31 +21,30 @@ type ButtonProps = {
           },
           never
         >
-      >
-    | Promise<void>;
+      >;
 };
 
-export default function Button({
+export default function ButtonMini({
   text,
-  bgColor,
-  textColor,
-  className,
+  dark,
   disabled,
-  noHover,
   clickFn,
-}: ButtonProps) {
+}: ButtonMiniProps) {
   return (
     <button
-      type="button"
-      onClick={(e) => clickFn && clickFn(e)}
-      className={`${bgColor ? bgColor : "bg-royal-blue"} ${
-        textColor ? textColor : "text-white"
-      } shadow-md shadow-background-grey prevent-select p-5 text-2xl font-serif text-center ${
-        !noHover && "hover:scale-110 transition-all duration-200"
-      } ${className}`}
+      className={` h-[32px] prevent-select ${
+        dark ? "bg-royal-blue " : "bg-white"
+      } border flex-center cursor-pointer flex px-2`}
       disabled={disabled}
+      onClick={(e) => clickFn && clickFn(e)}
     >
-      {text}
+      <span
+        className={`body-font ${
+          dark ? "text-white" : "text-royal-blue"
+        } text-sm`}
+      >
+        {text}
+      </span>
     </button>
   );
 }

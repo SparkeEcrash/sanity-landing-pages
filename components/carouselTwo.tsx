@@ -133,7 +133,7 @@ export default function carouselTwo() {
   return (
     <main className="bg-black w-full h-[1200px] mt-[100px] flex justify-center items-center">
       <button
-        className=" text-white p-12 bg-orange-500 mr-10"
+        className=" text-white p-14 bg-orange-500 mr-10"
         onClick={() => {
           setIncrement();
         }}

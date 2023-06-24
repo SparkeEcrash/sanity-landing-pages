@@ -58,7 +58,6 @@ export async function GET(request: NextRequest) {
 
   if (true) {
     data = await sanityClient.fetch(query).catch(console.error);
-    console.log(data);
   } else {
     data = mockData;
     data.isVisitorLiked = true;

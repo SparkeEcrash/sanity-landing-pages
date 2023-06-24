@@ -1,16 +1,13 @@
 /* reference */
 /* https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch */
 
-export const createUser = async (user: any) => {
+export const addUserProfile = async (user: any) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/createUser`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/addUserProfile`,
       {
         method: "POST", // or 'PUT'
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
+        body: user,
       }
     );
     return await res.json();

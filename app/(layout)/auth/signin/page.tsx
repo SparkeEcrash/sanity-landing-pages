@@ -1,41 +1,15 @@
-import Button from "components/button";
-// import { getServerSession } from "next-auth/next";
-// import { authOptions } from "@nextauth/route";
+import SignInPortal from "@components/signInPortal";
 import SigninOption from "sanity-components/signinOption/signinOption";
 
 export default async function Signin() {
   // const session = await getServerSession(authOptions);
   return (
-    <main className="py-[100px]">
-      <section className="bg-transparent flex justify-center items-center">
-        <div className="flex max-w-5xl p-14 flex-col text-center">
-          <h1 className="text-3xl text-royal-blue font-serif text-center">
-            Use your Moon Jar account
-          </h1>
-          <p className="text-background-black font-sans mt-2">
-            New members can sign up <span className="text-royal-blue font-bold cursor-pointer">here</span>
-          </p>
-          <p className="text-background-black font-sans mt-10">Your username or email</p>
-          <input
-            type="text"
-            className="border-2 border-background-grey font-sans mt-2"
-          />
-          <p className="text-background-black font-sans mt-5">Your password</p>
-          <input
-            type="password"
-            className="border-2 border-background-grey font-sans mt-2"
-          />
-          <div>
-            <Button
-              className="mt-10"
-              bgColor="bg-royal-blue"
-              text={"Continue"}
-            />
-          </div>
-        </div>
+    <main className="pt-[100px] bg-input-grey min-h-screen flex items-center justify-center">
+      <section className="flex justify-center items-center mr-24">
+        <SignInPortal />
       </section>
-      <section className="bg-transparent flex justify-center items-center">
-        <div className="flex max-w-5xl p-14 flex-col text-center">
+      <section className="max-w-3xl flex justify-center items-center my-10 bg-white border shadow-sm">
+        <div className="flex p-14 flex-col text-center">
           <h1 className="text-3xl text-royal-blue font-serif text-center">
             Choose another option for signing in
           </h1>

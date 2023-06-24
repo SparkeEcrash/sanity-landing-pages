@@ -6,7 +6,7 @@ export default function Citations() {
   return (
     <section className="w-full bg-white">
       <div className="flex flex-col gap-10 justify-center mx-auto max-w-7xl p-14">
-        <div className="p-12 w-full bg-border-grey flex">
+        <div className="p-14 w-full bg-border-grey flex">
           <div className="mr-10 min-w-[200px] flex items-center">
             <Image
               src={
@@ -43,7 +43,7 @@ export default function Citations() {
             </div>
           </div>
         </div>
-        <div className="p-12 w-full bg-border-grey flex">
+        <div className="p-14 w-full bg-border-grey flex">
           <div className="mr-10 min-w-[200px] flex items-center">
             <Image
               src={
@@ -77,7 +77,7 @@ export default function Citations() {
             </div>
           </div>
         </div>
-        <div className="p-12 w-full bg-border-grey flex">
+        <div className="p-14 w-full bg-border-grey flex">
           <div className="mr-10 min-w-[200px] flex items-center">
             <Image
               src={
@@ -111,7 +111,7 @@ export default function Citations() {
             </div>
           </div>
         </div>
-        <div className="p-12 w-full bg-border-grey flex">
+        <div className="p-14 w-full bg-border-grey flex">
           <div className="mr-10 min-w-[200px] flex items-center">
             <Image
               src={

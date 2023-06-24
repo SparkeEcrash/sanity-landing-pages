@@ -56,17 +56,21 @@ export default function UploadCommentModal({
   }, [show]);
 
   const sendComment = () => {
-    if (comment.trim().length === 0) {
+    const commentTrimmed = comment.trim();
+    if (commentTrimmed.length === 0) {
       setErrors({ comment: true });
     } else {
       if (editCommentModal) {
         dispatch(
-          fetchUpdateComment({ comment, comment_id: toUpdateCommentId })
+          fetchUpdateComment({
+            comment: commentTrimmed,
+            comment_id: toUpdateCommentId,
+          })
         );
       } else if (deleteCommentModal) {
         dispatch(fetchDeleteComment({ comment_id: toUpdateCommentId, aid }));
       } else {
-        dispatch(fetchAddComment({ comment, aid }));
+        dispatch(fetchAddComment({ comment: commentTrimmed, aid }));
       }
     }
   };
@@ -82,7 +86,7 @@ export default function UploadCommentModal({
 
   return (
     <div
-      className="fixed z-20 min-h-screen w-full bg-black/[.5] flex items-center justify-center"
+      className="fixed top-0 left-0 z-20 min-h-screen w-full bg-black/[.5] flex items-center justify-center"
       onClick={() => clickOut && setModalShow(false)}
     >
       <div

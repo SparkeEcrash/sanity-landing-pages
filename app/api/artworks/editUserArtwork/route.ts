@@ -188,7 +188,6 @@ export async function PATCH(request: NextRequest) {
         for (let i = 0; i < imagesUpdated.length; i++) {
           if (typeof imagesUpdated[i] !== "string") {
             isImagesChanged = true;
-          } else {
           }
         }
       }
@@ -280,6 +279,7 @@ export async function PATCH(request: NextRequest) {
             sanityClient
               .patch(deletedArtworks[i])
               .setIfMissing({ isDeleted: true })
+              .set({ isDeleted: true })
               .commit()
               .catch((err) =>
                 console.error("Marking deleted artworks failed: ", err.message)
