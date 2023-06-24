@@ -38,7 +38,16 @@ export default function NavigationMobile() {
       // initialize app for user
       const {
         data: {
-          user: { name, uid, username, image, email, roles, accessToken },
+          user: {
+            name,
+            uid,
+            username,
+            image,
+            email,
+            roles,
+            isPasswordSet,
+            accessToken,
+          },
         },
       } = session;
       dispatch(
@@ -52,6 +61,7 @@ export default function NavigationMobile() {
           roles,
           accessToken,
           signedIn: true,
+          isPasswordSet,
           userLoading: false,
         })
       );

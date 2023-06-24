@@ -24,6 +24,7 @@ declare module "next-auth" {
       roles: string[];
       accessToken: string;
       username?: string;
+      isPasswordSet: boolean;
     };
   }
 }

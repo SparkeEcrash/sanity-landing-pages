@@ -11,6 +11,12 @@ import {
   fetchToggleLike,
   fetchDeleteComment,
 } from "@redux/features/gallerySlice";
+import {
+  fetchAddUserProfile,
+  fetchEditUserProfile,
+  fetchDeleteUserProfile,
+  fetchResetPassword,
+} from "@redux/features/userSlice";
 
 interface Message {
   text: string;
@@ -144,6 +150,54 @@ const messagesSlice = createSlice({
     builder.addCase(fetchToggleHideComment.fulfilled, (state) => {
       const newMessages = state.messages.filter(
         (message) => message.key !== "toggle hide for selected comment"
+      );
+      state.messages = newMessages;
+    });
+    builder.addCase(fetchEditUserProfile.pending, (state) => {
+      state.messages.push({
+        text: "Updating your profile",
+        showLoading: true,
+        key: "update user profile",
+        dark: true,
+      });
+    });
+    builder.addCase(fetchEditUserProfile.fulfilled, (state) => {
+      const newMessages = state.messages.filter(
+        (message) => message.key !== "update user profile"
+      );
+      state.messages = newMessages;
+    });
+    builder.addCase(fetchAddUserProfile.pending, (state) => {
+      state.messages.push({
+        text: "Creating your account",
+        showLoading: true,
+        key: "add user profile",
+        dark: true,
+      });
+    });
+    builder.addCase(fetchAddUserProfile.fulfilled, (state) => {
+      const newMessages = state.messages.filter(
+        (message) => message.key !== "add user profile"
+      );
+      state.messages = newMessages;
+    });
+    builder.addCase(fetchDeleteUserProfile.pending, (state) => {
+      state.messages.push({
+        text: "Deleting your account",
+        showLoading: true,
+        key: "delete user profile",
+        dark: true,
+      });
+    });
+    builder.addCase(fetchDeleteUserProfile.fulfilled, (state) => {
+      const newMessages = state.messages.filter(
+        (message) => message.key !== "delete user profile"
+      );
+      state.messages = newMessages;
+    });
+    builder.addCase(fetchResetPassword.fulfilled, (state) => {
+      const newMessages = state.messages.filter(
+        (message) => message.key !== "change user password"
       );
       state.messages = newMessages;
     });

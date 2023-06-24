@@ -1,3 +1,10 @@
+interface UserProfileProps {
+  name: string;
+  userEmail: string;
+  userImage: string;
+  username: string;
+}
+
 interface ArtworkProps {
   _id: string;
   _updatedAt: string;

@@ -173,13 +173,13 @@ const Artwork = ({
             </div>
           </div>
         </div>
-        <div className="flex flex-col min-h-[75px] p-2 relative w-full overflow-hidden justify-center">
+        <div className="bg-white flex flex-col min-h-[75px] p-2 relative w-full overflow-hidden justify-center">
           <h2 className="w-full title-font text-xl text-center">
             {trimString(75, title)}
           </h2>
         </div>
         {posted && (
-          <div className="w-full">
+          <div className="w-full bg-white">
             <div className="flex justify-between pr-2 pb-2 pl-2">
               <p className="body-font text-sm">Likes: {likes.length}</p>
               <p className="body-font text-sm">Views: {views}</p>

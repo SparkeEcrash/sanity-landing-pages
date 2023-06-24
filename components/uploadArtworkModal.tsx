@@ -42,7 +42,7 @@ export default function UploadArtworkModal({
 }: UploadArtworkModalProps) {
   const dispatch = AppDispatch();
   const artworks = useAppSelector(getArtworks);
-  const { artworkFormData, isTogglingHideComment } = artworks;
+  const { artworkFormData } = artworks;
   const [showDelete, setShowDelete] = useState<boolean>(false);
   const [textDelete, setTextDelete] = useState<string>("");
   const [images, setImages] = useState<(File | string)[]>([
@@ -70,6 +70,7 @@ export default function UploadArtworkModal({
   } = artworkFormData;
   type Errors = {
     value: {
+      [key: string]: any;
       images?: boolean;
       title?: boolean;
       comment?: boolean;
@@ -121,8 +122,6 @@ export default function UploadArtworkModal({
       "image/tiff",
     ];
     if (e.target.files && e.target.files.length !== 0) {
-      console.log("this fired");
-      console.log(e.target.files);
       const fileList: File[] = Array.from(e.target.files);
       const myFileList = fileList.filter((file) =>
         acceptedImageTypes.includes(file.type)
@@ -199,37 +198,32 @@ export default function UploadArtworkModal({
   };
 
   const confirmDelete = () => {
-    console.log("hello");
-    console.log(textDelete);
     const trimmedLowerCaseTextDelete = textDelete.trim().toLowerCase();
     const trimmedLowerCaseTitle = title.trim().toLowerCase();
     if (trimmedLowerCaseTextDelete === trimmedLowerCaseTitle) {
       dispatch(fetchDeleteUserArtwork({ aid }));
       onChange([{ value: { ...errors, delete: false }, field: "errors" }]);
     } else {
-      console.log('this fired');
       onChange([{ value: { ...errors, delete: true }, field: "errors" }]);
     }
   };
 
   const sendData = (action: string) => {
+    const titleTrimmed = title.trim();
+    const commentTrimmed = comment.trim();
     errorChecks.push({
       value: {
         ...errors,
         images: images.length === 0,
-        title: title.length === 0,
-        comment: comment.length === 0,
+        title: titleTrimmed.length === 0,
+        comment: commentTrimmed.length === 0,
         tags: tags.length === 0,
       },
       field: "errors",
     });
     onChange(errorChecks);
-
-    let hasError =
-      images.length === 0 ||
-      title.length === 0 ||
-      comment.length === 0 ||
-      tags.length === 0;
+    const errorValues = errorChecks[0].value;
+    const hasError = Object.keys(errorValues).some((key) => errorValues[key]);
 
     if (!hasError) {
       const posted = action === "Post" ? true : false;
@@ -250,8 +244,8 @@ export default function UploadArtworkModal({
         : JSON.stringify({
             posted,
             imageDetails,
-            title: title.trim(),
-            comment: comment.trim(),
+            title: titleTrimmed,
+            comment: commentTrimmed,
             tags,
             isMaker,
             isForSale,
@@ -291,7 +285,7 @@ export default function UploadArtworkModal({
 
   return (
     <div
-      className="fixed z-20 min-h-screen w-full bg-black/[.5] flex items-center justify-center"
+      className="fixed top-0 left-0 z-20 min-h-screen w-full bg-black/[.5] flex items-center justify-center"
       onClick={() => clickOut && setModalShow(false)}
     >
       <div
@@ -360,7 +354,7 @@ export default function UploadArtworkModal({
                         src={imageDetail.path}
                         alt={imageDetail.name}
                         fill
-                        className="object-cover peer"
+                        className="object-cover prevent-select peer"
                         onLoad={({
                           currentTarget,
                         }: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -577,7 +571,7 @@ export default function UploadArtworkModal({
         {showDelete && (
           <div className="pt-14 pr-14 pl-14 flex flex-col">
             <p className="title-font text-base">
-              Please enter the title to confirm deleting the artwork
+              Please enter the title of the artwork to confirm deleting the artwork
             </p>
             <input
               type="text"

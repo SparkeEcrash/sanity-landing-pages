@@ -152,7 +152,6 @@ export default function Spotlight({ index, images, setIndex }: SpotlightProps) {
     }
 
     if (images.length < 3 && imagesDisplayed[1].imageUrl) {
-      console.log("this hit");
       const { width: setWidthTwo, height: setHeightTwo } = setMaxDimensions(
         imagesDisplayed[1].width,
         imagesDisplayed[1].height

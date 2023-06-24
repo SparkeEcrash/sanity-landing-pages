@@ -31,7 +31,7 @@ import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 
 //api: check_booked_dates
 
-export default function Artist() {
+export default function Artworks() {
   const router = useRouter();
   const { signedIn, uid, userLoading, accessToken } = useAppSelector(findUser);
   const {
@@ -89,7 +89,11 @@ export default function Artist() {
                   className={`h-10 text-royal-blue prevent-select cursor-pointer`}
                   onClick={() => {
                     dispatch(resetArtwork());
-                    dispatch(setShowArtworkModal({ show: true }));
+                    dispatch(
+                      setShowArtworkModal({
+                        show: true,
+                      })
+                    );
                   }}
                 />
               </div>

@@ -107,35 +107,3 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ data: "Adding like failed" }, { status: 500 });
   }
 }
-// export async function GET(request: NextRequest) {
-//   const aid = request.nextUrl.searchParams.get("aid");
-//   const uid = request.nextUrl.searchParams.get("uid");
-
-//   console.log(aid);
-
-//   const queryForArtwork = groq`
-// 	*[_type == "artwork" && _id == "${aid}" && isDeleted != true]
-//   `;
-
-//   const queryForUser = groq`
-// 	*[_type == "user" && _id == "${uid}"]
-//   `;
-
-//   const data = await sanityClient.fetch(queryForArtwork);
-//   if (data.length !== 0) {
-//     const likes = data[0].likes;
-//     const result = await sanityClient
-//       .patch(aid!)
-//       .inc({likes: 1}) // Increment field by count
-//       .commit();
-//     if ("_id" in result) {
-//       return NextResponse.json({ likes: likes + 1 }, { status: 200 });
-//     }
-//   }
-//   //TODO: proper validation check for checking user here
-//   if (data instanceof Array) {
-//     return NextResponse.json({ newUser: data.length === 0 }, { status: 200 });
-//   } else {
-//     return NextResponse.json({ data: "an error occured" }, { status: 500 });
-//   }
-// }

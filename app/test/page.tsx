@@ -3,7 +3,6 @@ import { useEffect } from "react";
 
 export default function Test() {
   useEffect(() => {
-    console.log("this");
   }, []);
   return (
     <main className="flex items-center justify-center min-h-screen">

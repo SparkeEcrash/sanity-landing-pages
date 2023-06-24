@@ -39,6 +39,7 @@ const Modal = ({ text, bgColor, textColor, className, hover }: ModalProps) => {
 };
 
 const UserModal = ({ hover }: { hover: boolean }) => {
+  const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
   const activeLinkStyle = "font-serif text-royal-blue text-3xl opacity-100";
   const inactiveLinkStyleDesktop =
     "font-serif text-royal-blue text-3xl opacity-70 hover:opacity-100 transition-all duration-200";
@@ -59,26 +60,37 @@ const UserModal = ({ hover }: { hover: boolean }) => {
         Artworks
       </Link>
       <Link
-        href={"coordinator"}
+        href={"likes"}
         className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
-          path === "/coordinator" ? activeLinkStyle : inactiveLinkStyleDesktop
+          path === "/likes" ? activeLinkStyle : inactiveLinkStyleDesktop
         }`}
       >
-        Coordinator
+        Likes
+      </Link>
+      <Link
+        href={"comments"}
+        className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
+          path === "/comments" ? activeLinkStyle : inactiveLinkStyleDesktop
+        }`}
+      >
+        Comments
       </Link>
       <div
         className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
           path === "/signout" ? activeLinkStyle : inactiveLinkStyleDesktop
         }`}
         onClick={() => {
-          dispatch(
-            addMessage({
-              text: "Signing out",
-              showLoading: true,
-              key: "signing out",
-            })
-          );
-          signOut();
+          if (!isSigningOut) {
+            dispatch(
+              addMessage({
+                text: "Signing out",
+                showLoading: true,
+                key: "signing out",
+              })
+            );
+            signOut();
+            setIsSigningOut(true);
+          }
         }}
       >
         Sign out

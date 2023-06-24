@@ -284,124 +284,6 @@ const artworksSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    // builder.addCase(fetchUserArtworks.fulfilled, (state, action) => {
-    //   const userArtworksSaved: ArtworkProps[] = [];
-    //   // const existingArtworksSaved = state.artworksSaved;
-    //   const userArtworksPosted: ArtworkProps[] = [];
-    //   // const existingArtworksPosted = state.artworksPosted;
-    //   action.payload.data.forEach((artwork: IArtwork) => {
-    //     if (artwork.posted) {
-    //       userArtworksPosted.push({
-    //         _id: artwork._id,
-    //         _updatedAt: artwork._updatedAt,
-    //         title: artwork.title,
-    //         images: artwork.images,
-    //         posted: artwork.posted,
-    //         tags: artwork.tags,
-    //         uid: artwork.uid,
-    //         name: artwork.name,
-    //         userImage: artwork.userImage,
-    //         userEmail: artwork.userEmail,
-    //         username: artwork.username,
-    //         isMaker: artwork.isMaker,
-    //         isForSale: artwork.isForSale,
-    //         views: artwork.views,
-    //         likes: artwork.likes ? artwork.likes : [],
-    //         comments: artwork.comments ? artwork.comments : [],
-    //         price: artwork.price,
-    //         comment: artwork.comment,
-    //         dateUploaded: artwork.dateUploaded,
-    //         dateUploadedNumber: artwork.dateUploadedNumber,
-    //         aid: artwork._id,
-    //       });
-    //     } else {
-    //       userArtworksSaved.push({
-    //         _id: artwork._id,
-    //         _updatedAt: artwork._updatedAt,
-    //         title: artwork.title,
-    //         images: artwork.images,
-    //         posted: artwork.posted,
-    //         tags: artwork.tags,
-    //         uid: artwork.uid,
-    //         name: artwork.name,
-    //         userImage: artwork.userImage,
-    //         userEmail: artwork.userEmail,
-    //         username: artwork.username,
-    //         isMaker: artwork.isMaker,
-    //         isForSale: artwork.isForSale,
-    //         views: artwork.views,
-    //         likes: artwork.likes ? artwork.likes : [],
-    //         comments: artwork.comments ? artwork.comments : [],
-    //         price: artwork.price,
-    //         comment: artwork.comment,
-    //         dateUploaded: artwork.dateUploaded,
-    //         dateUploadedNumber: artwork.dateUploadedNumber,
-    //         aid: artwork._id,
-    //       });
-    //     }
-    //   });
-
-    //   //sort for intial fetch of saved artworks
-    //   if (state.filterSaved === "Updated") {
-    //     state.artworksSaved = userArtworksSaved.sort(
-    //       (a, b) => Date.parse(b._updatedAt) - Date.parse(a._updatedAt)
-    //     );
-    //   }
-    //   if (state.filterSaved === "Newest") {
-    //     state.artworksSaved = userArtworksSaved.sort(
-    //       (a, b) => b.dateUploadedNumber - a.dateUploadedNumber
-    //     );
-    //   }
-    //   if (state.filterSaved === "Oldest") {
-    //     state.artworksSaved = userArtworksSaved.sort(
-    //       (a, b) => a.dateUploadedNumber - b.dateUploadedNumber
-    //     );
-    //   }
-    //   if (state.filterSaved === "Alphabetical") {
-    //     state.artworksSaved = userArtworksSaved.sort((a, b) => {
-    //       if (a.title < b.title) {
-    //         return -1;
-    //       }
-    //       if (a.title > b.title) {
-    //         return 1;
-    //       }
-    //       return 0;
-    //     });
-    //   } else {
-    //     state.artworksSaved = userArtworksSaved;
-    //   }
-
-    //   //sort for intial fetch of posted artworks
-    //   if (state.filterPosted === "Updated") {
-    //     state.artworksPosted = userArtworksPosted.sort(
-    //       (a, b) => Date.parse(b._updatedAt) - Date.parse(a._updatedAt)
-    //     );
-    //   }
-    //   if (state.filterPosted === "Most Liked") {
-    //     state.artworksPosted = userArtworksPosted.sort(
-    //       (a, b) => b.likes.length - a.likes.length
-    //     );
-    //   }
-    //   if (state.filterPosted === "Most Viewed") {
-    //     state.artworksPosted = userArtworksPosted.sort(
-    //       (a, b) => a.views - b.views
-    //     );
-    //   }
-    //   if (state.filterPosted === "Alphabetical") {
-    //     state.artworksPosted = userArtworksPosted.sort((a, b) => {
-    //       if (a.title < b.title) {
-    //         return -1;
-    //       }
-    //       if (a.title > b.title) {
-    //         return 1;
-    //       }
-    //       return 0;
-    //     });
-    //   } else {
-    //     state.artworksPosted = userArtworksPosted;
-    //   }
-    //   state.artworksLoading = false;
-    // });
     builder.addCase(fetchToggleHideComment.pending, (state) => {
       state.isTogglingHideComment = true;
     });
@@ -409,13 +291,6 @@ const artworksSlice = createSlice({
       state.artworkFormData.comments = action.payload.data;
       state.isTogglingHideComment = false;
     });
-    // builder.addCase(fetchEditUserArtwork.pending, (state) => {
-    //   state.isSendingArtwork = true;
-    // });
-    // builder.addCase(fetchEditUserArtwork.fulfilled, (state) => {
-    //   state.isSendingArtwork = false;
-    //   state.showArtworkModal = false;
-    // });
     builder.addMatcher(
       isAnyOf(
         fetchAddUserArtwork.pending,
@@ -435,6 +310,10 @@ const artworksSlice = createSlice({
       (state) => {
         state.isSendingArtwork = false;
         state.showArtworkModal = false;
+        state.editArtworkModal = false;
+        state.deleteArtworkModal = false;
+        state.toUpdateArtworkId = "";
+        state.artworkFormData = initialStateArtworkFormData;
       }
     );
     builder.addMatcher(
@@ -449,9 +328,7 @@ const artworksSlice = createSlice({
           return;
         }
         const userArtworksSaved: ArtworkProps[] = [];
-        // const existingArtworksSaved = state.artworksSaved;
         const userArtworksPosted: ArtworkProps[] = [];
-        // const existingArtworksPosted = state.artworksPosted;
         payload.data.forEach((artwork: IArtwork) => {
           if (artwork.posted) {
             userArtworksPosted.push({
@@ -566,31 +443,6 @@ const artworksSlice = createSlice({
         state.artworksLoading = false;
       }
     );
-    // builder.addMatcher(
-    //   isAnyOf(fetchToggleHideComment.fulfilled),
-    //   (state, { payload }) => {
-    // for (const [key, value] of Object.entries(action.payload)) {
-    //   if (key === "images") {
-    //     state.artworkFormData.imageDetailsFromRedux = value.map(
-    //       (image: { imageUrl: string; height: number; width: number }) => ({
-    //         path: image.imageUrl,
-    //         dimensions: { height: image.height, width: image.width },
-    //         name: "Uploaded Image",
-    //       })
-    //     );
-    //     state.artworkFormData.imagesFromRedux = value.map(
-    //       (image: { _id: string }) => image._id
-    //     );
-    //   } else if (key === "tags") {
-    //     state.artworkFormData.tags = value.map(
-    //       (tag: { label: string }) => tag.label
-    //     );
-    //   } else {
-    //     state.artworkFormData[key] = value;
-    //   }
-    // }
-    //   }
-    // );
   },
 });
 
