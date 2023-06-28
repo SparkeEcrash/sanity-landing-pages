@@ -15,7 +15,8 @@ import {
   fetchAddUserProfile,
   fetchDeleteUserProfile,
 } from "../redux/features/userSlice";
-import { verifyEmail } from "utils";
+import { imageResize, verifyEmail } from "utils";
+import { acceptedImageTypes } from "statics";
 
 interface UserFormModalProps {
   show: boolean;
@@ -41,7 +42,6 @@ export default function UserFormModal({
   const dispatch = AppDispatch();
   const [showDisclaimer, setShowDisclaimer] = useState<boolean>(false);
   const [images, setImages] = useState<(File | string)[]>([]);
-  const [showDelete, setShowDelete] = useState<boolean>(false);
   const [textDelete, setTextDelete] = useState<string>("");
   const [imageDetails, setImageDetails] = useState<
     {
@@ -85,7 +85,7 @@ export default function UserFormModal({
     name: "Please enter your name",
     userEmail: "Please enter your email",
     isUserEmailInvalid: "Please enter a valid email address",
-    isUserImageInvalid: "Please select a file with a valid image format",
+    isUserImageInvalid: "Image file type is not supported",
     password: "Please enter your password",
     isPasswordUnconfirmed: "Passwords do not match",
     delete: "The text you entered did not match your name",
@@ -100,14 +100,7 @@ export default function UserFormModal({
     };
   }, [show]);
 
-  const addPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const acceptedImageTypes = [
-      "image/png",
-      "image/svg",
-      "image/jpeg",
-      "image/gif",
-      "image/tiff",
-    ];
+  const addPicture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length !== 0) {
       const fileList: File[] = Array.from(e.target.files);
       const myFileList = fileList.filter((file) =>
@@ -122,11 +115,16 @@ export default function UserFormModal({
           { value: { ...errors, isUserImageInvalid: false }, field: "errors" },
         ]);
       }
-      const myFilePaths = myFileList.map((file) => ({
+      let myFileListResized: File[] = [];
+      for (let i = 0; i < myFileList.length; i++) {
+        const imageResized = await imageResize(myFileList[i], 200, 200, true);
+        myFileListResized.push(imageResized as File);
+      }
+      const myFilePaths = myFileListResized.map((file) => ({
         name: file.name,
         path: URL.createObjectURL(file),
       }));
-      setImages([...myFileList]);
+      setImages([...myFileListResized]);
       setImageDetails([...myFilePaths]);
     }
   };

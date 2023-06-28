@@ -10,3 +10,11 @@ export const avatars = [
   "https://cdn.sanity.io/images/m2vuwcq7/production/7ddd0204a28143882c167b1598a7882a9bcf2f99-247x248.png",
   "https://cdn.sanity.io/images/m2vuwcq7/production/7b04c4416a45d5316505432b25a6c2abe1160528-246x248.png",
 ];
+
+export const acceptedImageTypes = [
+  "image/png",
+  "image/svg",
+  "image/jpeg",
+  "image/gif",
+  "image/tiff",
+];

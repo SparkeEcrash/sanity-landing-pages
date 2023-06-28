@@ -20,7 +20,7 @@ export default function Footer() {
           <div className="flex flex-col mr-5">
             <div className="flex items-center">
               <p className="font-sans text-white">
-                All Rights Reserved ©2023 Moon Jar
+                All Rights Reserved ©2023 Lunar Jar
               </p>
             </div>
             <ul className="flex gap-y-3 gap-x-10 xl:justify-around font-sans text-border-grey mt-5 flex-wrap">
