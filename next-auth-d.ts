@@ -17,6 +17,7 @@ declare module "next-auth" {
 
     user: {
       /** The user's returned info when using jwt strategy with accessToken. */
+      id: string;
       uid: string;
       name: string;
       image: string;

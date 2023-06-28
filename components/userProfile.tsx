@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppSelector, AppDispatch } from "@redux/store";
 import {
   findUser,
@@ -31,7 +31,6 @@ export default function UserForm() {
     showUserProfileModal,
     updateSessionFlag,
     showResetPasswordModal,
-    isResettingPassword,
   } = useAppSelector(findUser);
   useEffect(() => {
     const updateSession = async () => {

@@ -4,6 +4,7 @@ import { getTodayDate, getDateNow } from "utils";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@nextauth/route";
 import { groq } from "next-sanity";
+import { queryArtwork } from "@utils/groq";
 
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -34,46 +35,9 @@ export async function PATCH(request: NextRequest) {
 				*[_type == "artwork" && _id == "${
           documentResult!._id
         }" && isDeleted != true][0]{
-					...,
-					comments[]-> {
-						_id,
-						uid,
-						aid,
-						name,
-						userEmail,
-						userImage,
-						username,
-						comment,
-						datePosted,
-						datePostedNumber,
-						dateUpdated,
-						dateUpdatedNumber,
-						isHidden,
-						hiddenBy,
-					},
-					likes[]-> {
-						_id,
-						uid,
-						aid,
-						name,
-						userEmail,
-						userImage,
-						username,
-						datePosted,
-						datePostedNumber,
-					},
-					tags[]-> {
-						_id,
-						label
-					},
-					images[]-> {
-						_id,
-						height,
-						width,
-						"imageUrl": image.asset->url,
-					}
-				}
-				`;
+          ${queryArtwork}
+          }
+          `;
       const data = await sanityClient.fetch(query).catch(console.error);
       const likes = data.likes ? data.likes : [];
       data.isVisitorLiked = likes.some((like: ILike) => like.uid === uid);

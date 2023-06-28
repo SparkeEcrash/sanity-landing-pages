@@ -14,10 +14,7 @@ interface ArtworkProps {
   posted: boolean;
   tags: TagProps[];
   uid: string;
-  name: string;
-  userImage: string;
-  userEmail: string;
-  username: string;
+  user: IUser;
   views: number;
   likes: LikeProps[];
   comments: CommentProps[];
@@ -41,11 +38,10 @@ interface ArtworkImageProps {
 
 interface LikeProps {
   _id: string;
+  user: IUser;
+  artwork: IArtwork;
   uid: string;
-  name: string;
-  username: string;
-  userImage: string;
-  userEmail: string;
+  aid: string;
   datePosted: string;
   datePostedNumber: number;
 }
@@ -53,10 +49,9 @@ interface LikeProps {
 interface CommentProps {
   _id: string;
   uid: string;
-  name: string;
-  username: string;
-  userImage: string;
-  userEmail: string;
+  user: IUser;
+  aid: string;
+  artwork: IArtwork;
   comment: string;
   datePosted: string;
   datePostedNumber: number;

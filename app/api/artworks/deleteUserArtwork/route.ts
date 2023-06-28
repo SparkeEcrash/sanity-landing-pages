@@ -4,6 +4,7 @@ import { getTodayDate, getDateNow } from "utils";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@nextauth/route";
 import { groq } from "next-sanity";
+import { queryArtwork } from "@utils/groq";
 
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -18,6 +19,7 @@ export async function PATCH(request: NextRequest) {
       .setIfMissing({ isDeleted: true })
       .setIfMissing({ dateUpdated: "" })
       .setIfMissing({ dateUpdatedNumber: 0 })
+      .set({ posted: false })
       .set({ dateUpdated })
       .set({ dateUpdatedNumber })
       .set({ isDeleted: true })
@@ -26,46 +28,9 @@ export async function PATCH(request: NextRequest) {
     if (documentResult !== null) {
       const query = groq`
 			*[_type == "artwork" && uid == "${uid}" && isDeleted != true]{
-				...,
-				comments[]-> {
-					_id,
-					uid,
-					aid,
-					name,
-					userEmail,
-					userImage,
-					username,
-					comment,
-					datePosted,
-					datePostedNumber,
-					dateUpdated,
-					dateUpdatedNumber,
-					isHidden,
-					hiddenBy,
-				},
-				likes[]-> {
-					_id,
-					uid,
-					aid,
-					name,
-					userEmail,
-					userImage,
-					username,
-					datePosted,
-					datePostedNumber,
-				},
-				tags[]-> {
-					_id,
-					label,
-				},
-				images[]-> {
-					_id,
-					height,
-					width,
-					"imageUrl": image.asset->url,
+				${queryArtwork}
 				}
-			}
-			`;
+				`;
       const data = await sanityClient.fetch(query).catch(console.error);
       const likes = data.likes ? data.likes : [];
       data.isVisitorLiked = likes.some((like: ILike) => like.uid === uid);

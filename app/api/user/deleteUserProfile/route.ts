@@ -15,28 +15,6 @@ export async function PATCH(request: NextRequest) {
   const { uid: uidFromClient } = await request.json();
 
   if (uid === uidFromClient) {
-    const queryArtworks = groq`
-	*[_type == "artwork" && uid == "${uid}" && isDeleted != true ]`;
-
-    const userArtworksToDelete = await sanityClient
-      .fetch(queryArtworks)
-      .catch(console.error);
-
-    userArtworksToDelete.forEach((artwork: { _id: PatchSelection }) => {
-      sanityClient
-        .patch(artwork._id)
-        .setIfMissing({ isDeleted: true })
-        .setIfMissing({ dateUpdated: "" })
-        .setIfMissing({ dateUpdatedNumber: 0 })
-        .set({ dateUpdated })
-        .set({ dateUpdatedNumber })
-        .set({ isDeleted: true })
-        .commit()
-        .catch((err) =>
-          console.error("deleting user's artworks failed: ", err.message)
-        );
-    });
-
     const queryUser = groq`
 	*[_type == "user" && uid == "${uid}" && isDeleted != true ][0]`;
     const userToUpdate = await sanityClient
@@ -61,8 +39,68 @@ export async function PATCH(request: NextRequest) {
       isDeleted: true,
     };
 
-    const data = await sanityClient.create(deletedUserDoc).catch(console.error);
-    if (data) {
+    const deletedUser = await sanityClient
+      .create(deletedUserDoc)
+      .catch(console.error);
+    if (deletedUser) {
+      //delete likes
+      const queryLikes = groq`
+      *[_type == "like" && uid == "${uid}"]`;
+      const userLikesToDelete = await sanityClient.fetch(queryLikes);
+      userLikesToDelete.forEach((like: { _id: string }) => {
+        sanityClient.delete(like._id);
+      });
+      //delete artworks
+      const queryArtworks = groq`
+      *[_type == "artwork" && uid == "${uid}" && isDeleted != true ]`;
+      const userArtworksToDelete = await sanityClient
+        .fetch(queryArtworks)
+        .catch(console.error);
+      userArtworksToDelete.forEach((artwork: { _id: PatchSelection }) => {
+        sanityClient
+          .patch(artwork._id)
+          .setIfMissing({ isDeleted: true })
+          .setIfMissing({ dateUpdated: "" })
+          .setIfMissing({ dateUpdatedNumber: 0 })
+          .set({ posted: false })
+          .set({ dateUpdated })
+          .set({ dateUpdatedNumber })
+          .set({ isDeleted: true })
+          .unset(["user"])
+          .setIfMissing({
+            user: { _type: "userDeleted", _ref: deletedUser._id },
+          })
+          .commit()
+          .catch((err) =>
+            console.error("deleting user's artworks failed: ", err.message)
+          );
+      });
+      //delete comments
+      const queryComments = groq`
+      *[_type == "comment" && uid == "${uid}" && isDeleted != true ]`;
+      const userCommentsToDelete = await sanityClient
+        .fetch(queryComments)
+        .catch(console.error);
+      userCommentsToDelete.forEach((comment: { _id: PatchSelection }) => {
+        sanityClient
+          .patch(comment._id)
+          .setIfMissing({ isDeleted: true })
+          .setIfMissing({ dateUpdated: "" })
+          .setIfMissing({ dateUpdatedNumber: 0 })
+          .set({ posted: false })
+          .set({ dateUpdated })
+          .set({ dateUpdatedNumber })
+          .set({ isDeleted: true })
+          .unset(["user"])
+          .setIfMissing({
+            user: { _type: "userDeleted", _ref: deletedUser._id },
+          })
+          .commit()
+          .catch((err) =>
+            console.error("deleting user's artworks failed: ", err.message)
+          );
+      });
+      //delete user
       const identifications = uid!.split(".");
       const providerId = identifications[0];
       const providerAccountId = identifications[1];
@@ -82,8 +120,8 @@ export async function PATCH(request: NextRequest) {
         sanityClient.delete(userToUpdate._id).catch(console.error);
       }
     }
-    if (data !== null) {
-      return NextResponse.json({ data }, { status: 200 });
+    if (deletedUser !== null) {
+      return NextResponse.json({ deletedUser }, { status: 200 });
     } else {
       return NextResponse.json(
         { data: "Deleting user account failed" },

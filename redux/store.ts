@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import sampleReducer from "@redux/features/sampleSlice";
 import userReducer from "@redux/features/userSlice";
 import messagesReducer from "@redux/features/messagesSlice";
 import artworksReducer from "@redux/features/artworksSlice";
@@ -10,14 +9,10 @@ import logger from "redux-logger";
 
 export const store = configureStore({
   reducer: {
-    sample: sampleReducer,
     user: userReducer,
     messages: messagesReducer,
     artworks: artworksReducer,
     gallery: galleryReducer,
-    // posts: postsReducer,
-    // comments: commentsReducer,
-    // users: usersReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   // preloadedState,

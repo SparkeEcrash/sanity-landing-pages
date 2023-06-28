@@ -28,23 +28,36 @@ interface IArtworkImage extends SanityBody {
   imageUrl: string;
 }
 
+interface IUser extends SanityBody {
+  uid: string;
+  name: string;
+  email: string;
+  image: string;
+  username: string;
+  password: string;
+  provider: string;
+  roles: string[];
+  isEmailVerified?: boolean;
+  isPasswordSet: boolean;
+  dateJoined: string;
+  dateUpdated: string;
+  dateUpdatedNumber: number;
+}
+
 interface ILike extends SanityBody {
+  user: IUser;
+  artwork: IArtwork;
   uid: string;
   aid: string;
-  name: string;
-  userEmail: string;
-  userImage: string;
-  username: string;
   datePosted: string;
   datePostedNumber: number;
 }
 
 interface IComment extends SanityBody {
   uid: string;
-  name: string;
-  userImage: string;
-  userEmail: string;
-  username: string;
+  user: IUser;
+  aid: string;
+  artwork: IArtwork;
   comment: string;
   datePosted: string;
   datePostedNumber: number;
@@ -61,10 +74,7 @@ interface IArtwork extends SanityBody {
   tags: ITag[];
   posted: boolean;
   uid: string;
-  name: string;
-  userImage: string;
-  userEmail: string;
-  username: string;
+  user: IUser;
   likes: ILike[];
   comments: IComment[];
   views: number;
@@ -75,4 +85,5 @@ interface IArtwork extends SanityBody {
   dateUploadedNumber: number;
   dateUpdated?: string;
   dateUpdatedNumber?: number;
+  isDeleted?: boolean;
 }

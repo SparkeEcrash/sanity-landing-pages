@@ -18,6 +18,7 @@ import {
   ArtworkFormData as ArtworkFormDataInterface,
   resetArtwork,
 } from "@redux/features/artworksSlice";
+import { getDefaultUserAvatar } from "@utils/index";
 
 interface UploadArtworkModalProps {
   show: boolean;
@@ -493,11 +494,15 @@ export default function UploadArtworkModal({
                     <div className="flex" key={comment._id}>
                       <div>
                         <Comment
-                          _id={comment._id}
+                          _id={comment._id} 
                           isHidden={comment.isHidden}
                           comment={comment.comment}
-                          name={comment.name}
-                          userImage={comment.userImage}
+                          name={comment.user ? comment.user.name : "Unknown"}
+                          userImage={
+                            comment.user
+                              ? comment.user.image
+                              : getDefaultUserAvatar()
+                          }
                           datePosted={comment.datePosted}
                           dateUpdated={comment.dateUpdated}
                         />
@@ -571,7 +576,8 @@ export default function UploadArtworkModal({
         {showDelete && (
           <div className="pt-14 pr-14 pl-14 flex flex-col">
             <p className="title-font text-base">
-              Please enter the title of the artwork to confirm deleting the artwork
+              Please enter the title of the artwork to confirm deleting the
+              artwork
             </p>
             <input
               type="text"

@@ -1,0 +1,20 @@
+export const userInitialValue: IUser = {
+  uid: "",
+  name: "",
+  email: "",
+  image: "",
+  username: "",
+  password: "",
+  provider: "",
+  roles: [],
+  isPasswordSet: false,
+  dateJoined: "",
+  dateUpdated: "",
+  dateUpdatedNumber: 0,
+  _createdAt: "",
+  _id: "",
+  _rev: "",
+  _type: "",
+  _updatedAt: "",
+};
+

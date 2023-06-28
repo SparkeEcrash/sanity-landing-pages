@@ -15,7 +15,7 @@ export default function Navigation() {
         <div>
           <Link href="/">
             <Image
-              src={"/pictures/company-logo.png"}
+              src={"/pictures/lunar-jar-logo.png"}
               alt={"Company Logo"}
               width={100}
               height={100}

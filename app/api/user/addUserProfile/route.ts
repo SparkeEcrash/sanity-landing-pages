@@ -4,8 +4,7 @@ import { groq } from "next-sanity";
 import { getTodayDate, getDateNow } from "utils";
 import * as bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
-import { verifyEmail } from "utils";
-import { avatars } from "statics";
+import { verifyEmail, getDefaultUserAvatar } from "utils";
 
 export async function POST(request: NextRequest) {
   const form = await request.formData();
@@ -16,6 +15,7 @@ export async function POST(request: NextRequest) {
   const dateJoined = getTodayDate();
   const dateJoinedNumber = getDateNow();
   const id = "user." + uuidv4();
+  const uid = "credentials." + id.split(".")[1];
 
   if (name && verifyEmail(userEmail) && password) {
     const nameTrimmed = name.trim();
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       isPasswordSet: true,
       provider: "credentials",
       roles: ["user"],
-      uid: id,
+      uid,
       dateJoined,
       dateJoinedNumber,
     };
@@ -118,8 +118,7 @@ export async function POST(request: NextRequest) {
       }
     } else {
       /*Add default profile image */
-      const avatarImageUrl =
-        avatars[Math.floor(Math.random() * avatars.length)];
+      const avatarImageUrl = getDefaultUserAvatar();
       const docUserProfileWithImage = await sanityClient
         .patch(id)
         .set({ image: avatarImageUrl })

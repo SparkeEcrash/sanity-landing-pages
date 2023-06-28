@@ -28,6 +28,7 @@
       "@api/*": ["app/api/*"],
       "@redux/*": ["redux/*"],
       "@lib/*": ["lib/*"],
+      "@utils/*": ["utils/*"]
     }
   },
   "include": [

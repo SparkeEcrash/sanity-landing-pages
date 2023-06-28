@@ -60,7 +60,7 @@ export default function Artworks() {
 
   useEffect(() => {
     signedIn && dispatch(fetchUserArtworks({ uid, accessToken }));
-  }, []);
+  }, [signedIn]);
 
   useEffect(() => {
     signedIn && dispatch(sortArtworksSavedByFilter(filterSaved));
@@ -100,9 +100,9 @@ export default function Artworks() {
             </div>
             {postedView ? (
               <div className="p-14">
-                <p className="text-3xl text-royal-blue font-serif text-center">
+                <h1 className="text-3xl text-royal-blue font-serif text-center">
                   Your artworks posted on the gallery
-                </p>
+                </h1>
                 <div className="mt-10 flex justify-center">
                   <Toggle
                     yesno={false}
@@ -128,9 +128,9 @@ export default function Artworks() {
               </div>
             ) : (
               <div className="p-14">
-                <p className="text-3xl text-royal-blue font-serif text-center">
+                <h1 className="text-3xl text-royal-blue font-serif text-center">
                   Your artworks saved on your account
-                </p>
+                </h1>
                 <div className="mt-10 flex justify-center">
                   <Toggle
                     yesno={false}

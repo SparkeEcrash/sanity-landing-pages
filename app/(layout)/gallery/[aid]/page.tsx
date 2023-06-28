@@ -21,7 +21,7 @@ import {
 import { AppDispatch, useAppSelector } from "@redux/store";
 import { addMessage } from "@redux/features/messagesSlice";
 import { findUser } from "@redux/features/userSlice";
-import { changeDateFormat } from "utils";
+import { changeDateFormat, getDefaultUserAvatar } from "utils";
 import BounceLoader from "react-spinners/BounceLoader";
 
 export default function About({ params }: { params: { aid: string } }) {
@@ -30,9 +30,7 @@ export default function About({ params }: { params: { aid: string } }) {
   const {
     title,
     images,
-    name,
-    userImage,
-    userEmail,
+    user,
     comment,
     views,
     likes,
@@ -45,6 +43,7 @@ export default function About({ params }: { params: { aid: string } }) {
     dateUpdated,
     isVisitorLiked,
   } = artwork;
+  const { name, image: userImage, email: userEmail } = user;
   const dateToUse = dateUpdated ? dateUpdated : dateUploaded;
   const dateFormatted = changeDateFormat(dateToUse);
   const aid = params.aid;
@@ -63,7 +62,9 @@ export default function About({ params }: { params: { aid: string } }) {
       {isArtworkNotFound ? (
         <div className="flex-center min-h-screen">
           <div className="border shadow-sm p-14 flex flex-col flex-center">
-            <div><QuestionMarkCircleIcon className="h-12 text-royal-blue"/></div>
+            <div>
+              <QuestionMarkCircleIcon className="h-12 text-royal-blue" />
+            </div>
             <h1 className="title-font mt-5">No artwork was found</h1>
             <p className="body-font mt-10 ">
               You can browse the gallery and select an artwork
@@ -213,8 +214,14 @@ export default function About({ params }: { params: { aid: string } }) {
                             <Comment
                               _id={comment._id}
                               comment={comment.comment}
-                              name={comment.name}
-                              userImage={comment.userImage}
+                              name={
+                                comment.user ? comment.user.name : "Unknown"
+                              }
+                              userImage={
+                                comment.user
+                                  ? comment.user.image
+                                  : getDefaultUserAvatar()
+                              }
                               datePosted={comment.datePosted}
                               dateUpdated={comment.dateUpdated}
                               isAuthor={comment.uid === uid}

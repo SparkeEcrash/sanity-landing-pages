@@ -4,40 +4,42 @@ import { getTodayDate, getDateNow } from "utils";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@nextauth/route";
 import { groq } from "next-sanity";
+import { queryArtwork } from "@utils/groq";
 
 export async function PATCH(request: NextRequest) {
   const { aid, isVisitorLiked } = await request.json();
   const session = await getServerSession(authOptions);
   const user = session && session.user;
-  const name = user && user.name;
-  const userEmail = user && user.email;
-  const userImage = user && user.image;
-  const username = user && user.username;
   const uid = user && user.uid;
+  const id = user && user.id;
   const datePosted = getTodayDate();
   const datePostedNumber = getDateNow();
   let documentResult;
 
-  if (uid && !isVisitorLiked) {
+  if (id && uid && !isVisitorLiked) {
     //add a like
     const doc = {
       _type: "like",
+      user: {
+        _type: "user",
+        _ref: id,
+      },
+      artwork: {
+        _type: "artwork",
+        _ref: aid,
+      },
       aid,
-      name,
-      userEmail,
-      userImage,
-      username,
       uid,
       datePosted,
       datePostedNumber,
     };
-    const document = await sanityClient
+    const likeDoc = await sanityClient
       .create(doc)
       .catch((err) => console.error("Adding like failed: ", err.message));
     documentResult = await sanityClient
       .patch(aid)
       .setIfMissing({ likes: [] })
-      .append("likes", [{ _ref: document!._id, _type: "reference" }])
+      .append("likes", [{ _ref: likeDoc!._id, _type: "reference" }])
       .commit({ autoGenerateArrayKeys: true })
       .catch((err) => console.error("Adding like failed: ", err.message));
   } else {
@@ -59,46 +61,9 @@ export async function PATCH(request: NextRequest) {
     *[_type == "artwork" && _id == "${
       documentResult!._id
     }" && isDeleted != true][0]{
-      ...,
-      comments[]-> {
-        _id,
-				uid,
-				aid,
-				name,
-				userEmail,
-				userImage,
-				username,
-				comment,
-				datePosted,
-				datePostedNumber,
-        dateUpdated,
-				dateUpdatedNumber,
-        isHidden,
-        hiddenBy,
-			},
-      likes[]-> {
-        _id,
-        uid,
-        aid,
-        name,
-        userEmail,
-        userImage,
-        username,
-        datePosted,
-        datePostedNumber,
-      },
-      tags[]-> {
-        _id,
-        label
-      },
-      images[]-> {
-        _id,
-        height,
-        width,
-        "imageUrl": image.asset->url,
+      ${queryArtwork}
       }
-    }
-    `;
+      `;
     const data = await sanityClient.fetch(query).catch(console.error);
     const likes = data.likes ? data.likes : [];
     data.isVisitorLiked = likes.some((like: ILike) => like.uid === uid);
