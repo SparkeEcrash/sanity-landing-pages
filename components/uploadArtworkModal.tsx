@@ -18,7 +18,8 @@ import {
   ArtworkFormData as ArtworkFormDataInterface,
   resetArtwork,
 } from "@redux/features/artworksSlice";
-import { getDefaultUserAvatar } from "@utils/index";
+import { getDefaultUserAvatar, imageResize } from "@utils/index";
+import { acceptedImageTypes } from "statics";
 
 interface UploadArtworkModalProps {
   show: boolean;
@@ -114,14 +115,7 @@ export default function UploadArtworkModal({
     };
   }, [show]);
 
-  const addPictures = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const acceptedImageTypes = [
-      "image/png",
-      "image/svg",
-      "image/jpeg",
-      "image/gif",
-      "image/tiff",
-    ];
+  const addPictures = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length !== 0) {
       const fileList: File[] = Array.from(e.target.files);
       const myFileList = fileList.filter((file) =>
@@ -132,11 +126,21 @@ export default function UploadArtworkModal({
       } else {
         onChange([{ value: { ...errors, image: false }, field: "errors" }]);
       }
-      const myFilePaths = myFileList.map((file) => ({
+      let myFileListResized: File[] = [];
+      for (let i = 0; i < myFileList.length; i++) {
+        const imageResized = await imageResize(
+          myFileList[i],
+          1000,
+          1000,
+          false
+        );
+        myFileListResized.push(imageResized as File);
+      }
+      const myFilePaths = myFileListResized.map((file) => ({
         name: file.name,
         path: URL.createObjectURL(file),
       }));
-      setImages((images) => [...images, ...myFileList]);
+      setImages((images) => [...images, ...myFileListResized]);
       setImageDetails((imageDetails) => [...imageDetails, ...myFilePaths]);
     }
   };
@@ -494,7 +498,7 @@ export default function UploadArtworkModal({
                     <div className="flex" key={comment._id}>
                       <div>
                         <Comment
-                          _id={comment._id} 
+                          _id={comment._id}
                           isHidden={comment.isHidden}
                           comment={comment.comment}
                           name={comment.user ? comment.user.name : "Unknown"}

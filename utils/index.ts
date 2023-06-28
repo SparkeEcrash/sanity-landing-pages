@@ -120,3 +120,70 @@ export const setMaxDimensions = (
     }
   }
 };
+
+export const imageResize = (
+  image: File,
+  width: number,
+  height: number,
+  forWindow: boolean
+): boolean | Promise<File> => {
+  if (!image) {
+    return false;
+  }
+  const imageFileName = image.name;
+  if (!imageFileName.match(/\.(jpg|jpeg|png|svg|tiff|gif|JPG|JPEG|PNG|SVG|TIFF|GIF)$/)) {
+    return false;
+  }
+  const filePromise = new Promise<File>((resolve, reject) => {
+    let reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const imgWidth = img.width;
+        const imgHeight = img.height;
+        let resizedWidth;
+        let resizedHeight;
+        if (forWindow) {
+          const resizedDimensions = setDimensionsForWindow(
+            imgWidth,
+            imgHeight,
+            width,
+            height
+          );
+          resizedWidth = resizedDimensions.width;
+          resizedHeight = resizedDimensions.height;
+        } else {
+          const resizedDimensions = setMaxDimensions(
+            imgWidth,
+            imgHeight,
+            width,
+            height
+          );
+          resizedWidth = resizedDimensions.width;
+          resizedHeight = resizedDimensions.height;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = resizedWidth;
+        canvas.height = resizedHeight;
+        const ctx = canvas.getContext("2d");
+        ctx!.drawImage(img, 0, 0, resizedWidth, resizedHeight);
+        ctx!.canvas.toBlob((blob) => {
+          if (blob) {
+            const file: File = new File([blob], imageFileName, {
+              type: "image/jpeg",
+              lastModified: Date.now(),
+            });
+            if (file) {
+              resolve(file);
+            } else {
+              reject(new Error("failed to resize image"));
+            }
+          }
+        });
+      };
+      img.src = e.target!.result as string;
+    };
+    reader.readAsDataURL(image);
+  });
+  return filePromise;
+};
