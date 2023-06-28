@@ -11,6 +11,7 @@ import {
   deleteUserProfile,
   resetPassword,
 } from "utils/patchData";
+import { getUserLikedArtworks, getUserCommentedArtworks } from "utils/getData";
 
 export interface UserProfileData {
   [key: string]: any;
@@ -50,6 +51,7 @@ const initialUserProfileData = {
 };
 
 interface UserSliceState {
+  id: string;
   name: string;
   first_name?: string;
   last_name?: string;
@@ -77,9 +79,14 @@ interface UserSliceState {
   showResetPasswordModal: boolean;
   isResettingPassword: boolean;
   resetPasswordError: string;
+  artworksLiked: ArtworkProps[];
+  artworksLikedLoading: boolean;
+  artworksCommented: ArtworkProps[];
+  artworksCommentedLoading: boolean;
 }
 
 export const initialState: UserSliceState = {
+  id: "",
   name: "",
   username: "",
   uid: "",
@@ -104,6 +111,10 @@ export const initialState: UserSliceState = {
   showResetPasswordModal: false,
   isResettingPassword: false,
   resetPasswordError: "",
+  artworksLiked: [],
+  artworksLikedLoading: true,
+  artworksCommented: [],
+  artworksCommentedLoading: true,
 };
 
 export const fetchAddUserProfile = createAsyncThunk(
@@ -124,6 +135,16 @@ export const fetchDeleteUserProfile = createAsyncThunk(
 export const fetchResetPassword = createAsyncThunk(
   "user/fetchResetPassword",
   resetPassword
+);
+
+export const fetchUserLikedArtworks = createAsyncThunk(
+  "user/fetchUserLikedArtworks",
+  getUserLikedArtworks
+);
+
+export const fetchUserCommentedArtworks = createAsyncThunk(
+  "user/fetchUserCommentedArtworks",
+  getUserCommentedArtworks
 );
 
 const userSlice = createSlice({
@@ -216,6 +237,77 @@ const userSlice = createSlice({
       if (action.payload.data === "wrong password") {
         state.resetPasswordError = "The password you entered was incorrect";
       }
+    });
+    builder.addCase(fetchUserLikedArtworks.pending, (state) => {
+      state.artworksLikedLoading = true;
+    });
+    builder.addCase(fetchUserLikedArtworks.fulfilled, (state, action) => {
+      const userLikedArtworks: ArtworkProps[] = [];
+      const sortedLikedArtworks = action.payload.data.sort(
+        (a: ILike, b: ILike) =>
+          Date.parse(b._createdAt) - Date.parse(a._createdAt)
+      );
+      sortedLikedArtworks.forEach(({ artwork }: ILike) => {
+        userLikedArtworks.push({
+          _id: artwork._id,
+          _updatedAt: artwork._updatedAt,
+          title: artwork.title,
+          images: artwork.images,
+          posted: artwork.posted,
+          tags: artwork.tags,
+          uid: artwork.uid,
+          user: artwork.user,
+          isMaker: artwork.isMaker,
+          isForSale: artwork.isForSale,
+          views: artwork.views,
+          likes: artwork.likes ? artwork.likes : [],
+          comments: artwork.comments ? artwork.comments : [],
+          price: artwork.price,
+          comment: artwork.comment,
+          dateUploaded: artwork.dateUploaded,
+          dateUploadedNumber: artwork.dateUploadedNumber,
+          aid: artwork._id,
+        });
+      });
+      state.artworksLiked = userLikedArtworks;
+      state.artworksLikedLoading = false;
+    });
+    builder.addCase(fetchUserCommentedArtworks.pending, (state) => {
+      state.artworksCommentedLoading = true;
+    });
+    builder.addCase(fetchUserCommentedArtworks.fulfilled, (state, action) => {
+      const userCommentedArtworks: ArtworkProps[] = [];
+      const sortedCommentedArtworks = action.payload.data.sort(
+        (a: IComment, b: IComment) =>
+          Date.parse(b._createdAt) - Date.parse(a._createdAt)
+      );
+
+      sortedCommentedArtworks.forEach(({ artwork }: IComment) => {
+        if (artwork.posted) {
+          userCommentedArtworks.push({
+            _id: artwork._id,
+            _updatedAt: artwork._updatedAt,
+            title: artwork.title,
+            images: artwork.images,
+            posted: artwork.posted,
+            tags: artwork.tags,
+            uid: artwork.uid,
+            user: artwork.user,
+            isMaker: artwork.isMaker,
+            isForSale: artwork.isForSale,
+            views: artwork.views,
+            likes: artwork.likes ? artwork.likes : [],
+            comments: artwork.comments ? artwork.comments : [],
+            price: artwork.price,
+            comment: artwork.comment,
+            dateUploaded: artwork.dateUploaded,
+            dateUploadedNumber: artwork.dateUploadedNumber,
+            aid: artwork._id,
+          });
+        }
+      });
+      state.artworksCommented = userCommentedArtworks;
+      state.artworksCommentedLoading = false;
     });
     builder.addMatcher(
       isAnyOf(

@@ -80,3 +80,31 @@ export const getGalleryTagsAndArtworks = async () => {
   );
   return await res.json();
 };
+
+export const getUserLikedArtworks = async ({
+  uid,
+  accessToken,
+}: {
+  uid: string;
+  accessToken: string;
+}) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/getLikedArtworks?user=${uid}`,
+    authorization(accessToken)
+  );
+  return await res.json();
+};
+
+export const getUserCommentedArtworks = async ({
+  uid,
+  accessToken,
+}: {
+  uid: string;
+  accessToken: string;
+}) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/getCommentedArtworks?user=${uid}`,
+    authorization(accessToken)
+  );
+  return await res.json();
+};

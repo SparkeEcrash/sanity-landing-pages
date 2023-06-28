@@ -208,10 +208,7 @@ export default function UserArtworks({
               isForSale,
               price,
               uid,
-              name,
-              userImage,
-              userEmail,
-              username,
+              user,
               comments,
               dateUploaded,
               dateUploadedNumber,
@@ -238,10 +235,7 @@ export default function UserArtworks({
                       _updatedAt,
                       posted,
                       uid,
-                      name,
-                      userEmail,
-                      username,
-                      userImage,
+                      user,
                       views,
                       likes,
                       comments,
@@ -266,10 +260,7 @@ export default function UserArtworks({
                   isForSale={isForSale}
                   price={price}
                   uid={uid}
-                  name={name}
-                  userImage={userImage}
-                  userEmail={userEmail}
-                  username={username}
+                  user={user}
                   comments={comments}
                   dateUploaded={dateUploaded}
                   dateUploadedNumber={dateUploadedNumber}

@@ -4,7 +4,11 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { AppDispatch, useAppSelector } from "@redux/store";
-import { signIn, findUser } from "@redux/features/userSlice";
+import {
+  signIn,
+  findUser,
+  fetchUserLikedArtworks,
+} from "@redux/features/userSlice";
 import { fetchUserArtworks } from "@redux/features/artworksSlice";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
@@ -39,6 +43,7 @@ export default function NavigationMobile() {
       const {
         data: {
           user: {
+            id,
             name,
             uid,
             username,
@@ -53,6 +58,7 @@ export default function NavigationMobile() {
       dispatch(
         signIn({
           ...initialState,
+          id,
           name,
           uid,
           userImage: image,
@@ -65,7 +71,9 @@ export default function NavigationMobile() {
           userLoading: false,
         })
       );
+      //preload user data
       dispatch(fetchUserArtworks({ uid, accessToken }));
+      // dispatch(fetchUserLikedArtworks({ uid, accessToken }));
     }
     if (session.status === "unauthenticated" && user.userLoading) {
       dispatch(

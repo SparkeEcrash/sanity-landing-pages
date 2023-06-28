@@ -6,15 +6,13 @@ import { authOptions } from "@nextauth/route";
 import { v4 as uuidv4 } from "uuid";
 import { getTagLabels } from "utils/getData";
 import { groq } from "next-sanity";
+import { queryArtwork } from "@utils/groq";
 
 export async function POST(request: NextRequest) {
   // https://developer.mozilla.org/en-US/docs/Web/API/FormData/append
   const data = await getServerSession(authOptions);
   const uid = data && data.user.uid;
-  const name = data && data.user.name;
-  const userImage = data && data.user.image;
-  const userEmail = data && data.user.email;
-  const username = data && data.user.username;
+  const userId = data && data.user.id;
 
   //https://www.sanity.io/plugins/sanity-plugin-media-library
 
@@ -39,17 +37,17 @@ export async function POST(request: NextRequest) {
   const commentTrimmed = comment.trim();
 
   /* Validation check */
-  if (imageDetails && title && comment && name && tags && images.length !== 0) {
+  if (imageDetails && title && comment && tags && images.length !== 0) {
     const doc = {
       _type: "artwork",
       _id: id,
       title: titleTrimmed,
       comment: commentTrimmed,
       uid,
-      name,
-      userImage,
-      userEmail,
-      username,
+      user: {
+        _type: "user",
+        _ref: userId,
+      },
       dateUploaded,
       dateUploadedNumber,
       posted,
@@ -179,46 +177,9 @@ export async function POST(request: NextRequest) {
       //return updated data
       const queryTwo = groq`
 		*[_type == "artwork" && uid == "${uid}" && isDeleted != true]{
-			...,
-			comments[]-> {
-				_id,
-				uid,
-				aid,
-				name,
-				userEmail,
-				userImage,
-				username,
-				comment,
-				datePosted,
-				datePostedNumber,
-				dateUpdated,
-				dateUpdatedNumber,
-				isHidden,
-				hiddenBy,
-			},
-			likes[]-> {
-				_id,
-				uid,
-				aid,
-				name,
-				userEmail,
-				userImage,
-				username,
-				datePosted,
-				datePostedNumber,
-			},
-			tags[]-> {
-				_id,
-				label,
-			},
-			images[]-> {
-				_id,
-				height,
-				width,
-				"imageUrl": image.asset->url,
-			}
-		}
-		`;
+      ${queryArtwork}
+      }
+      `;
 
       const data = await sanityClient.fetch(queryTwo).catch(console.error);
       return NextResponse.json({ data }, { status: 200 });

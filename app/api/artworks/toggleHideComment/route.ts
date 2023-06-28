@@ -3,6 +3,7 @@ import { sanityClient } from "sanity";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@nextauth/route";
 import { groq } from "next-sanity";
+import { queryArtwork } from "@utils/groq";
 
 export async function PATCH(request: NextRequest) {
   const { comment_id, isHidden } = await request.json();
@@ -29,47 +30,12 @@ export async function PATCH(request: NextRequest) {
   }
   if (documentResult !== null) {
     const query = groq`
-		*[_type == "artwork" && _id == "${documentResult!.aid}" && isDeleted != true][0]{
-			...,
-			comments[]-> {
-				_id,
-				uid,
-				aid,
-				name,
-				userEmail,
-				userImage,
-				username,
-				comment,
-				datePosted,
-				datePostedNumber,
-				dateUpdated,
-				dateUpdatedNumber,
-				isHidden,
-				hiddenBy,
-			},
-			likes[]-> {
-				_id,
-				uid,
-				aid,
-				name,
-				userEmail,
-				userImage,
-				username,
-				datePosted,
-				datePostedNumber,
-			},
-			tags[]-> {
-				_id,
-				label
-			},
-			images[]-> {
-				_id,
-				height,
-				width,
-				"imageUrl": image.asset->url,
+		*[_type == "artwork" && _id == "${
+      documentResult!.aid
+    }" && isDeleted != true][0]{
+			${queryArtwork}
 			}
-		}
-		`;
+			`;
     let data = await sanityClient.fetch(query).catch(console.error);
     return NextResponse.json({ data: data.comments }, { status: 200 });
   } else {

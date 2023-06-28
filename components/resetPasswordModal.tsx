@@ -16,7 +16,7 @@ interface ResetPasswordModalProps {
   clickOut?: boolean;
 }
 
-export default function UploadCommentModal({
+export default function ResetPasswordModal({
   show,
   setShow,
   title,

@@ -18,8 +18,27 @@ const sans = Noto_Sans_KR({
 });
 
 export const metadata = {
-  title: "Moon Jar Ceramics",
+  title: "Lunar Jar Ceramics",
   description: "A Gallery for Ceramic Art",
+  icons: [
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "32x32",
+      url: "/favicon/favicon-32x32.png",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "16x16",
+      url: "/pictures/lunar-jar-favicon.png",
+    },
+    {
+      rel: "apple-touch-icon",
+      sizes: "180x180",
+      url: "/favicon/apple-touch-icon.png",
+    },
+  ],
 };
 
 export default function RootLayout({

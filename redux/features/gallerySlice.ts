@@ -13,6 +13,7 @@ import {
 } from "utils/getData";
 import { toggleLike, updateComment, deleteComment } from "utils/patchData";
 import { addComment } from "utils/postData";
+import { userInitialValue } from "@utils/initialValues";
 
 interface GallerySliceState {
   artwork: ArtworkProps;
@@ -39,10 +40,7 @@ const artworkInitialState: ArtworkProps = {
   posted: false,
   tags: [],
   uid: "",
-  name: "",
-  userImage: "",
-  userEmail: "",
-  username: "",
+  user: userInitialValue,
   views: 0,
   likes: [],
   comments: [],
@@ -229,10 +227,7 @@ const gallerySlice = createSlice({
             posted: payload.data.posted,
             tags: payload.data.tags,
             uid: payload.data.uid,
-            name: payload.data.name,
-            userImage: payload.data.userImage,
-            userEmail: payload.data.userEmail,
-            username: payload.data.username,
+            user: payload.data.user,
             views: payload.data.views,
             likes: payload.data.likes ? payload.data.likes : [],
             comments: payload.data.comments ? payload.data.comments : [],

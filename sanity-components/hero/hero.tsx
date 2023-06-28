@@ -25,7 +25,7 @@ export default function Hero() {
       <div className="flex justify-center items-center h-full">
         <Link href="/about">
           <Image
-            src={"/pictures/company-logo.png"}
+            src={"/pictures/lunar-jar-logo.png"}
             alt={"Company Logo"}
             width={300}
             height={300}

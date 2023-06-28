@@ -190,6 +190,7 @@ export const authOptions: NextAuthOptions = {
       //set session.user depending on whether token or user was provided
       if (token) {
         session.user = {
+          id: data._id,
           uid: data.uid,
           name: data.name,
           username: data.username,

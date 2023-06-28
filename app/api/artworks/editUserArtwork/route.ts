@@ -6,6 +6,7 @@ import { authOptions } from "@nextauth/route";
 import { groq } from "next-sanity";
 import { getTagLabels } from "utils/getData";
 import { toggleHideComment } from "utils/patchData";
+import { queryArtwork } from "@utils/groq";
 
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -41,46 +42,9 @@ export async function PATCH(request: NextRequest) {
   ) {
     const query = groq`
     *[_type == "artwork" && _id == "${aid}" && isDeleted != true][0]{
-			...,
-			comments[]-> {
-				_id,
-				uid,
-				aid,
-				name,
-				userEmail,
-				userImage,
-				username,
-				comment,
-				datePosted,
-				datePostedNumber,
-				dateUpdated,
-				dateUpdatedNumber,
-				isHidden,
-				hiddenBy,
-			},
-			likes[]-> {
-				_id,
-				uid,
-				aid,
-				name,
-				userEmail,
-				userImage,
-				username,
-				datePosted,
-				datePostedNumber,
-			},
-			tags[]-> {
-				_id,
-				label,
-			},
-			images[]-> {
-				_id,
-				height,
-				width,
-				"imageUrl": image.asset->url,
-			}
-    }
-    `;
+      ${queryArtwork}
+      }
+      `;
     const artworkToUpdate = await sanityClient
       .fetch(query)
       .catch(console.error);
@@ -297,46 +261,9 @@ export async function PATCH(request: NextRequest) {
     //return updated data
     const queryTwo = groq`
 		*[_type == "artwork" && uid == "${uid}" && isDeleted != true]{
-			...,
-			comments[]-> {
-				_id,
-				uid,
-				aid,
-				name,
-				userEmail,
-				userImage,
-				username,
-				comment,
-				datePosted,
-				datePostedNumber,
-				dateUpdated,
-				dateUpdatedNumber,
-				isHidden,
-				hiddenBy,
-			},
-			likes[]-> {
-				_id,
-				uid,
-				aid,
-				name,
-				userEmail,
-				userImage,
-				username,
-				datePosted,
-				datePostedNumber,
-			},
-			tags[]-> {
-				_id,
-				label,
-			},
-			images[]-> {
-				_id,
-				height,
-				width,
-				"imageUrl": image.asset->url,
-			}
-		}
-		`;
+      ${queryArtwork}
+      }
+      `;
 
     const data = await sanityClient.fetch(queryTwo).catch(console.error);
 
