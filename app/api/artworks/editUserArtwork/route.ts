@@ -141,6 +141,7 @@ export async function PATCH(request: NextRequest) {
           await toggleHideComment({
             comment_id: commentsUpdated[i]._id,
             isHidden: comments[i].isHidden,
+            uid,
           });
         }
       }

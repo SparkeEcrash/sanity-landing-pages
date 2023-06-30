@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   }
 
   const query = groq`
-	*[_type == "like" && uid == "${uid}"]{
+	*[_type == "like" && uid == "${uid}" && isDeleted != true ]{
     ...,
     artwork-> {
       ...,

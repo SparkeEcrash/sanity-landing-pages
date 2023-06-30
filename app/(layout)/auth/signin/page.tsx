@@ -9,12 +9,12 @@ export default async function Signin() {
         <SignInPortal />
       </section>
       <section className="max-w-3xl flex justify-center items-center my-10 bg-white border shadow-sm">
-        <div className="flex p-14 flex-col text-center">
+        <div className="flex p-14 flex-col text-center h-[580px]">
           <h1 className="text-3xl text-royal-blue font-serif text-center">
-            Choose another option for signing in
+            Choose another option for signing up
           </h1>
           <p className="text-background-black font-sans mt-2">
-            You can use an existing account from another platform to sign in
+            You can use an existing account from another platform to sign up and sign in
           </p>
           <div className="flex justify-center flex-wrap gap-x-24 gap-y-10 mt-10">
             <SigninOption

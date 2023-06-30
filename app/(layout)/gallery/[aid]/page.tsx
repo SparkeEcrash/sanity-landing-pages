@@ -78,9 +78,9 @@ export default function About({ params }: { params: { aid: string } }) {
               <Spotlight
                 index={index}
                 images={images}
-                maxWidth={800}
-                maxHeight={800}
                 setIndex={setIndex}
+                enableDownload={true}
+                title={title}
               />
               <div className="text-center w-[1100px] relative">
                 <div className="absolute right-0 top-[-30px]">
@@ -209,25 +209,54 @@ export default function About({ params }: { params: { aid: string } }) {
                         className="my-masonry-grid"
                         columnClassName="my-masonry-grid_column"
                       >
-                        {comments.map((comment) => (
-                          <div key={comment._id}>
-                            <Comment
-                              _id={comment._id}
-                              comment={comment.comment}
-                              name={
-                                comment.user ? comment.user.name : "Unknown"
-                              }
-                              userImage={
-                                comment.user
-                                  ? comment.user.image
-                                  : getDefaultUserAvatar()
-                              }
-                              datePosted={comment.datePosted}
-                              dateUpdated={comment.dateUpdated}
-                              isAuthor={comment.uid === uid}
-                            />
-                          </div>
-                        ))}
+                        {comments.map((comment) => {
+                          if (comment.isHidden) {
+                            if (comment.uid === uid) {
+                              return (
+                                <div key={comment._id}>
+                                  <Comment
+                                    _id={comment._id}
+                                    comment={comment.comment}
+                                    isHidden={comment.isHidden}
+                                    name={
+                                      comment.user
+                                        ? comment.user.name
+                                        : "Unknown"
+                                    }
+                                    userImage={
+                                      comment.user
+                                        ? comment.user.image
+                                        : getDefaultUserAvatar()
+                                    }
+                                    datePosted={comment.datePosted}
+                                    dateUpdated={comment.dateUpdated}
+                                    isAuthor={comment.uid === uid}
+                                  />
+                                </div>
+                              );
+                            }
+                          } else {
+                            return (
+                              <div key={comment._id}>
+                                <Comment
+                                  _id={comment._id}
+                                  comment={comment.comment}
+                                  name={
+                                    comment.user ? comment.user.name : "Unknown"
+                                  }
+                                  userImage={
+                                    comment.user
+                                      ? comment.user.image
+                                      : getDefaultUserAvatar()
+                                  }
+                                  datePosted={comment.datePosted}
+                                  dateUpdated={comment.dateUpdated}
+                                  isAuthor={comment.uid === uid}
+                                />
+                              </div>
+                            );
+                          }
+                        })}
                       </Masonry>
                     </div>
                   </div>

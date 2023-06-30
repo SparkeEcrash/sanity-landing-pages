@@ -68,7 +68,7 @@ export const Artwork = ({
           <Image
             src={images[0].imageUrl}
             alt={title}
-            className="absolute prevent-select override-max-w peer"
+            className="h-[350px] object-cover absolute prevent-select override-max-w peer"
             width={shrunkWidth}
             height={shrunkHeight}
             priority
@@ -78,7 +78,7 @@ export const Artwork = ({
               <Image
                 src={userImage}
                 alt={title}
-                className="prevent-select override-max-w peer rounded-full"
+                className="h-[50px] object-cover prevent-select override-max-w peer rounded-full"
                 width={50}
                 height={50}
                 priority

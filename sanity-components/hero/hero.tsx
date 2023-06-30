@@ -22,7 +22,7 @@ export default function Hero() {
           />
         </video>
       </div>
-      <div className="flex justify-center items-center h-full">
+      {/* <div className="flex justify-center items-center h-full">
         <Link href="/about">
           <Image
             src={"/pictures/lunar-jar-logo.png"}
@@ -33,25 +33,7 @@ export default function Hero() {
             priority
           />
         </Link>
-        {/* <div className="bg-royal-blue p-4 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
-          <div className=" border-[6px] border-blue-green p-10 rounded-xl sm:rounded-full sm:aspect-square flex items-center">
-            <div>
-              <h1 className="font-serif text-5xl text-center w-full text-blue-green">
-                Moon Jar
-              </h1>
-              <div className="flex justify-center mt-10">
-                <Link href="/about">
-                  <Button
-                    bgColor="bg-blue-green"
-                    textColor="text-royal-blue"
-                    text={"Welcome"}
-                  />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div> */}
-      </div>
+      </div> */}
     </section>
   );
 }

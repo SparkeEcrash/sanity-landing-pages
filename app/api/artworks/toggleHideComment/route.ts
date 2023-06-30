@@ -6,12 +6,29 @@ import { groq } from "next-sanity";
 import { queryArtwork } from "@utils/groq";
 
 export async function PATCH(request: NextRequest) {
-  const { comment_id, isHidden } = await request.json();
+  let comment_id: string;
+  let isHidden: boolean;
+  let uid: string;
   const session = await getServerSession(authOptions);
-  const user = session && session.user;
-  const uid = user && user.uid;
+  if (session === null) {
+    const data = await request.json();
+    comment_id = data.comment_id;
+    isHidden = data.isHidden;
+    if (!data.uid) {
+      return NextResponse.json(
+        { data: "Toggling hide comment failed" },
+        { status: 500 }
+      );
+    } else {
+      uid = data.uid;
+    }
+  } else {
+    const data = await request.json();
+    comment_id = data.comment_id;
+    isHidden = data.isHidden;
+    uid = session.user.uid;
+  }
   let documentResult;
-
   if (isHidden) {
     documentResult = await sanityClient
       .patch(comment_id)
@@ -24,6 +41,7 @@ export async function PATCH(request: NextRequest) {
       .patch(comment_id)
       .setIfMissing({ isHidden: true })
       .set({ isHidden: true })
+      .setIfMissing({ hiddenBy: uid })
       .set({ hiddenBy: uid })
       .commit()
       .catch((err) => console.error("Hiding comment failed: ", err.message));
@@ -39,7 +57,10 @@ export async function PATCH(request: NextRequest) {
     let data = await sanityClient.fetch(query).catch(console.error);
     return NextResponse.json({ data: data.comments }, { status: 200 });
   } else {
-    return NextResponse.json({ data: "Adding like failed" }, { status: 500 });
+    return NextResponse.json(
+      { data: "Toggling hide comment failed" },
+      { status: 500 }
+    );
   }
 }
 

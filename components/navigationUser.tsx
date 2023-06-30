@@ -23,7 +23,7 @@ export default async function NavigationUser() {
               alt={"User image"}
               width={50}
               height={50}
-              className="rounded-full relative prevent-select mr-4 border"
+              className="rounded-full h-[50px] object-cover relative prevent-select mr-4 border"
               priority
             />
             {user.name}
@@ -39,5 +39,5 @@ export default async function NavigationUser() {
         </Link>
       )}
     </div>
-  ) ;
-} 
+  );
+}

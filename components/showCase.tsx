@@ -16,6 +16,8 @@ export default function ShowCase() {
   );
 
   useEffect(() => {
+    // below keeps the artwork data and does not trigger another api request
+    // artworks.length === 0 && dispatch(fetchGalleryTagsAndArtworks());
     dispatch(fetchGalleryTagsAndArtworks());
   }, []);
 
