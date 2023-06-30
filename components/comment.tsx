@@ -15,7 +15,6 @@ interface CommentProps {
   datePosted: string;
   dateUpdated?: string;
   isAuthor?: boolean;
-  hasOnlyDeletePermission?: boolean;
   isHidden?: boolean;
 }
 
@@ -27,7 +26,6 @@ export default function Comment({
   datePosted,
   dateUpdated,
   isAuthor,
-  hasOnlyDeletePermission,
   isHidden,
 }: CommentProps) {
   const dateFormatted = dateUpdated
@@ -38,7 +36,7 @@ export default function Comment({
     <div
       className={`${
         isAuthor && "group/comment"
-      } border shadow-sm p-4 w-[500px] ${isHidden && "opacity-50"} relative`}
+      } border shadow-md p-4 w-[500px] ${isHidden && "opacity-50"} relative`}
     >
       <div className="flex items-start gap-x-4">
         <div className="w-[40px] h-[29px] relative flex-none">

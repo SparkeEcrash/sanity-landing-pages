@@ -4,7 +4,11 @@ import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import Button from "@components/button";
 import UserProfileModal from "./userProfileModal";
 import { useAppSelector, AppDispatch } from "@redux/store";
-import { findUser, setShowUserProfileModal } from "../redux/features/userSlice";
+import {
+  findUser,
+  setShowUserProfileModal,
+  setIsNewAccountCreated,
+} from "../redux/features/userSlice";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
@@ -35,6 +39,7 @@ export default function SignInPortal() {
     setPassword("");
     usernameOrEmailRef!.current!.value = newUserEmail;
     passwordRef!.current!.value = "";
+    setErrorMessage("");
   }, [isNewAccountCreated]);
 
   useEffect(() => {
@@ -59,6 +64,7 @@ export default function SignInPortal() {
       return;
     }
     setSigningIn(true);
+    dispatch(setIsNewAccountCreated(false));
     //const result can be used only if redirect is false
     //auth fail redirects can be set in[...nextauth] api
     const result = await signIn("credentials", {
@@ -82,7 +88,7 @@ export default function SignInPortal() {
     <>
       <div className="h-[580px] flex max-w-5xl p-14 flex-col text-center bg-white border shadow-sm relative">
         <h1 className="text-3xl text-royal-blue font-serif text-center">
-          Use your Moon Jar account
+          Use your Lunar Jar account
         </h1>
         <p className="text-background-black font-sans mt-2">
           New members can sign up{" "}

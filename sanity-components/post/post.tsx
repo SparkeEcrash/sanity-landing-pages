@@ -12,7 +12,7 @@ export default function Hero() {
               Find the Perfect Porcelain
             </h1>
             <p className="text-white font-sans mt-10 indent-10">
-              Moon Jar exhibits a gallery of masterfully crafted porcelain and
+              Lunar Jar exhibits a gallery of masterfully crafted porcelain and
               if given the availability makes them available for purchase to
               interested individuals. Vivamus eget neque non lectus interdum
               imperdiet eget non tellus. Mauris elementum pellentesque pharetra.

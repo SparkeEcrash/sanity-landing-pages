@@ -38,7 +38,7 @@ export default function Citations() {
                 James Park
               </p>
               <p className="text-background-black font-serif">
-                Founder of Moon Jar{" "}
+                Founder of Lunar Jar{" "}
               </p>
             </div>
           </div>

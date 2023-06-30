@@ -63,7 +63,7 @@ export default function UserForm() {
                 alt={`Picture of ${name}`}
                 width={100}
                 height={100}
-                className="mt-5 relative object-cover prevent-select border"
+                className="mt-5 relative object-cover prevent-select border h-[100px]"
                 priority
               />
             </div>

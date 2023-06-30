@@ -1,4 +1,5 @@
 import { SocialIcon } from "react-social-icons";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -6,14 +7,18 @@ export default function Footer() {
       <div className="xl:w-3/4 2xl:w-2/3 3xl:w-1/2 mx-auto">
         <div className="border-b-2 border-border-grey pb-8 flex flex-col xl:flex-row">
           <div>
-            <h2 className="text-border-grey hover:opacity-80 transition-all duration-200 font-serif text-4xl cursor-pointer">
-              About
-            </h2>
+            <Link href="/about">
+              <h2 className="text-border-grey hover:opacity-80 transition-all duration-200 font-serif text-4xl cursor-pointer">
+                About
+              </h2>
+            </Link>
           </div>
-          <div>
-            <h2 className="text-border-grey hover:opacity-80 transition-all duration-200 font-serif text-4xl ml-[100px] cursor-pointer">
-              Contact
-            </h2>
+          <div className="ml-[100px]">
+            <Link href="/contact">
+              <h2 className="text-border-grey hover:opacity-80 transition-all duration-200 font-serif text-4xl cursor-pointer">
+                Contact
+              </h2>
+            </Link>
           </div>
         </div>
         <div className="flex justify-between mt-8 flex-col xl:flex-row">

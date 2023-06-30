@@ -90,7 +90,7 @@ export const Artwork = ({
         <Image
           src={images[0].imageUrl}
           alt={title}
-          className="absolute prevent-select override-max-w"
+          className="h-[300px] object-cover absolute prevent-select override-max-w"
           width={shrunkWidth}
           height={shrunkHeight} //change this so that image has width and height
           priority

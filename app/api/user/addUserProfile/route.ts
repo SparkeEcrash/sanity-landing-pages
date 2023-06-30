@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
           _type: "userProfileImage",
           height,
           width,
-          uid: id,
+          uid,
           dateUploaded: dateJoined,
           image: {
             _type: "image",

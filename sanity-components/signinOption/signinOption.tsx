@@ -25,7 +25,7 @@ export default function SigninOption({ name, image, id }: SigninOptionProps) {
           style={{ width: "100%", height: "auto" }}
         />
       </div>
-      <p className="text-3xl text-royal-blue font-serif mt-6">{name}</p>
+      <p className="title-font text-base mt-6">{name}</p>
     </div>
   );
 }

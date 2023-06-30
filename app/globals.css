@@ -51,6 +51,7 @@ body {
   user-select: none; /* Standard syntax */
 }
 
+/*The override css classes to override default css styles applied to image files from tailwind*/
 .override-max-w {
   max-width: none;
 }

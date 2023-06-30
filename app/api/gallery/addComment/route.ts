@@ -10,10 +10,6 @@ export async function POST(request: NextRequest) {
   const data = await getServerSession(authOptions);
   const uid = data && data.user.uid;
   const id = data && data.user.id;
-  const name = data && data.user.name;
-  const userImage = data && data.user.image;
-  const userEmail = data && data.user.email;
-  const username = data && data.user.username;
   const datePosted = getTodayDate();
   const datePostedNumber = getDateNow();
   const { comment, aid } = await request.json();
@@ -31,14 +27,11 @@ export async function POST(request: NextRequest) {
       },
       uid,
       aid,
-      name,
-      userEmail,
-      userImage,
-      username,
       comment: commentTrimmed,
       datePosted,
       datePostedNumber,
       isHidden: false,
+      hiddenBy: "",
     };
     const document = await sanityClient.create(doc).catch(console.error);
     const documentResult = await sanityClient

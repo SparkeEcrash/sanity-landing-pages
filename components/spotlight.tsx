@@ -6,6 +6,9 @@ import {
   Square2StackIcon,
   Square3Stack3DIcon,
   ArrowUturnLeftIcon,
+  FolderArrowDownIcon,
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
 } from "@heroicons/react/24/outline";
 import BounceLoader from "react-spinners/BounceLoader";
 import { setMaxDimensions } from "utils";
@@ -20,36 +23,66 @@ interface SpotlightProps {
   index: number;
   images: Image[];
   setIndex: Dispatch<SetStateAction<number>>;
-  maxWidth: number;
-  maxHeight: number;
+  enableDownload?: boolean;
+  title?: string;
 }
 
 export default function Spotlight({
   index,
   images,
   setIndex,
-  maxWidth,
-  maxHeight,
+  enableDownload,
+  title,
 }: SpotlightProps) {
   const [imagesDisplayed, setImagesDisplayed] = useState<Image[]>([]);
   const [imagesHidden, setImagesHidden] = useState<Image[]>([]);
   const [view, setView] = useState<"" | "single" | "double" | "triple">("");
+  const [dimensionSize, setDimensionSize] = useState<"small" | "big">("small");
+  let maxWidth = 500;
+  let maxHeight = 500;
+  let windowSize = "w-[750px] h-[750px]";
+  let offset = 12;
+  let offsetTwo = 6;
+  if (dimensionSize === "big") {
+    maxWidth = 750;
+    maxHeight = 750;
+    windowSize = "w-[1100px] h-[1100px]";
+  } else if (dimensionSize === "small") {
+    maxWidth = 500;
+    maxHeight = 500;
+    windowSize = "w-[750px] h-[750px]";
+  }
   let positionExit = "hidden";
   const positionFirst = "z-[4]";
   let positionSecond = "";
   let positionThird = "";
 
   if (view === "single") {
-    positionSecond = "-translate-x-24 -translate-y-24 opacity-0";
-    positionThird = "translate-x-24 -translate-y-24 opacity-0";
+    if (dimensionSize === "big") {
+      positionSecond = `-translate-x-24 -translate-y-24 opacity-0`;
+      positionThird = `translate-x-24 -translate-y-24 opacity-0`;
+    } else {
+      positionSecond = `-translate-x-12 -translate-y-12 opacity-0`;
+      positionThird = `translate-x-12 -translate-y-12 opacity-0`;
+    }
   }
   if (view === "double") {
-    positionSecond = "-translate-x-24 -translate-y-24";
-    positionThird = "translate-x-24 -translate-y-24 opacity-0";
+    if (dimensionSize === "big") {
+      positionSecond = `-translate-x-24 -translate-y-24`;
+      positionThird = `translate-x-24 -translate-y-24 opacity-0`;
+    } else {
+      positionSecond = `-translate-x-12 -translate-y-12`;
+      positionThird = `translate-x-12 -translate-y-12 opacity-0`;
+    }
   }
   if (view === "triple") {
-    positionSecond = "translate-x-12 translate-y-12 rotate-[20deg] z-[3]";
-    positionThird = "-translate-x-12 -translate-y-12 rotate-[-20deg] z-[2]";
+    if (dimensionSize === "big") {
+      positionSecond = `translate-x-12 translate-y-12 rotate-[20deg] z-[3]`;
+      positionThird = `-translate-x-12 -translate-y-12 rotate-[-20deg] z-[2]`;
+    } else {
+      positionSecond = `translate-x-6 translate-y-6 rotate-[20deg] z-[3]`;
+      positionThird = `-translate-x-6 -translate-y-6 rotate-[-20deg] z-[2]`;
+    }
   }
 
   const image =
@@ -132,6 +165,25 @@ export default function Spotlight({
     }
   };
 
+  const ChangeSize = () =>
+    dimensionSize === "small" ? (
+      <ArrowsPointingOutIcon
+        className="prevent-click bg-white border shadow-md rounded-full p-2 prevent-click top-12 left-0 absolute h-10 text-royal-blue"
+        onClick={(e) => {
+          e.stopPropagation();
+          setDimensionSize("big");
+        }}
+      />
+    ) : (
+      <ArrowsPointingInIcon
+        className="prevent-click bg-white border shadow-md rounded-full p-2 prevent-click top-12 left-0 absolute h-10 text-royal-blue"
+        onClick={(e) => {
+          e.stopPropagation();
+          setDimensionSize("small");
+        }}
+      />
+    );
+
   const ChangeMode = () => {
     if (images.length === 1) {
       return;
@@ -170,6 +222,42 @@ export default function Spotlight({
     }
   };
 
+  const SpotlightImage = ({
+    index,
+    width,
+    height,
+  }: {
+    index: number;
+    width: number;
+    height: number;
+  }) => (
+    <>
+      <Image
+        src={imagesDisplayed[index] ? imagesDisplayed[index].imageUrl : ""}
+        className="peer"
+        alt="alt"
+        width={width}
+        height={height}
+      />
+      {enableDownload && (
+        <a
+          onClick={(e) => e.stopPropagation()}
+          className="opacity-0 peer-hover:opacity-100 hover:opacity-100 transition-all duration-200"
+          href={`${imagesDisplayed[index].imageUrl}?dl=${
+            title
+              ? title.replace(/[^a-z0-9]/gi, "_").toLowerCase()
+              : "lunar_jar_picture"
+          }.jpg`}
+          download
+        >
+          <FolderArrowDownIcon
+            className={`m-2 rounded-full bg-black bg-opacity-40 h-10 w-10 p-2 absolute text-white bottom-0 right-0`}
+          />
+        </a>
+      )}
+    </>
+  );
+
   if (images.length === 0) {
     return (
       <div className="relative w-[1100px] h-[1100px] flex-center">
@@ -192,57 +280,63 @@ export default function Spotlight({
 
     return (
       <div
-        className="flex justify-center items-center relative w-[1100px] h-[1100px] cursor-pointer"
+        className={`flex justify-center items-center relative ${windowSize} cursor-pointer`}
         onClick={() => setIncrement()}
       >
         {images.length === 1 && (
           <>
+            <ChangeSize />
             {imagesDisplayed[0] && imagesDisplayed[0].imageUrl && (
-              <Image
-                src={imagesDisplayed[0] ? imagesDisplayed[0].imageUrl : ""}
-                className={`${image} ${positionFirst}`}
-                alt="alt"
-                width={dimensions[0].width}
-                height={dimensions[0].height}
-              />
+              <div className={`${image} ${positionFirst}`}>
+                <SpotlightImage
+                  index={0}
+                  width={dimensions[0].width}
+                  height={dimensions[0].height}
+                />
+              </div>
             )}
           </>
         )}
         {images.length === 2 && (
           <>
             <ChangeMode />
-            <ArrowUturnLeftIcon className="prevent-click top-12 right-0 absolute h-6 text-royal-blue" />
+            <ChangeSize />
+            <ArrowUturnLeftIcon className="bg-white border shadow-md rounded-full p-2 prevent-click top-12 right-0 absolute h-10 text-royal-blue" />
             {imagesDisplayed[0] && imagesDisplayed[0].imageUrl && (
-              <Image
-                src={imagesDisplayed[0] ? imagesDisplayed[0].imageUrl : ""}
+              <div
                 className={`${image} ${
                   index % 2 === 0 ? positionFirst : positionSecond
                 }`}
-                alt="alt"
-                width={dimensions[0].width}
-                height={dimensions[0].height}
-              />
+              >
+                <SpotlightImage
+                  index={0}
+                  width={dimensions[0].width}
+                  height={dimensions[0].height}
+                />
+              </div>
             )}
             {imagesDisplayed[1] && imagesDisplayed[1].imageUrl && (
-              <Image
-                src={imagesDisplayed[1] ? imagesDisplayed[1].imageUrl : ""}
+              <div
                 className={`${image} ${
                   index % 2 === 0 ? positionSecond : positionFirst
                 }`}
-                alt="alt"
-                width={dimensions[1].width}
-                height={dimensions[1].height}
-              />
+              >
+                <SpotlightImage
+                  index={1}
+                  width={dimensions[1].width}
+                  height={dimensions[1].height}
+                />
+              </div>
             )}
           </>
         )}
         {images.length === 3 && (
           <>
             <ChangeMode />
-            <ArrowUturnLeftIcon className="prevent-click top-12 right-0 absolute h-6 text-royal-blue" />
+            <ChangeSize />
+            <ArrowUturnLeftIcon className="bg-white border shadow-md rounded-full p-2 prevent-click top-12 right-0 absolute h-10 text-royal-blue" />
             {imagesDisplayed[0] && imagesDisplayed[0].imageUrl && (
-              <Image
-                src={imagesDisplayed[0] ? imagesDisplayed[0].imageUrl : ""}
+              <div
                 className={`${image} ${
                   index % 3 === 0
                     ? positionFirst
@@ -252,14 +346,16 @@ export default function Spotlight({
                     ? positionSecond
                     : ""
                 }`}
-                alt="alt"
-                width={dimensions[0].width}
-                height={dimensions[0].height}
-              />
+              >
+                <SpotlightImage
+                  index={0}
+                  width={dimensions[0].width}
+                  height={dimensions[0].height}
+                />
+              </div>
             )}
             {imagesDisplayed[1] && imagesDisplayed[1].imageUrl && (
-              <Image
-                src={imagesDisplayed[1] ? imagesDisplayed[1].imageUrl : ""}
+              <div
                 className={`${image} ${
                   index % 3 === 0
                     ? positionSecond
@@ -269,14 +365,16 @@ export default function Spotlight({
                     ? positionThird
                     : ""
                 }`}
-                alt="alt"
-                width={dimensions[1].width}
-                height={dimensions[1].height}
-              />
+              >
+                <SpotlightImage
+                  index={1}
+                  width={dimensions[1].width}
+                  height={dimensions[1].height}
+                />
+              </div>
             )}
             {imagesDisplayed[2] && imagesDisplayed[2].imageUrl && (
-              <Image
-                src={imagesDisplayed[2] ? imagesDisplayed[2].imageUrl : ""}
+              <div
                 className={`${image} ${
                   index % 3 === 0
                     ? positionThird
@@ -286,20 +384,23 @@ export default function Spotlight({
                     ? positionFirst
                     : ""
                 }`}
-                alt="alt"
-                width={dimensions[2].width}
-                height={dimensions[2].height}
-              />
+              >
+                <SpotlightImage
+                  index={2}
+                  width={dimensions[2].width}
+                  height={dimensions[2].height}
+                />
+              </div>
             )}
           </>
         )}
         {images.length > 3 && (
           <>
             <ChangeMode />
-            <ArrowUturnLeftIcon className="prevent-click top-12 right-0 absolute h-6 text-royal-blue" />
+            <ChangeSize />
+            <ArrowUturnLeftIcon className="bg-white border shadow-md rounded-full p-2 prevent-click top-12 right-0 absolute h-10 text-royal-blue" />
             {imagesDisplayed[0] && imagesDisplayed[0].imageUrl && (
-              <Image
-                src={imagesDisplayed[0] ? imagesDisplayed[0].imageUrl : ""}
+              <div
                 className={`${image} ${
                   index % 4 === 0
                     ? positionFirst
@@ -311,14 +412,16 @@ export default function Spotlight({
                     ? positionSecond
                     : ""
                 }`}
-                alt="alt"
-                width={dimensions[0].width}
-                height={dimensions[0].height}
-              />
+              >
+                <SpotlightImage
+                  index={0}
+                  width={dimensions[0].width}
+                  height={dimensions[0].height}
+                />
+              </div>
             )}
             {imagesDisplayed[1] && imagesDisplayed[1].imageUrl && (
-              <Image
-                src={imagesDisplayed[1] ? imagesDisplayed[1].imageUrl : ""}
+              <div
                 className={`${image} ${
                   (index % 4) + 1 === 1
                     ? positionSecond
@@ -330,14 +433,16 @@ export default function Spotlight({
                     ? positionThird
                     : ""
                 }`}
-                alt="alt"
-                width={dimensions[1].width}
-                height={dimensions[1].height}
-              />
+              >
+                <SpotlightImage
+                  index={1}
+                  width={dimensions[1].width}
+                  height={dimensions[1].height}
+                />
+              </div>
             )}
             {imagesDisplayed[2] && imagesDisplayed[2].imageUrl && (
-              <Image
-                src={imagesDisplayed[2] ? imagesDisplayed[2].imageUrl : ""}
+              <div
                 className={`${image} ${
                   (index % 4) + 2 === 2
                     ? positionThird
@@ -349,14 +454,16 @@ export default function Spotlight({
                     ? positionExit
                     : ""
                 }`}
-                alt="alt"
-                width={dimensions[2].width}
-                height={dimensions[2].height}
-              />
+              >
+                <SpotlightImage
+                  index={2}
+                  width={dimensions[2].width}
+                  height={dimensions[2].height}
+                />
+              </div>
             )}
             {imagesDisplayed[3] && imagesDisplayed[3].imageUrl && (
-              <Image
-                src={imagesDisplayed[3] ? imagesDisplayed[3].imageUrl : ""}
+              <div
                 className={`${image} ${
                   (index % 4) + 3 === 3
                     ? positionExit
@@ -368,10 +475,13 @@ export default function Spotlight({
                     ? positionFirst
                     : ""
                 }`}
-                alt="alt"
-                width={dimensions[3].width}
-                height={dimensions[3].height}
-              />
+              >
+                <SpotlightImage
+                  index={3}
+                  width={dimensions[3].width}
+                  height={dimensions[3].height}
+                />
+              </div>
             )}
           </>
         )}

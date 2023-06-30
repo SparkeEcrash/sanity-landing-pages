@@ -199,6 +199,9 @@ const userSlice = createSlice({
     onChangeUserForm: (state, action: PayloadAction<UserProfileData>) => {
       state.userProfileData = { ...action.payload };
     },
+    setIsNewAccountCreated: (state, action: PayloadAction<boolean>) => {
+      state.isNewAccountCreated = action.payload;
+    },
   },
   extraReducers(builder) {
     builder.addCase(fetchAddUserProfile.fulfilled, (state, action) => {
@@ -353,6 +356,7 @@ export const {
   onChangeUserForm,
   setUpdateSessionFlag,
   setResetPasswordModal,
+  setIsNewAccountCreated,
 } = userSlice.actions;
 export default userSlice.reducer;
 export const findUser = (state: RootState) => state.user;
