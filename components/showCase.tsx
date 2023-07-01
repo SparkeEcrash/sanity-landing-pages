@@ -11,9 +11,12 @@ import DisplayArtworks from "@sanity-components/displayArtworks/displayArtworks"
 
 export default function ShowCase() {
   const dispatch = AppDispatch();
-  const { artworks, artworksFiltered, tags, tagsSelected } = useAppSelector(
-    findGalleryTagsAndArtworks
-  );
+  const {
+    artworksFiltered,
+    tags,
+    tagsSelected,
+    isGettingGalleryTagsAndArtworks,
+  } = useAppSelector(findGalleryTagsAndArtworks);
 
   useEffect(() => {
     // below keeps the artwork data and does not trigger another api request
@@ -53,7 +56,7 @@ export default function ShowCase() {
         <Buttons buttons={buttonTags} />
       </div>
       <div className="flex justify-center">
-        <DisplayArtworks artworks={artworksFiltered} loading={true} />
+        <DisplayArtworks artworks={artworksFiltered} loading={isGettingGalleryTagsAndArtworks} />
       </div>
     </div>
   );

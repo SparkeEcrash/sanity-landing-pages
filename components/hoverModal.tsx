@@ -3,7 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { AppDispatch } from "@redux/store";
+import { AppDispatch, useAppSelector } from "@redux/store";
+import { findUser } from "@redux/features/userSlice";
 import { addMessage } from "@redux/features/messagesSlice";
 
 interface HoverModalProps {
@@ -15,29 +16,6 @@ interface HoverModalProps {
   children: React.ReactNode;
 }
 
-interface ModalProps {
-  text: string;
-  bgColor?: string;
-  textColor?: string;
-  className?: string;
-  link?: string;
-  hover: boolean;
-}
-
-const Modal = ({ text, bgColor, textColor, className, hover }: ModalProps) => {
-  return (
-    <div
-      className={`${bgColor ? bgColor : "bg-royal-blue"} ${
-        textColor ? textColor : "text-white absolute"
-      } p-5 text-2xl font-serif text-center transition-all duration-200 absolute cursor-pointer ${
-        hover ? "translate-x-0 opacity-100" : "-translate-x-1/4 opacity-0"
-      } ${className}`}
-    >
-      <div onClick={() => signOut()}>{text}</div>
-    </div>
-  );
-};
-
 const UserModal = ({ hover }: { hover: boolean }) => {
   const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
   const activeLinkStyle = "font-serif text-royal-blue text-3xl opacity-100";
@@ -45,6 +23,7 @@ const UserModal = ({ hover }: { hover: boolean }) => {
     "font-serif text-royal-blue text-3xl opacity-70 hover:opacity-100 transition-all duration-200";
   const path = usePathname();
   const dispatch = AppDispatch();
+  const { username } = useAppSelector(findUser);
   return (
     <div
       className={`bg-white transition-all duration-200 absolute border shadow-sm flex flex-col items-start ${
@@ -52,8 +31,18 @@ const UserModal = ({ hover }: { hover: boolean }) => {
       }`}
     >
       <Link
+        href={`gallery/user/${username}`}
+        className={`prevent-select px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
+          path === `/gallery/user/${username}`
+            ? activeLinkStyle
+            : inactiveLinkStyleDesktop
+        }`}
+      >
+        Home
+      </Link>
+      <Link
         href={"artworks"}
-        className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
+        className={`prevent-select px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
           path === "/artworks" ? activeLinkStyle : inactiveLinkStyleDesktop
         }`}
       >
@@ -61,7 +50,7 @@ const UserModal = ({ hover }: { hover: boolean }) => {
       </Link>
       <Link
         href={"likes"}
-        className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
+        className={`prevent-select px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
           path === "/likes" ? activeLinkStyle : inactiveLinkStyleDesktop
         }`}
       >
@@ -69,14 +58,14 @@ const UserModal = ({ hover }: { hover: boolean }) => {
       </Link>
       <Link
         href={"comments"}
-        className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
+        className={`prevent-select px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
           path === "/comments" ? activeLinkStyle : inactiveLinkStyleDesktop
         }`}
       >
         Comments
       </Link>
       <div
-        className={`px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
+        className={`prevent-select px-5 mx-5 cursor-pointer flex justify-center items-center h-16 ${
           path === "/signout" ? activeLinkStyle : inactiveLinkStyleDesktop
         }`}
         onClick={() => {

@@ -10,6 +10,7 @@ import {
   getGalleryArtworks,
   getTagLabels,
   getGalleryTagsAndArtworks,
+  getGalleryUserArtworks,
 } from "utils/getData";
 import { toggleLike, updateComment, deleteComment } from "utils/patchData";
 import { addComment } from "utils/postData";
@@ -19,10 +20,16 @@ interface GallerySliceState {
   artwork: ArtworkProps;
   artworks: ArtworkProps[];
   artworksFiltered: ArtworkProps[];
+  userArtworks: {
+    user: UserProps;
+    artworks: ArtworkProps[];
+  };
   tags: TagButtons[];
   tagsSelected: TagProps[];
   isArtworkNotFound: boolean;
   comment: string;
+  isGettingUserArtworks: boolean;
+  isGettingGalleryTagsAndArtworks: boolean;
   isTogglingLike: boolean;
   isSendingComment: boolean;
   showCommentModal: boolean;
@@ -30,6 +37,22 @@ interface GallerySliceState {
   deleteCommentModal: boolean;
   toUpdateCommentId: string;
 }
+
+interface UserProps {
+  name: string;
+  userEmail: string;
+  userImage: string;
+  username: string;
+  uid: string;
+}
+
+const userInitialState = {
+  name: "",
+  userEmail: "",
+  userImage: "",
+  username: "",
+  uid: "",
+};
 
 const artworkInitialState: ArtworkProps = {
   _id: "",
@@ -58,17 +81,28 @@ const initialState: GallerySliceState = {
   artwork: artworkInitialState,
   artworks: [],
   artworksFiltered: [],
+  userArtworks: {
+    user: userInitialState,
+    artworks: [],
+  },
   tags: [],
   tagsSelected: [],
   isArtworkNotFound: false,
   comment: "",
   isTogglingLike: false,
+  isGettingUserArtworks: true,
+  isGettingGalleryTagsAndArtworks: true,
   isSendingComment: false,
   showCommentModal: false,
   editCommentModal: false,
   deleteCommentModal: false,
   toUpdateCommentId: "",
 };
+
+export const fetchGalleryUserArtworks = createAsyncThunk(
+  "gallery/fetchGalleryUserArtworks",
+  getGalleryUserArtworks
+);
 
 export const fetchGalleryTagsAndArtworks = createAsyncThunk(
   "gallery/fetchGalleryTagsAndArtworks",
@@ -162,10 +196,24 @@ const gallerySlice = createSlice({
     },
   },
   extraReducers(builder) {
+    builder.addCase(fetchGalleryUserArtworks.pending, (state) => {
+      state.userArtworks.user = userInitialState;
+      state.userArtworks.artworks = [];
+      state.isGettingUserArtworks = true;
+    });
+    builder.addCase(fetchGalleryUserArtworks.fulfilled, (state, action) => {
+      state.userArtworks.user = action.payload.user;
+      state.userArtworks.artworks = action.payload.artworks;
+      state.isGettingUserArtworks = false;
+    });
+    builder.addCase(fetchGalleryTagsAndArtworks.pending, (state, action) => {
+      state.isGettingGalleryTagsAndArtworks = true;
+    });
     builder.addCase(fetchGalleryTagsAndArtworks.fulfilled, (state, action) => {
       state.artworks = action.payload.artworks;
       state.artworksFiltered = action.payload.artworks;
       state.tags = action.payload.tagsWithCount;
+      state.isGettingGalleryTagsAndArtworks = false;
     });
     builder.addCase(fetchGalleryArtwork.pending, (state) => {
       state.artwork = initialState.artwork;
@@ -263,6 +311,8 @@ export const findGalleryTagsAndArtworks = (state: RootState) => {
     artworksFiltered: state.gallery.artworksFiltered,
     tags: state.gallery.tags,
     tagsSelected: state.gallery.tagsSelected,
+    isGettingGalleryTagsAndArtworks:
+      state.gallery.isGettingGalleryTagsAndArtworks,
   };
 };
 // function getState() {

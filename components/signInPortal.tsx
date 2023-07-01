@@ -77,7 +77,7 @@ export default function SignInPortal() {
       setErrorMessage(result.error);
     }
     if (result && !result.error && result.ok) {
-      router.push("/artworks");
+      router.push("/user");
       router.refresh();
       setErrorMessage("user is authenticated");
     }
@@ -140,7 +140,7 @@ export default function SignInPortal() {
           </p>
         )}
         {!signingIn && isNewAccountCreated && (
-          <p className="body-font mt-7">
+          <p className="body-font mt-7 text-red-500">
             Sign into your new account with your password
           </p>
         )}

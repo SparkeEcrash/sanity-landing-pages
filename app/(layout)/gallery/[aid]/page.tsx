@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import Image from "next/image";
 import Comment from "components/comment";
 import { useState, useEffect } from "react";
@@ -43,7 +44,7 @@ export default function About({ params }: { params: { aid: string } }) {
     dateUpdated,
     isVisitorLiked,
   } = artwork;
-  const { name, image: userImage, email: userEmail } = user;
+  const { name, username, image: userImage, email: userEmail } = user;
   const dateToUse = dateUpdated ? dateUpdated : dateUploaded;
   const dateFormatted = changeDateFormat(dateToUse);
   const aid = params.aid;
@@ -146,13 +147,15 @@ export default function About({ params }: { params: { aid: string } }) {
                         </motion.div>
                       </AnimatePresence>
                     )}
-                    <Image
-                      src={userImage}
-                      alt={`Picture of ${name}`}
-                      fill
-                      className="relative mx-auto object-cover prevent-select rounded-full border shadow-sm"
-                      priority
-                    />
+                    <Link href={`/gallery/user/${username}`}>
+                      <Image
+                        src={userImage}
+                        alt={`Picture of ${name}`}
+                        fill
+                        className="relative mx-auto object-cover prevent-select rounded-full border shadow-sm"
+                        priority
+                      />
+                    </Link>
                   </div>
                 </div>
                 <div className="mt-10 flex gap-x-16 justify-center">
@@ -223,6 +226,9 @@ export default function About({ params }: { params: { aid: string } }) {
                                         ? comment.user.name
                                         : "Unknown"
                                     }
+                                    username={
+                                      comment.user ? comment.user.username : ""
+                                    }
                                     userImage={
                                       comment.user
                                         ? comment.user.image
@@ -243,6 +249,9 @@ export default function About({ params }: { params: { aid: string } }) {
                                   comment={comment.comment}
                                   name={
                                     comment.user ? comment.user.name : "Unknown"
+                                  }
+                                  username={
+                                    comment.user ? comment.user.username : ""
                                   }
                                   userImage={
                                     comment.user

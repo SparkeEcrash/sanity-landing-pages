@@ -1,7 +1,8 @@
+import Link from "next/link";
 import Image from "next/image";
 import { changeDateFormat } from "utils";
 import { PencilSquareIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { AppDispatch, useAppSelector } from "@redux/store";
+import { AppDispatch } from "@redux/store";
 import {
   onChangeComment,
   setShowCommentModal,
@@ -11,6 +12,7 @@ interface CommentProps {
   _id: string;
   comment: string;
   name: string;
+  username: string;
   userImage: string;
   datePosted: string;
   dateUpdated?: string;
@@ -22,6 +24,7 @@ export default function Comment({
   _id,
   comment,
   name,
+  username,
   userImage,
   datePosted,
   dateUpdated,
@@ -69,13 +72,16 @@ export default function Comment({
           <span className="ml-2 title-font text-lg">{name}</span>
         </h3>
         <div className="h-[100px] w-[100px] relative mx-auto mt-5">
-          <Image
-            src={userImage}
-            alt={`Picture of ${name}`}
-            fill
-            className="relative mx-auto object-cover prevent-select rounded-full border"
-            priority
-          />
+          <Link href={username ? `/gallery/user/${username}` : ""}>
+            <Image
+              src={userImage}
+              alt={`Picture of ${name}`}
+              height={100}
+              width={100}
+              className="h-[100px] relative mx-auto object-cover prevent-select rounded-full border"
+              priority
+            />
+          </Link>
         </div>
         <div className="flex mt-5">
           <div className="flex-1">

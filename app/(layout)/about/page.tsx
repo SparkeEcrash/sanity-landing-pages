@@ -7,6 +7,15 @@ export default function About() {
     <main>
       <section className="bg-input-grey min-h-screen flex justify-center items-center">
         <div className="flex flex-col gap-10 justify-center mx-auto max-w-7xl p-14 mt-[100px]">
+          <h1 className="title-font text-center">About</h1>
+          <Image
+            src={"/pictures/lunar-jar-logo.png"}
+            alt={"Company Logo"}
+            width={300}
+            height={300}
+            className="relative mx-auto object-cover prevent-select"
+            priority
+          />
           <div className="p-14 w-full bg-white flex border shadow-md">
             <div className="mr-10 min-w-[200px] flex items-center">
               <Image
@@ -52,7 +61,7 @@ export default function About() {
           </div>
           <div className="p-14 w-full bg-white flex border shadow-md flex-col">
             <p className="body-font text-royal-blue">
-              Lunar Jar is a privately maintained platform created from the
+              Lunar Jar is a privately maintained platform created with the
               following technologies. All data is stored in a remote server from
               Sanity.io.
             </p>
@@ -72,45 +81,6 @@ export default function About() {
               </div>
               <div>
                 <Image
-                  src={"/pictures/react_icon.jpg"}
-                  alt={"Porcelain Collection"}
-                  width={100}
-                  height={100}
-                  className="relative aspect-square object-cover rounded-full prevent-select border shadow-sm"
-                  priority
-                />
-                <div className="body-font text-royal-blue text-center mt-2">
-                  React.js
-                </div>
-              </div>
-              <div>
-                <Image
-                  src={"/pictures/redux_icon.jpg"}
-                  alt={"Porcelain Collection"}
-                  width={100}
-                  height={100}
-                  className="relative aspect-square object-cover rounded-full prevent-select border shadow-sm"
-                  priority
-                />
-                <div className="body-font text-royal-blue text-center mt-2">
-                  Redux.js
-                </div>
-              </div>
-              <div>
-                <Image
-                  src={"/pictures/nodejs_icon.jpg"}
-                  alt={"Porcelain Collection"}
-                  width={100}
-                  height={100}
-                  className="relative aspect-square object-cover rounded-full prevent-select border shadow-sm"
-                  priority
-                />
-                <div className="body-font text-royal-blue text-center mt-2">
-                  Node.js
-                </div>
-              </div>
-              <div>
-                <Image
                   src={"/pictures/sanityio_icon.jpg"}
                   alt={"Porcelain Collection"}
                   width={100}
@@ -120,45 +90,6 @@ export default function About() {
                 />
                 <div className="body-font text-royal-blue text-center mt-2">
                   Sanity.io
-                </div>
-              </div>
-              <div>
-                <Image
-                  src={"/pictures/typescript_icon.jpg"}
-                  alt={"Porcelain Collection"}
-                  width={100}
-                  height={100}
-                  className="relative aspect-square object-cover rounded-full prevent-select border shadow-sm"
-                  priority
-                />
-                <div className="body-font text-royal-blue text-center mt-2">
-                  Typescript
-                </div>
-              </div>
-              <div>
-                <Image
-                  src={"/pictures/tailwind_icon.jpg"}
-                  alt={"Porcelain Collection"}
-                  width={100}
-                  height={100}
-                  className="relative aspect-square object-cover rounded-full prevent-select border shadow-sm"
-                  priority
-                />
-                <div className="body-font text-royal-blue text-center mt-2">
-                  Tailwind
-                </div>
-              </div>
-              <div>
-                <Image
-                  src={"/pictures/aws_icon.jpg"}
-                  alt={"Porcelain Collection"}
-                  width={100}
-                  height={100}
-                  className="relative aspect-square object-cover rounded-full prevent-select border shadow-sm"
-                  priority
-                />
-                <div className="body-font text-royal-blue text-center mt-2">
-                  AWS
                 </div>
               </div>
             </div>
