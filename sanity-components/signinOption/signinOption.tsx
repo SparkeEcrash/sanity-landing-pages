@@ -13,7 +13,7 @@ export default function SigninOption({ name, image, id }: SigninOptionProps) {
     <div className="flex justify-center flex-col items-center w-[150px]">
       <div
         className="flex-center p-4 border-2 w-[100px] h-[100px] relative shadow-md cursor-pointer hover:scale-110 transition-all duration-200"
-        onClick={() => signIn(id, { callbackUrl: "/artworks" })}
+        onClick={() => signIn(id, { callbackUrl: "/user" })}
       >
         <Image
           src={image}

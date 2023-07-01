@@ -41,12 +41,16 @@ export const authOptions: NextAuthOptions = {
         //this only gets returned as user if you do not have adapter
         //if you have adapter this is what gets saved to the database
         const dateJoined = getTodayDate();
+        const username =
+          profile.email.substring(0, profile.email.indexOf("@")) +
+          Date.now().toString();
 
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
+          username,
           uid: "google." + profile.sub,
           roles: ["user"],
           dateJoined,
@@ -73,6 +77,7 @@ export const authOptions: NextAuthOptions = {
           name: profile.name,
           email: profile.email,
           image: profile.avatar_url,
+          username: profile.login + Date.now().toString(),
           uid: "github." + profile.id,
           roles: ["user"],
           dateJoined,

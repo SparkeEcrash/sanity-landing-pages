@@ -74,6 +74,13 @@ export const getGalleryArtworks = async () => {
   return await res.json();
 };
 
+export const getGalleryUserArtworks = async (username: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/gallery/getUserArtworks?username=${username}`
+  );
+  return await res.json();
+};
+
 export const getGalleryTagsAndArtworks = async () => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/gallery/getTagsAndArtworks`

@@ -11,6 +11,8 @@ import { setDimensionsForWindow, getDefaultUserAvatar } from "utils";
 interface DisplayArtworksProps {
   artworks: ArtworkProps[];
   loading: boolean;
+  breakPoints?: number;
+  defaultCount?: number;
 }
 
 const LoadingArtwork = () => (
@@ -115,8 +117,9 @@ export const Artwork = ({
 export default function DisplayArtworks({
   artworks,
   loading,
+  breakPoints = 3,
+  defaultCount = 6,
 }: DisplayArtworksProps) {
-  const defaultCount = 6;
   if (loading && artworks.length === 0) {
     const placeHolders = [];
     for (let index = 0; index < defaultCount; index++) {
@@ -128,7 +131,7 @@ export default function DisplayArtworks({
     }
     return (
       <Masonry
-        breakpointCols={3}
+        breakpointCols={breakPoints}
         className="my-masonry-grid"
         columnClassName="my-masonry-grid_column"
       >
@@ -146,7 +149,7 @@ export default function DisplayArtworks({
     }
     return (
       <Masonry
-        breakpointCols={3}
+        breakpointCols={breakPoints}
         className="my-masonry-grid"
         columnClassName="my-masonry-grid_column"
       >
@@ -167,7 +170,7 @@ export default function DisplayArtworks({
     }
     return (
       <Masonry
-        breakpointCols={3}
+        breakpointCols={breakPoints}
         className="my-masonry-grid"
         columnClassName="my-masonry-grid_column"
       >

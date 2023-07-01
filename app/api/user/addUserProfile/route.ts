@@ -20,7 +20,9 @@ export async function POST(request: NextRequest) {
   if (name && verifyEmail(userEmail) && password) {
     const nameTrimmed = name.trim();
     const userEmailTrimmed = userEmail.trim();
-    const usernameTrimmed = username ? username.trim() : "";
+    const usernameTrimmed = username
+      ? username.trim()
+      : nameTrimmed.split(" ").join("").toLocaleLowerCase("en-US") + Date.now().toString();
     const passwordTrimmed = password.trim();
     const passwordHashed = passwordTrimmed
       ? await bcrypt.hash(passwordTrimmed, 10)

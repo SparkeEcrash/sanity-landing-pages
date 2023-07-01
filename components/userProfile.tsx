@@ -53,7 +53,10 @@ export default function UserForm() {
         <div className="w-[900px] border shadow-md bg-white p-14">
           <div>
             <h1 className="title-font">Hello {name}!</h1>
-            <p className="body-font mt-5">Shown below is your profile</p>
+            <p className="body-font mt-5">
+              You can hover over your picture or
+              name at the top right to access other pages.
+            </p>
           </div>
           <div className="p-14 flex flex-col items-center justify-center">
             <div className="mx-auto flex flex-col items-center">
